@@ -9,10 +9,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b165fffd030ed5f409ab62581908e5e8, type: 3}
-  m_Name: test_enemy
+  m_Name: test_enemy_2
   m_EditorClassIdentifier: 
-  Name: test_enemy
+  Name: test_enemy_2
   Health: 100
   Damage: 10
-  Speed: 5
+  SpeedMultiplier: 1
+  PixelsPerUnit: 100
+  CellSize: {x: 64, y: 64}
+  VisibleSize: {x: 0.15, y: 0.4}
+  DefaultFacingDirection: 1
+  DefaultAnchorPoint: 0
+  Scale: 3
   Animations: {fileID: 22100000, guid: b4abe1d133ac23d4d9633978e6ce7bd8, type: 2}
+  Prefab: {fileID: 1678399063311732, guid: 93529d895bd608f43afc6b3fd5583bd3, type: 2}

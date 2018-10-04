@@ -6,5 +6,6 @@ namespace Defs
 {
 	public abstract class DataDef : ScriptableObject
 	{
+		public abstract string DefName { get; }
 	}
 }

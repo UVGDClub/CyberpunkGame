@@ -5,6 +5,26 @@ AnimatorOverrideController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: test_enemy_animator
+  m_Name: test_enemy_override
   m_Controller: {fileID: 9100000, guid: 957b73958ca864443b3f9e13f7e1b5cd, type: 2}
-  m_Clips: []
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 9e64ca36f28506349a9321971c5a3f66, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 82e56a7bcd712384ca3ad7f6f89307e5, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 875e03e8bf2468e45926a1df8362790f, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 82e56a7bcd712384ca3ad7f6f89307e5, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: d6c6b11938b2ab2408342fada74cc8d1, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 32dfee9e5563e284792ad7066faab0c3, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: eb7d0923a89808c4e824337ddd3500d4, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 1ac802a6da1c653449333ce7062a4b19, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 4c3dae4352de969479a0985d2bf32fc7, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: a9968190bc42ce7489c10a1a5c5f41a2, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 9cf252052deed7443b87cf25349f1650, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 17869db3cbf01ee46bdc654916013cb0, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 883a8ab261fad6d4da7e6f8c229193a5, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 1ac802a6da1c653449333ce7062a4b19, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 248d34a62c1a459409fda65a574a5e75, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 1ac802a6da1c653449333ce7062a4b19, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 39e901c717ce85d418dfa55686c36d69, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 32dfee9e5563e284792ad7066faab0c3, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: e12f2b1bcebd11442bfd23d733f1913f, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 1ac802a6da1c653449333ce7062a4b19, type: 2}
