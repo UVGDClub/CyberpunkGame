@@ -110,7 +110,7 @@ public class ProtoPlayer : FighterChar
 		//if(!isLocalPlayer||!isClient){return;}
 		print("Executing post-scenelaunch player code!");
 		o_MainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
-		v.defaultCameraMode = 3;
+		v.defaultCameraMode = 0;
 		o_MainCameraTransform = o_MainCamera.transform.parent.transform;
 		o_MainCameraTransform.SetParent(this.transform);
 		o_MainCameraTransform.localPosition = new Vector3(0, 0, -10f);
@@ -132,18 +132,21 @@ public class ProtoPlayer : FighterChar
 	{
 		if(!sceneIsReady){return;}
 
-		d.tickCounter++;
+		d.tickCounter++; // Used for debug purposes, to determine what happened on what frame with print statements.
 		d.tickCounter = (d.tickCounter > 60) ? 0 : d.tickCounter; // Rolls back to zero when hitting 60
+
 		FixedUpdateProcessInput();
+
 		if(k_IsKinematic)
 		{
 			FixedUpdateKinematic();	//If the player is in kinematic mode, physics are disabled while animations are played.
 		}
 		else
 		{
-			FixedUpdatePhysics(); // Change this to take time as an input so you can implement local time dilation.
+			FixedUpdatePhysics(); // This is where all movement, collision, etc happen.
 		}
-		FixedUpdateLogic();			// Deals with variables such as life
+
+		FixedUpdateLogic();			// Deals with variables such as health
 		//FixedUpdateAnimation();		// Animates the character based on movement and input.
 		FixedUpdateAudio();
     }

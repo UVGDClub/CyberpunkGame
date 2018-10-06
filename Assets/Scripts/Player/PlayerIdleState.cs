@@ -48,7 +48,7 @@ public class PlayerIdleState : IState
                 OnBeginExit(this, player.stateTransitions.JumpToAirTransition());
                 yield break;
             }
-            else if(Input.GetButton("Attack"))
+            else if(Input.GetMouseButtonDown(0))
             {
                 OnBeginExit(this, player.stateTransitions.AttackTransition());
                 yield break;
