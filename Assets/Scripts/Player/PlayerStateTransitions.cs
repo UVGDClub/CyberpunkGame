@@ -38,7 +38,7 @@ public class PlayerStateTransitions {
 
     public StateBeginExitEventArgs JumpToAirTransition()
     {
-        player.Jump();
+        player.StartCoroutine(player.Jump());
         return AirTransition();
     }
 
