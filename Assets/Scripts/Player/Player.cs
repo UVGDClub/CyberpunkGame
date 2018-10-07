@@ -6,7 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(RaycastController))]
 public class Player : MonoBehaviour
 {
 
@@ -20,8 +19,10 @@ public class Player : MonoBehaviour
     [Header("Collision")]
     public BoxCollider2D collider;
     public Rigidbody2D rigidbody2d;
+    public float groundDistance = 0.01f;
     public float maxForwardSlopeCastDistance = 0.3f;
     public float maxDownSlopeCastDistance = 0.1f;
+    public LayerMask collisionMask;
 
     [Header("States")]
     protected StateMachine stateMachine;
@@ -75,20 +76,19 @@ public class Player : MonoBehaviour
         if (dir == 0)
             return Vector2.zero;
 
-        raycastController.UpdateRaycastOrigins();
-        Vector2 raycastOrigin = dir < 0 ? raycastController.raycastOrigins.bottomLeft : raycastController.raycastOrigins.bottomRight;
+        Vector2 raycastOrigin = dir < 0 ? new Vector2(-collider.bounds.extents.x, -collider.bounds.extents.y) : new Vector2(collider.bounds.extents.x, -collider.bounds.extents.y);
 
         Debug.DrawRay(raycastOrigin, Vector2.right * dir * maxForwardSlopeCastDistance, Color.yellow);
         Debug.DrawRay(raycastOrigin, Vector2.down, Color.red);
 
-        RaycastHit2D hitForward = Physics2D.Raycast(raycastOrigin, Vector2.right * dir, maxForwardSlopeCastDistance, raycastController.collisionMask);
+        RaycastHit2D hitForward = Physics2D.Raycast(raycastOrigin, Vector2.right * dir, maxForwardSlopeCastDistance, collisionMask);
         if (hitForward && !Mathf.Approximately(hitForward.normal.y, 0))
         {
             //Debug.Log("Ascending slope (normal) : " + hitForward.normal);
             return Vector2.Perpendicular(hitForward.normal) * -dir;
         }
 
-        RaycastHit2D hitDown = Physics2D.Raycast(raycastOrigin, Vector2.down, maxDownSlopeCastDistance, raycastController.collisionMask);
+        RaycastHit2D hitDown = Physics2D.Raycast(raycastOrigin, Vector2.down, maxDownSlopeCastDistance, collisionMask);
         if (hitDown && !Mathf.Approximately(hitDown.normal.y, 1))
         {
             //Debug.Log("Descending slope (normal) : " + hitDown.normal );
@@ -101,31 +101,40 @@ public class Player : MonoBehaviour
 
     public bool isGrounded()
     {
-        raycastController.UpdateRaycastOrigins();
-
         bool grounded = false;
 
-        Debug.DrawRay(rigidbody2d.position, Vector2.down * maxDownSlopeCastDistance, Color.magenta);
-        Debug.DrawRay(rigidbody2d.position - new Vector2(collider.bounds.extents.x, collider.bounds.extents.y), Vector2.down * maxDownSlopeCastDistance, Color.magenta);
-        Debug.DrawRay(rigidbody2d.position + new Vector2(collider.bounds.extents.x, -collider.bounds.extents.y), Vector2.down * maxDownSlopeCastDistance, Color.magenta);
+        Debug.DrawRay(rigidbody2d.position + Vector2.down * collider.bounds.extents.y, Vector2.down, Color.magenta);
+        Debug.DrawRay(rigidbody2d.position - new Vector2(collider.bounds.extents.x, collider.bounds.extents.y), Vector2.down, Color.magenta);
+        Debug.DrawRay(rigidbody2d.position + new Vector2(collider.bounds.extents.x, -collider.bounds.extents.y), Vector2.down, Color.magenta);
 
-        RaycastHit2D hit = Physics2D.Raycast(rigidbody2d.position, Vector2.down, maxDownSlopeCastDistance, raycastController.collisionMask);
-        RaycastHit2D hitL = Physics2D.Raycast(rigidbody2d.position - new Vector2(collider.bounds.extents.x, collider.bounds.extents.y), Vector2.down, maxDownSlopeCastDistance, raycastController.collisionMask);
-        RaycastHit2D hitR = Physics2D.Raycast(rigidbody2d.position + new Vector2(collider.bounds.extents.x, -collider.bounds.extents.y), Vector2.down, maxDownSlopeCastDistance, raycastController.collisionMask);
+        RaycastHit2D hit = Physics2D.Raycast(rigidbody2d.position + Vector2.down * collider.bounds.extents.y, Vector2.down, 1, collisionMask);
+        RaycastHit2D hitL = Physics2D.Raycast(rigidbody2d.position - new Vector2(collider.bounds.extents.x, collider.bounds.extents.y), Vector2.down, 1, collisionMask);
+        RaycastHit2D hitR = Physics2D.Raycast(rigidbody2d.position + new Vector2(collider.bounds.extents.x, -collider.bounds.extents.y), Vector2.down, 1, collisionMask);
+
         if (hit)
         {
             levelgrid.CompareScenePositions(hit.collider.gameObject.scene.buildIndex);
-            grounded = true;
+
+            if(hit.distance <= groundDistance)
+                grounded = true;
         }
-        else if(hitL)
+
+        if (hitL)
         {
-            levelgrid.CompareScenePositions(hitL.collider.gameObject.scene.buildIndex);
-            grounded = true;
+            if(!hit)
+                levelgrid.CompareScenePositions(hitL.collider.gameObject.scene.buildIndex);
+
+            if (hitL.distance <= groundDistance)
+                grounded = true;
         }
-        else if(hitR)
+
+        if (hitR)
         {
-            levelgrid.CompareScenePositions(hitR.collider.gameObject.scene.buildIndex);
-            grounded = true;
+            if(!hit && !hitL)
+                levelgrid.CompareScenePositions(hitR.collider.gameObject.scene.buildIndex);
+
+            if (hitR.distance <= groundDistance)
+                grounded = true;
         }
 
         return grounded;

@@ -314,26 +314,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 114253550075353934, guid: cd75af5db10fde9479c1f4a6e86884e7,
-        type: 2}
-      propertyPath: collider
-      value: 
-      objectReference: {fileID: 2093885780}
-    - target: {fileID: 114253550075353934, guid: cd75af5db10fde9479c1f4a6e86884e7,
-        type: 2}
-      propertyPath: moveSpeed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 50223512932700974, guid: cd75af5db10fde9479c1f4a6e86884e7,
-        type: 2}
-      propertyPath: m_AngularDrag
-      value: 0.015
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd75af5db10fde9479c1f4a6e86884e7, type: 2}
   m_IsPrefabAsset: 0
---- !u!61 &2093885780 stripped
-BoxCollider2D:
-  m_CorrespondingSourceObject: {fileID: 61343701647797416, guid: cd75af5db10fde9479c1f4a6e86884e7,
-    type: 2}
-  m_PrefabInternal: {fileID: 2081242760}
