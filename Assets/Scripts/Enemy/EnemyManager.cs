@@ -101,3 +101,10 @@ public static class EnemyManager
 	#endregion
 	
 }
+
+public struct EnemySpawnInfo
+{
+    public string name;
+    public Vector2 position;
+    public Direction facingDir;
+}
