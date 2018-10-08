@@ -6,18 +6,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour
+{
 
-    //it's not redundant, it's caching :)
-    public Transform myTransform;
+    public LevelGrid levelgrid;
+
+    [Header("Movement")]
     public float moveSpeed = 3f;
     public float jumpForce = 5f;
+    public int maxJumpIterations = 5;
 
     [Header("Collision")]
+    public BoxCollider2D collider;
     public Rigidbody2D rigidbody2d;
-    public BoxCollider2D boxCollider2d;
-    public float groundingRayDistance = 0.01f;
-    public LayerMask terrainLayerMask;
+    public float groundDistance = 0.01f;
+    public float maxForwardSlopeCastDistance = 0.3f;
+    public float maxDownSlopeCastDistance = 0.1f;
+    public LayerMask collisionMask;
 
     [Header("States")]
     protected StateMachine stateMachine;
@@ -32,6 +37,7 @@ public class Player : MonoBehaviour {
 
     private void Awake()
     {
+        rigidbody2d.gravityScale = 0;
         stateTransitions.player = this;
         airState.player = this;
         attackState.player = this;
@@ -41,33 +47,97 @@ public class Player : MonoBehaviour {
         idleState.player = this;
         moveState.player = this;
         stateMachine = new StateMachine(idleState);
+
+        //once saving/loading is implemented, initialize the grid from the stored position
+        levelgrid.InitializeActiveGrid(Vector2Int.zero);
     }
 
     private void Start()
     {
         StartCoroutine(RunStateMachine());
+        rigidbody2d.gravityScale = 1;
     }
 
-    /* @TODO:
-     * Make this clean and implement higher jumps depending on duration key is held
-     */ 
-    public void Jump()
+    //should really be a discrete state in the state machine, apart from "air"
+    public IEnumerator Jump()
     {
-        rigidbody2d.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        int i = 0;
+        while (Input.GetButton("Jump") && i <= maxJumpIterations)
+        {
+            rigidbody2d.velocity += Vector2.up * jumpForce;
+            //rigidbody2d.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            i++;
+            yield return null;
+        }
+    }
+
+    public Vector2 GetForwardVelocity(float dir)
+    {
+        if (dir == 0)
+            return Vector2.zero;
+
+        Vector2 raycastOrigin = dir < 0 ? new Vector2(-collider.bounds.extents.x, -collider.bounds.extents.y) : new Vector2(collider.bounds.extents.x, -collider.bounds.extents.y);
+
+        Debug.DrawRay(raycastOrigin, Vector2.right * dir * maxForwardSlopeCastDistance, Color.yellow);
+        Debug.DrawRay(raycastOrigin, Vector2.down, Color.red);
+
+        RaycastHit2D hitForward = Physics2D.Raycast(raycastOrigin, Vector2.right * dir, maxForwardSlopeCastDistance, collisionMask);
+        if (hitForward && !Mathf.Approximately(hitForward.normal.y, 0))
+        {
+            //Debug.Log("Ascending slope (normal) : " + hitForward.normal);
+            return Vector2.Perpendicular(hitForward.normal) * -dir;
+        }
+
+        RaycastHit2D hitDown = Physics2D.Raycast(raycastOrigin, Vector2.down, maxDownSlopeCastDistance, collisionMask);
+        if (hitDown && !Mathf.Approximately(hitDown.normal.y, 1))
+        {
+            //Debug.Log("Descending slope (normal) : " + hitDown.normal );
+            return Vector2.Perpendicular(hitDown.normal) * -dir;
+        }
+
+        //Debug.Log("Not on slope");
+        return dir * Vector2.right;
     }
 
     public bool isGrounded()
     {
-        Debug.DrawRay(myTransform.position, Vector2.down * groundingRayDistance, Color.yellow);
+        bool grounded = false;
 
-        if (Physics2D.Raycast(myTransform.position, Vector2.down, groundingRayDistance, terrainLayerMask) == true)
+        Debug.DrawRay(rigidbody2d.position + Vector2.down * collider.bounds.extents.y, Vector2.down, Color.magenta);
+        Debug.DrawRay(rigidbody2d.position - new Vector2(collider.bounds.extents.x, collider.bounds.extents.y), Vector2.down, Color.magenta);
+        Debug.DrawRay(rigidbody2d.position + new Vector2(collider.bounds.extents.x, -collider.bounds.extents.y), Vector2.down, Color.magenta);
+
+        RaycastHit2D hit = Physics2D.Raycast(rigidbody2d.position + Vector2.down * collider.bounds.extents.y, Vector2.down, 1, collisionMask);
+        RaycastHit2D hitL = Physics2D.Raycast(rigidbody2d.position - new Vector2(collider.bounds.extents.x, collider.bounds.extents.y), Vector2.down, 1, collisionMask);
+        RaycastHit2D hitR = Physics2D.Raycast(rigidbody2d.position + new Vector2(collider.bounds.extents.x, -collider.bounds.extents.y), Vector2.down, 1, collisionMask);
+
+        if (hit)
         {
-            //Debug.Log("is grounded");
-            return true;
+            levelgrid.CompareScenePositions(hit.collider.gameObject.scene.buildIndex);
+
+            if(hit.distance <= groundDistance)
+                grounded = true;
         }
 
-        Debug.Log("not grounded");
-        return false;
+        if (hitL)
+        {
+            if(!hit)
+                levelgrid.CompareScenePositions(hitL.collider.gameObject.scene.buildIndex);
+
+            if (hitL.distance <= groundDistance)
+                grounded = true;
+        }
+
+        if (hitR)
+        {
+            if(!hit && !hitL)
+                levelgrid.CompareScenePositions(hitR.collider.gameObject.scene.buildIndex);
+
+            if (hitR.distance <= groundDistance)
+                grounded = true;
+        }
+
+        return grounded;
     }
 
     /*
