@@ -102,9 +102,20 @@ public static class EnemyManager
 	
 }
 
+[System.Serializable]
+public enum EnemySpawnMode
+{
+    Once,
+    OnLoad,
+    Timer
+}
+
+[System.Serializable]
 public struct EnemySpawnInfo
 {
     public string name;
     public Vector2 position;
     public Direction facingDir;
+    public EnemySpawnMode spawnMode;
+    public float respawnTime;
 }

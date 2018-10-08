@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
@@ -8,13 +9,15 @@ using UnityEngine.SceneManagement;
  * should know where to spawn enemies
  * should know where to spawn special items, if they are still available
  * should know what music to play
- */ 
+ */
 
 [CreateAssetMenu(menuName = "Level")]
 public class Level : ScriptableObject {
+    public LoadSceneMode loadSceneMode = LoadSceneMode.Additive;
     public int sceneIndex = -1;
     public SceneAsset scene;
     public AudioClip backgroundMusic;
+    public EnemySpawnInfo[] enemySpawnInfo = new EnemySpawnInfo[1];
 
     public void RefreshSceneIndex()
     {

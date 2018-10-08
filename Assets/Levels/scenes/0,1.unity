@@ -2367,6 +2367,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1693980843}
   - component: {fileID: 1693980842}
+  - component: {fileID: 1693980844}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -2399,3 +2400,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1693980844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1693980841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc96a8f50d27b754285d2cb70a901af3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelGrid: {fileID: 11400000, guid: 96d17eb0442f0af4abaa679ae4883600, type: 2}
+  level: {fileID: 11400000, guid: f73a0783a3a84774097559adce370cb8, type: 2}
+  colour: {r: 1, g: 0, b: 0.08614111, a: 1}
+  scale: 0.1

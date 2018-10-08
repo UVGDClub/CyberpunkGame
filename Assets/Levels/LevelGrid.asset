@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Name: LevelGrid
   m_EditorClassIdentifier: 
   activeRadius: 1
-  position: {x: 0, y: 0}
+  position: {x: 2, y: 2}
   dimensions: {x: 5, y: 5}
-  currentScene: 1
+  currentScene: 8
   levels:
   - {fileID: 11400000, guid: add9a4e124f8979439e210f78f26e721, type: 2}
   - {fileID: 11400000, guid: 730cf0ea579e6b34db4cd4f940bd8df6, type: 2}

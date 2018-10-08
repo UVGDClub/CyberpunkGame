@@ -11,27 +11,11 @@ public class LevelGrid : ScriptableObject {
     public int activeRadius = 1;
     public Vector2Int position = Vector2Int.zero;
 
-    //need to flatten array for serialization; can use x*y; index with [x + dimension.x*y]
-    [HideInInspector][SerializeField] Vector2Int dimensions = Vector2Int.zero;
+    [HideInInspector][SerializeField] Vector2Int dimensions = Vector2Int.one;
     public int currentScene = -1;
-    public Level[] levels = new Level[25];    
+    [HideInInspector][SerializeField] Level[] levels = new Level[25];    
     Dictionary<int, Vector2Int> activeScenes = new Dictionary<int, Vector2Int>();
 
-    public void ModifyGridSize(int x, int y)
-    {
-        Level[] temp = new Level[x * y];
-        for(int i = 0; i < x && i < dimensions.x; i++)
-        {
-            for(int k = 0; k < y && k < dimensions.y; k++)
-            {
-                temp[i * k] = levels[i * k];
-            }
-        }
-
-        levels = temp;
-    }
-
-    //@todo paramaterize initial position once saving/loading is implemented
     public void InitializeActiveGrid(Vector2Int center)
     {
         //once saving is implemented, set position based on save data
@@ -39,12 +23,10 @@ public class LevelGrid : ScriptableObject {
 
         position = center;
         activeScenes = new Dictionary<int, Vector2Int>();
-
-        //Quick and dirty test -- should have a base scene to load from, and load additively so that 
-        //all 'levels' have no essential gameobjects in the scene at load.
         
         currentScene = levels[position.x + dimensions.x * position.y].sceneIndex;
-        SceneManager.LoadScene(currentScene, LoadSceneMode.Additive);
+        //SceneManager.LoadScene(currentScene, LoadSceneMode.Additive);
+        LoadLevel(position.x + dimensions.x * position.y);
         activeScenes.Add(currentScene, position);
 
         Debug.Log("levels length: " + levels.Length);
@@ -92,9 +74,9 @@ public class LevelGrid : ScriptableObject {
                 }
                 Debug.Log("loading " + levels[x + dimensions.x * y].scene.name + " at buildIndex: " + levels[x + dimensions.x * y].sceneIndex);
 
-                //AsyncOperation ao = SceneManager.LoadSceneAsync(levels[x, y].sceneIndex, LoadSceneMode.Additive);
-                //ao.allowSceneActivation = true;
-                SceneManager.LoadScene(levels[x + dimensions.x * y].sceneIndex, LoadSceneMode.Additive);
+                activeScenes.Add(levels[x + dimensions.x * y].sceneIndex, new Vector2Int(x, y));
+                LoadLevel(x + dimensions.x * y);
+                //SceneManager.LoadScene(levels[x + dimensions.x * y].sceneIndex, LoadSceneMode.Additive);
             }
         }
     }
@@ -153,26 +135,19 @@ public class LevelGrid : ScriptableObject {
                 switch (offset.y)
                 {
                     case -1:
-                        //unload position.x + 2 for position.y to position.y + 2
-                        //unload position.x to position.x + 1 for position.y + 2
                         UnloadLevelRange(new Vector2Int(2, 2), new Vector2Int(0, 2));
                         UnloadLevelRange(new Vector2Int(0, 1), new Vector2Int(2, 2));
 
-                        //load position.x - 1 for position.y-1 to position.y+1
-                        //load position.x to position.x + 1 for position.y-1 to position.y+1
                         LoadLevelRange(new Vector2Int(-1, -1), new Vector2Int(-1, 1));
                         LoadLevelRange(new Vector2Int(0, 1), new Vector2Int(-1, 1));
                         break;
 
                     case 0:
-                        //unload position.x + 1 for position.y - 1 to position.y + 1
                         UnloadLevelRange(new Vector2Int(-2,-2), new Vector2Int(-1, 1));
                         LoadLevelRange(new Vector2Int(-1, -1), new Vector2Int(-1, 1));
                         break;
 
                     case 1:
-                        //unload position.x + 2 for position.y - 2 to position.y
-                        //unload position.x to position.x + 1 for position.y - 2
                         UnloadLevelRange(new Vector2Int(2, 2), new Vector2Int(-2, 0));
                         UnloadLevelRange(new Vector2Int(0, 1), new Vector2Int(-2, -2));
 
@@ -190,7 +165,6 @@ public class LevelGrid : ScriptableObject {
                 switch (offset.y)
                 {
                     case -1:
-                        //unload position.x-1 to position.x+1 for position.y + 2
                         UnloadLevelRange(new Vector2Int(-1, 1), new Vector2Int(2, 2));
                         LoadLevelRange(new Vector2Int(-1, 1), new Vector2Int(-1, -1));
 
@@ -201,7 +175,6 @@ public class LevelGrid : ScriptableObject {
                         break;
 
                     case 1:
-                        //unload position.x-1 to position.x+1 for position.y - 2
                         UnloadLevelRange(new Vector2Int(-1, 1), new Vector2Int(-2, -2));
                         LoadLevelRange(new Vector2Int(-1, 1), new Vector2Int(1, 1));
                         break;
@@ -216,8 +189,6 @@ public class LevelGrid : ScriptableObject {
                 switch (offset.y)
                 {
                     case -1:
-                        //unload position.x-2 for position.y to position.y + 2
-                        //unload position.x-1 to position.x for position.y + 2
                         UnloadLevelRange(new Vector2Int(-2, -2), new Vector2Int(0, 2));
                         UnloadLevelRange(new Vector2Int(-1, 0), new Vector2Int(2, 2));
 
@@ -226,14 +197,11 @@ public class LevelGrid : ScriptableObject {
                         break;
 
                     case 0:
-                        //unload position.x-2 for position.y - 1 to position.y + 1
                         UnloadLevelRange(new Vector2Int(-2, -2), new Vector2Int(-1, 1));
                         LoadLevelRange(new Vector2Int(1, 1), new Vector2Int(-1, 1));
                         break;
 
                     case 1:
-                        //unload position.x-2 for position.y to position.y - 2
-                        //unload position.x-2 to position.x for position.y - 2
                         UnloadLevelRange(new Vector2Int(-2, -2), new Vector2Int(0, -2));
                         UnloadLevelRange(new Vector2Int(-1, 1), new Vector2Int(-2, -2));
                         LoadLevelRange(new Vector2Int(1, 1), new Vector2Int(-1, 1));
@@ -303,8 +271,25 @@ public class LevelGrid : ScriptableObject {
                     continue;
 
                 activeScenes.Add(levels[x + dimensions.x * y].sceneIndex, new Vector2Int(x,y));
-                SceneManager.LoadScene(levels[x + dimensions.x * y].sceneIndex, LoadSceneMode.Additive);
+                LoadLevel(x + dimensions.x * y);
+                //SceneManager.LoadScene(levels[x + dimensions.x * y].sceneIndex, LoadSceneMode.Additive);
             }
+        }
+    }
+
+    public void LoadLevel(int gridIndex)
+    {
+        SceneManager.LoadScene(levels[gridIndex].sceneIndex, levels[gridIndex].loadSceneMode);
+        
+        for(int i = 0; i < levels[gridIndex].enemySpawnInfo.Length; i++)
+        {
+            if (levels[gridIndex].enemySpawnInfo[i].name == "" || levels[gridIndex].enemySpawnInfo[i].spawnMode != EnemySpawnMode.OnLoad)
+                continue;
+
+            Debug.Log("Trying to spawn " + levels[gridIndex].enemySpawnInfo[i].name);
+            EnemyManager.SpawnEnemy(levels[gridIndex].enemySpawnInfo[i].name,
+                                    levels[gridIndex].enemySpawnInfo[i].position,
+                                    levels[gridIndex].enemySpawnInfo[i].facingDir);
         }
     }
 
@@ -325,14 +310,17 @@ public class LevelGrid : ScriptableObject {
         }
     }
 
-    /*
-    IEnumerator LoadLevelAsync(int index)
+    public Level GetLevelFromBuildIndex(int index)
     {
-        AsyncOperation ao = SceneManager.LoadSceneAsync(index, LoadSceneMode.Additive);
-        while(!ao.isDone)
+        foreach(Level l in levels)
         {
-            yield return null;
-        }
-    }*/
+            if (l == null)
+                continue;
 
+            if (l.sceneIndex == index)
+                return l;
+        }
+
+        return null;
+    }
 }
