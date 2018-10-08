@@ -11,8 +11,8 @@ public class DialogueTesting : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        
-    }
+		dialogue.AddDialogue(dialogue.LoadTextFile("Pulp Fiction"), 4);
+	}
 
     // Update is called once per frame
     void Update() {
@@ -23,7 +23,7 @@ public class DialogueTesting : MonoBehaviour {
     [ContextMenu("Who is a wizard?")]
     void WhosTheWizard()
     {
-        dialogue.SetDialogue("Alexander is the wizard.");
+        dialogue.AddDialogue("Alexander is the wizard.");
     }
 
 }

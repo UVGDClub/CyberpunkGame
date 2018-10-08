@@ -6,60 +6,74 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * Written by Alexander Aldridge
+ * for the use of UVic GameDev "Cyberpunk" 2018-19 project
+ * Modified by: Nobody so far
+ * Last Updated 2018-10-07
+ * 
+ * Known bugs to fix:
+ * -Default text continues to display for first round of dialogue
+ * -Words longer than MAX_SENTANCE_LENGTH untested
+ */
 public class Dialogue : MonoBehaviour {
 
     public Text dialogueText;
     float displayStartTime = 0;
-    float displayTimeLength = 0;
-    int MAX_SENTANCE_LENGTH = 80;
-    LinkedList<string> queue = new LinkedList<string>();
+    float displayTimeLength = 1;
+
+    const int MAX_SENTANCE_LENGTH = 80;
+    LinkedList<string> queue = new LinkedList<string>();	//LinkedList should hypothetically be nice and efficient for the queue
 
     // Use this for initialization
     void Start () {
-        dialogueText.text = "";
-        this.LoadTextFile("Pulp Fiction");
 	}
 	
 	void FixedUpdate () {
         if (Time.fixedTime >= displayStartTime + displayTimeLength) {
             if (queue.Count == 0) {
                 dialogueText.text = "";
-            } else
-            {
-                SetDialogue(queue.First.Value, displayTimeLength);
+            } else {
+				SetDialogue(queue.First.Value, displayTimeLength);
                 queue.RemoveFirst();
             }
         }
     }
 
-    /*
+	/*
+	 * @param dialogue -> the text to be displayed
+	 * @param textTime -> the amount of time that the text should be on the screen
+	 */
+	private void SetDialogue(string dialogue, float textTime)
+	{
+		dialogueText.text = dialogue;
+		displayStartTime = Time.fixedTime;
+		displayTimeLength = textTime;
+	}
+
+	/*
      * @param dialogue -> the text to be displayed
-     * Will display the text for sixteen seconds
      */
-    public void SetDialogue(string dialogue)
+	public void AddDialogue(string dialogue)
     {
-        dialogueText.text = dialogue;
-        displayStartTime = Time.fixedTime;
-        displayTimeLength = 8;
+		AddDialogue(new string[] { dialogue });
     }
-    /*
+
+	/*
+     * @param dialogue -> the text to be displayed
+     */
+	public void AddDialogue(string[] dialogue)
+    {
+		AddDialogue(dialogue, dialogue.Length);
+    }
+
+	/*
+	 * @param dialogue -> the text to be displayed
      * @param textTime -> the amount of time that the text should be on the screen
      */
-    public void SetDialogue(string dialogue, float textTime)
+	public void AddDialogue(string[] dialogue, float timePerLine)
     {
-        dialogueText.text = dialogue;
-        displayStartTime = Time.fixedTime;
-        displayTimeLength = textTime;
-    }
-
-    public void SetDialogue(string[] dialogue)
-    {
-        SetDialogue(dialogue, dialogue.Length * 4);
-    }
-
-    public void SetDialogue(string[] dialogue, float totalTextTime)
-    {
-        displayTimeLength = totalTextTime / (float) dialogue.Length;
+        displayTimeLength = timePerLine;
 
         foreach (string line in dialogue)
         {
@@ -67,28 +81,45 @@ public class Dialogue : MonoBehaviour {
         }
     }
 
+	/*
+	 * Removes current dialogue from the screen
+	 * Untested!
+	 */
+	public void ClearDialogue()
+	{
+		queue.Clear();
+		dialogueText.text = "";
+	}
+
     /**
      * @param location -> the name of the text file within "Resources/Dialogue"
      * Example: "Pulp Fiction" will load "Pulp Fiction.txt" from Resources/Dialogue
      */
-    public void LoadTextFile(string name)
+    public string[] LoadTextFile(string name)
     {
-        string text = Resources.Load<TextAsset>("Dialgue/" + name).ToString();
-
-        SetDialogue(ParseText(text));
+        return ParseText(Resources.Load<TextAsset>("Dialgue/" + name).ToString());
 
     }
 
-    private string[] ParseText(string text)
+	/*
+	 * This function splits the text up into individual words (based off of
+	 * where spaces are) and then puts the words together into sentances. 
+	 * A sentance ends when it runs out of characters or if it reaches the
+	 * end of the line (ie '\n')
+	 * 
+	 * It outputs an array of strings where each string is a sentance and
+	 * string[n].Length <= MAX_SENTANCE_LENGTH
+	 * 
+	 * Untested for edgecases such as: words > MAX_SENTANCE_LENGTH
+	 */
+	private string[] ParseText(string text)
     {
-		List<string> output = new List<string>{""};
-
-		text = text.Replace("\n\n", "  \n");
+		List<string> output = new List<string> { "" };
 
 		string[] words = text.Split(' ');
 		foreach (string word in words)
         {
-            if (output[output.Count - 1].Length + word.Length + 1 > MAX_SENTANCE_LENGTH)
+            if (output[output.Count - 1].Length + word.Length > MAX_SENTANCE_LENGTH)
             {
                 output.Add("");
             }
@@ -96,14 +127,14 @@ public class Dialogue : MonoBehaviour {
 			//If text file contains multiple lines
 			if (word.Contains('\n'))
 			{
-				string pinch;
+				string s;
 				string[] section = word.Split('\n');
 				for (int i = 0; i < section.Length; i++)
 				{
-					pinch = section[i].Trim();
-					if (pinch.Length > 0)
+					s = section[i].Trim();
+					if (s.Length > 0)
 					{
-						output[output.Count - 1] += " " + pinch;
+						output[output.Count - 1] += " " + s;
 						if (i < section.Length - 1)
 						{
 							output.Add("");
