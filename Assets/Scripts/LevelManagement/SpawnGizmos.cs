@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class SpawnGizmos : MonoBehaviour {
 
@@ -25,6 +26,7 @@ public class SpawnGizmos : MonoBehaviour {
         for (int i = 0; i < level.enemySpawnInfo.Length; i++)
         {
             Gizmos.DrawWireCube(level.enemySpawnInfo[i].position, Vector2.one * scale);
+            Handles.Label(level.enemySpawnInfo[i].position, i.ToString());
         }
     }
 }

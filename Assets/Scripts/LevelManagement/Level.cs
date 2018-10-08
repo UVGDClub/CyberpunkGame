@@ -13,18 +13,26 @@ using UnityEngine.SceneManagement;
 
 [CreateAssetMenu(menuName = "Level")]
 public class Level : ScriptableObject {
-    public LoadSceneMode loadSceneMode = LoadSceneMode.Additive;
-    public int sceneIndex = -1;
+    
+    [HideInInspector] public int sceneIndex = -1;
     public SceneAsset scene;
+    public LoadSceneMode loadSceneMode = LoadSceneMode.Additive;
     public AudioClip backgroundMusic;
+    public float fadeRate = 0.1f;
     public EnemySpawnInfo[] enemySpawnInfo = new EnemySpawnInfo[1];
 
+    [ContextMenu("Refresh Scene Index")]
     public void RefreshSceneIndex()
     {
         if (scene == null)
+        {
             sceneIndex = -1;
-
+            return;
+        }
+            
         sceneIndex = IsSceneInBuildSettings();
+        if (sceneIndex == -1)
+            AddSceneToBuildSettings();
     }
 
   #region Build Settings Scene Injection
@@ -50,10 +58,12 @@ public class Level : ScriptableObject {
 
         EditorBuildSettingsScene[] scenes = new EditorBuildSettingsScene[EditorBuildSettings.scenes.Length + 1];
 
+
+        sceneIndex = EditorBuildSettings.scenes.Length;
+
         for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
         {
-            scenes[i] = EditorBuildSettings.scenes[i];
-            sceneIndex = i;
+            scenes[i] = EditorBuildSettings.scenes[i];           
         }
 
         scenes[EditorBuildSettings.scenes.Length] = new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(scene), true);

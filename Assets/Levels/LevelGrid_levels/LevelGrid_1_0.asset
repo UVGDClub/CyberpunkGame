@@ -13,8 +13,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneIndex: 3
   scene: {fileID: 102900000, guid: c0f50644f340aca4187a8c10d88c82a9, type: 3}
-  backgroundMusic: {fileID: 0}
+  loadSceneMode: 1
+  backgroundMusic: {fileID: 8300000, guid: a51eb35c601c9344fa1bec21af102219, type: 3}
+  fadeRate: 0.05
   enemySpawnInfo:
   - name: 
     position: {x: 0, y: 0}
     facingDir: 0
+    spawnMode: 0
+    respawnTime: 0

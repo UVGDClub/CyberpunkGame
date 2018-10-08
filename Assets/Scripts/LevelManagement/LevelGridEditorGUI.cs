@@ -37,11 +37,7 @@ public class LevelGridEditorGUI : Editor  {
             Debug.Log("trying to index outside dimension bounds");
             return;
         }
-            
 
-        if (levels.GetArrayElementAtIndex(gridIndex.x + dimensions.vector2IntValue.x * gridIndex.y).objectReferenceValue == null && GetLevelAsset() == false)
-            CreateLevelAsset();
-            
         Repaint();
 
         Save();    
@@ -122,7 +118,11 @@ public class LevelGridEditorGUI : Editor  {
         if (dimensions.vector2IntValue.x > gridIndex.x && dimensions.vector2IntValue.y > gridIndex.y
             && gridIndex.x >= 0 && gridIndex.y >= 0)
         {
+            if (levels.GetArrayElementAtIndex(gridIndex.x + dimensions.vector2IntValue.x * gridIndex.y).objectReferenceValue == null && GetLevelAsset() == false)
+                CreateLevelAsset();
+
             Level level = (Level)levels.GetArrayElementAtIndex(gridIndex.x + dimensions.vector2IntValue.x * gridIndex.y).objectReferenceValue;
+
             level = (Level)EditorGUI.ObjectField(levelSelectRect, "Level", level, typeof(Level), false);
 
             levels.GetArrayElementAtIndex(gridIndex.x + dimensions.vector2IntValue.x * gridIndex.y).objectReferenceValue = level;

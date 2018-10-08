@@ -12,6 +12,11 @@ public class LevelEditorGUI : Editor  {
 
     public override void OnInspectorGUI()
     {
+        Level myTarget = (Level)target;
+        EditorGUILayout.LabelField("Scene Index: " + myTarget.sceneIndex);
+        if (GUI.Button(GUILayoutUtility.GetRect(50, 20), "Refresh scene index"))
+            myTarget.RefreshSceneIndex();
+
         DrawDefaultInspector(); //rather than this, make the slider go below the scene name
         
         //Level myTarget = (Level)target;

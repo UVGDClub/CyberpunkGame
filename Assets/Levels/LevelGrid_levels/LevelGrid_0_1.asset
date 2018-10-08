@@ -11,10 +11,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd90533f010671045bbf784430d53d29, type: 3}
   m_Name: LevelGrid_0_1
   m_EditorClassIdentifier: 
-  loadSceneMode: 1
   sceneIndex: 1
   scene: {fileID: 102900000, guid: d5eac27d2f7e7e64e9dedcf3dfc1bfd5, type: 3}
+  loadSceneMode: 1
   backgroundMusic: {fileID: 0}
+  fadeRate: 0.1
   enemySpawnInfo:
   - name: test_enemy_3
     position: {x: -0.5, y: -0.55}

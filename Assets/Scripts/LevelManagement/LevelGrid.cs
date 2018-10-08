@@ -9,7 +9,25 @@ using UnityEngine.SceneManagement;
 public class LevelGrid : ScriptableObject {
     [Range(1,char.MaxValue)]
     public int activeRadius = 1;
-    public Vector2Int position = Vector2Int.zero;
+    public Vector2Int position = Vector2Int.one;
+    public Vector2Int Position
+    {
+        get { return position; }
+
+        set
+        {
+            if (Position == value)
+                return;
+
+            position = value;
+            if(CrossfadeBGM != null && levels[Position.x + dimensions.x * Position.y].backgroundMusic != null )
+            {
+                CrossfadeBGM(levels[Position.x + dimensions.x * Position.y].backgroundMusic, levels[Position.x + dimensions.x * Position.y].fadeRate);
+            }
+        }
+    }
+    public delegate void CrossfadeBGM_Delegate(AudioClip clip, float fadeRate);
+    public event CrossfadeBGM_Delegate CrossfadeBGM;
 
     [HideInInspector][SerializeField] Vector2Int dimensions = Vector2Int.one;
     public int currentScene = -1;
@@ -18,21 +36,21 @@ public class LevelGrid : ScriptableObject {
 
     public void InitializeActiveGrid(Vector2Int center)
     {
-        //once saving is implemented, set position based on save data
-        //when starting a new game, remember to set the position accordingly
+        //once saving is implemented, set Position based on save data
+        //when starting a new game, remember to set the Position accordingly
 
-        position = center;
+        Position = center;
         activeScenes = new Dictionary<int, Vector2Int>();
         
-        currentScene = levels[position.x + dimensions.x * position.y].sceneIndex;
+        currentScene = levels[Position.x + dimensions.x * Position.y].sceneIndex;
         //SceneManager.LoadScene(currentScene, LoadSceneMode.Additive);
-        LoadLevel(position.x + dimensions.x * position.y);
-        activeScenes.Add(currentScene, position);
+        LoadLevel(Position.x + dimensions.x * Position.y);
+        activeScenes.Add(currentScene, Position);
 
         Debug.Log("levels length: " + levels.Length);
         Debug.Log("EditorBuildSettingsSceneLength: " + EditorBuildSettings.scenes.Length);
 
-        for (int x = position.x - activeRadius; x <= position.x + activeRadius; x++)
+        for (int x = Position.x - activeRadius; x <= Position.x + activeRadius; x++)
         {
             if (x < 0 || x >= dimensions.x)
             {
@@ -40,7 +58,7 @@ public class LevelGrid : ScriptableObject {
                 continue;
             }
 
-            for (int y = position.y - activeRadius; y <= position.y + activeRadius; y++)
+            for (int y = Position.y - activeRadius; y <= Position.y + activeRadius; y++)
             {
                 if (y < 0 || y >= dimensions.y)
                 {
@@ -48,7 +66,7 @@ public class LevelGrid : ScriptableObject {
                     continue;
                 }
 
-                if (x == position.x && y == position.y)
+                if (x == Position.x && y == Position.y)
                     continue;
 
                 if (levels[x + dimensions.x*y] == null)
@@ -102,24 +120,24 @@ public class LevelGrid : ScriptableObject {
             }
             if (newPosition == null)
             {
-                Debug.LogWarning("Couldn't resolve position in grid from scene index {" + otherIndex + "} in build order!");
+                Debug.LogWarning("Couldn't resolve Position in grid from scene index {" + otherIndex + "} in build order!");
                 return;
             }
                 
         }
 
-        UpdateActiveGrid(newPosition - position);
+        UpdateActiveGrid(newPosition - Position);
         currentScene = otherIndex;
 
     }
 
     /// <summary>
-    /// Loads and unloads level chunks based on the radius around the position in the level grid
+    /// Loads and unloads level chunks based on the radius around the Position in the level grid
     /// where the player is currently.
     /// 
     /// Idea:
-    /// Consider updating player position based on the ground check in the player's main loop.
-    /// See which scene the tileset collider belongs to, and then set the position accordingly.
+    /// Consider updating player Position based on the ground check in the player's main loop.
+    /// See which scene the tileset collider belongs to, and then set the Position accordingly.
     /// </summary>
     /// <param name="offset"></param>    
     public void UpdateActiveGrid(Vector2Int offset)
@@ -127,7 +145,8 @@ public class LevelGrid : ScriptableObject {
         Debug.Log("offset " + offset);
 
         //testing
-        position += offset;
+        Position += offset;
+        //play bgm
 
         switch(offset.x)
         {
@@ -227,12 +246,12 @@ public class LevelGrid : ScriptableObject {
         xRange *= activeRadius;
         yRange *= activeRadius;
 
-        for(int x = position.x + xRange.x; x <= position.x + xRange.y; x++)
+        for(int x = Position.x + xRange.x; x <= Position.x + xRange.y; x++)
         {
             if (x < 0 || x >= dimensions.x)
                 continue; 
 
-            for (int y = position.y + yRange.x; y <= position.y + yRange.y; y++)
+            for (int y = Position.y + yRange.x; y <= Position.y + yRange.y; y++)
             {
                 if (y < 0 || y >= dimensions.y
                     || levels[x + dimensions.x * y] == null
@@ -255,12 +274,12 @@ public class LevelGrid : ScriptableObject {
         xRange *= activeRadius;
         yRange *= activeRadius;
 
-        for (int x = position.x + xRange.x; x <= position.x + xRange.y; x++)
+        for (int x = Position.x + xRange.x; x <= Position.x + xRange.y; x++)
         {
             if (x < 0 || x >= dimensions.x)
                 continue;
 
-            for (int y = position.y + yRange.x; y <= position.y + yRange.y; y++)
+            for (int y = Position.y + yRange.x; y <= Position.y + yRange.y; y++)
             {
                 if (y < 0 || y >= dimensions.y
                     || levels[x + dimensions.x * y] == null
@@ -304,7 +323,8 @@ public class LevelGrid : ScriptableObject {
                 {
                     levels[x + dimensions.x * y].RefreshSceneIndex();
 
-                    Debug.Log(levels[x + dimensions.x * y].name + " sceneName: " + levels[x + dimensions.x * y].scene.name +  " sceneIndex: " + levels[x + dimensions.x * y].sceneIndex);
+                    if(levels[x + dimensions.x * y] != null && levels[x + dimensions.x * y].scene != null)
+                        Debug.Log(levels[x + dimensions.x * y].name + " sceneName: " + levels[x + dimensions.x * y].scene.name +  " sceneIndex: " + levels[x + dimensions.x * y].sceneIndex);
                 }
             }
         }
