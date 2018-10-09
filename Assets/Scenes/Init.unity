@@ -306,7 +306,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -401,7 +401,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -496,6 +496,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active_source: {fileID: 1527350831}
   inactive_source: {fileID: 1527350830}
+  cutoffThreshold: 0.05
 --- !u!4 &1527350833
 Transform:
   m_ObjectHideFlags: 0

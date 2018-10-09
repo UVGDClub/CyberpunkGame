@@ -92,6 +92,8 @@ public class LevelGridEditorGUI : Editor  {
 
         EditorGUILayout.LabelField("LevelGrid Properties", header);
 
+        if (GUI.Button(GUILayoutUtility.GetRect(50, 20), "Refresh scene indices"))
+            ((LevelGrid)target).RefreshLevelsceneIndices();
         //DrawDefaultInspector();
 
         EditorGUILayout.BeginHorizontal();
@@ -159,12 +161,7 @@ public class LevelGridEditorGUI : Editor  {
                     EditorGUILayout.EndHorizontal();
                 }
                 EditorGUIUtility.labelWidth = 0;
-            }
-                
-
-            
-
-            
+            }         
         }
         /*else
         {

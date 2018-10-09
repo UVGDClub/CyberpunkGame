@@ -38,12 +38,10 @@ public class LevelGrid : ScriptableObject {
     {
         //once saving is implemented, set Position based on save data
         //when starting a new game, remember to set the Position accordingly
-
         Position = center;
         activeScenes = new Dictionary<int, Vector2Int>();
         
         currentScene = levels[Position.x + dimensions.x * Position.y].sceneIndex;
-        //SceneManager.LoadScene(currentScene, LoadSceneMode.Additive);
         LoadLevel(Position.x + dimensions.x * Position.y);
         activeScenes.Add(currentScene, Position);
 
@@ -94,13 +92,14 @@ public class LevelGrid : ScriptableObject {
 
                 activeScenes.Add(levels[x + dimensions.x * y].sceneIndex, new Vector2Int(x, y));
                 LoadLevel(x + dimensions.x * y);
-                //SceneManager.LoadScene(levels[x + dimensions.x * y].sceneIndex, LoadSceneMode.Additive);
             }
         }
     }
 
     public void CompareScenePositions(int otherIndex)
     {
+        Debug.Log("otherIndex: " + otherIndex);
+
         if (otherIndex == currentScene)
             return;
 
@@ -126,6 +125,8 @@ public class LevelGrid : ScriptableObject {
                 
         }
 
+        Debug.Log(newPosition + " - " + Position + " = " + (newPosition - Position));
+
         UpdateActiveGrid(newPosition - Position);
         currentScene = otherIndex;
 
@@ -134,41 +135,42 @@ public class LevelGrid : ScriptableObject {
     /// <summary>
     /// Loads and unloads level chunks based on the radius around the Position in the level grid
     /// where the player is currently.
+    ///
+    /// Seems that unloading levels is a bit slow, and since asnc operations can't be cancelled, sometimes levels
+    /// are being unloaded when we don't want them to be.
+    /// Given a recent profile, having 3x3 relatively small levels active at once doesn't seem to be a performance burden.
     /// 
-    /// Idea:
-    /// Consider updating player Position based on the ground check in the player's main loop.
-    /// See which scene the tileset collider belongs to, and then set the Position accordingly.
     /// </summary>
     /// <param name="offset"></param>    
     public void UpdateActiveGrid(Vector2Int offset)
     {
-        Debug.Log("offset " + offset);
+        Debug.Log("offset: " + offset);
 
-        //testing
+        Debug.Log("\nbefore applying offset, pos = " + Position);
         Position += offset;
-        //play bgm
+        Debug.Log("after applying offset, pos = " + Position);
 
-        switch(offset.x)
+        switch (offset.x)
         {
             case -1:
                 switch (offset.y)
                 {
                     case -1:
-                        UnloadLevelRange(new Vector2Int(2, 2), new Vector2Int(0, 2));
-                        UnloadLevelRange(new Vector2Int(0, 1), new Vector2Int(2, 2));
+                        //UnloadLevelRange(new Vector2Int(2, 2), new Vector2Int(0, 2));
+                        //UnloadLevelRange(new Vector2Int(0, 1), new Vector2Int(2, 2));
 
                         LoadLevelRange(new Vector2Int(-1, -1), new Vector2Int(-1, 1));
                         LoadLevelRange(new Vector2Int(0, 1), new Vector2Int(-1, 1));
                         break;
 
                     case 0:
-                        UnloadLevelRange(new Vector2Int(-2,-2), new Vector2Int(-1, 1));
+                        //UnloadLevelRange(new Vector2Int(2, 2), new Vector2Int(-1, 1));
                         LoadLevelRange(new Vector2Int(-1, -1), new Vector2Int(-1, 1));
                         break;
 
                     case 1:
-                        UnloadLevelRange(new Vector2Int(2, 2), new Vector2Int(-2, 0));
-                        UnloadLevelRange(new Vector2Int(0, 1), new Vector2Int(-2, -2));
+                        //UnloadLevelRange(new Vector2Int(2, 2), new Vector2Int(-2, 0));
+                        //UnloadLevelRange(new Vector2Int(0, 1), new Vector2Int(-2, -2));
 
                         LoadLevelRange(new Vector2Int(-1, -1), new Vector2Int(-1, 1));
                         LoadLevelRange(new Vector2Int(0, 1), new Vector2Int(-1, -1));
@@ -184,7 +186,7 @@ public class LevelGrid : ScriptableObject {
                 switch (offset.y)
                 {
                     case -1:
-                        UnloadLevelRange(new Vector2Int(-1, 1), new Vector2Int(2, 2));
+                        //UnloadLevelRange(new Vector2Int(-1, 1), new Vector2Int(2, 2));
                         LoadLevelRange(new Vector2Int(-1, 1), new Vector2Int(-1, -1));
 
                         break;
@@ -194,7 +196,7 @@ public class LevelGrid : ScriptableObject {
                         break;
 
                     case 1:
-                        UnloadLevelRange(new Vector2Int(-1, 1), new Vector2Int(-2, -2));
+                        //UnloadLevelRange(new Vector2Int(-1, 1), new Vector2Int(-2, -2));
                         LoadLevelRange(new Vector2Int(-1, 1), new Vector2Int(1, 1));
                         break;
 
@@ -208,21 +210,21 @@ public class LevelGrid : ScriptableObject {
                 switch (offset.y)
                 {
                     case -1:
-                        UnloadLevelRange(new Vector2Int(-2, -2), new Vector2Int(0, 2));
-                        UnloadLevelRange(new Vector2Int(-1, 0), new Vector2Int(2, 2));
+                        //UnloadLevelRange(new Vector2Int(-2, -2), new Vector2Int(0, 2));
+                        //UnloadLevelRange(new Vector2Int(-1, 0), new Vector2Int(2, 2));
 
                         LoadLevelRange(new Vector2Int(1, 1), new Vector2Int(-1, 1));
                         LoadLevelRange(new Vector2Int(-1, 0), new Vector2Int(-1, -1));
                         break;
 
                     case 0:
-                        UnloadLevelRange(new Vector2Int(-2, -2), new Vector2Int(-1, 1));
+                        //UnloadLevelRange(new Vector2Int(-2, -2), new Vector2Int(-1, 1));
                         LoadLevelRange(new Vector2Int(1, 1), new Vector2Int(-1, 1));
                         break;
 
                     case 1:
-                        UnloadLevelRange(new Vector2Int(-2, -2), new Vector2Int(0, -2));
-                        UnloadLevelRange(new Vector2Int(-1, 1), new Vector2Int(-2, -2));
+                        //UnloadLevelRange(new Vector2Int(-2, -2), new Vector2Int(0, -2));
+                        //UnloadLevelRange(new Vector2Int(-1, 1), new Vector2Int(-2, -2));
                         LoadLevelRange(new Vector2Int(1, 1), new Vector2Int(-1, 1));
                         LoadLevelRange(new Vector2Int(-1, 0), new Vector2Int(1, 1));
                         break;
@@ -260,7 +262,7 @@ public class LevelGrid : ScriptableObject {
                     || activeScenes.ContainsKey(levels[x + dimensions.x * y].sceneIndex) == false)
                     continue;
 
-                //Debug.Log("unloading scene: " + levels[x + dimensions.x * y].name);
+                Debug.Log("unloading scene: " + levels[x + dimensions.x * y].name);
 
                 activeScenes.Remove(levels[x + dimensions.x * y].sceneIndex);
                 SceneManager.UnloadSceneAsync(levels[x + dimensions.x * y].sceneIndex);

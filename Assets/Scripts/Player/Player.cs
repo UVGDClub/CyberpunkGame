@@ -46,14 +46,13 @@ public class Player : MonoBehaviour
         struckState.player = this;
         idleState.player = this;
         moveState.player = this;
-        stateMachine = new StateMachine(idleState);
-
-        //once saving/loading is implemented, initialize the grid from the stored position
-        levelgrid.InitializeActiveGrid(Vector2Int.zero);
+        stateMachine = new StateMachine(idleState); 
     }
 
     private void Start()
     {
+        //once saving/loading is implemented, initialize the grid from the stored position
+        levelgrid.InitializeActiveGrid(Vector2Int.zero);
         StartCoroutine(RunStateMachine());
         rigidbody2d.gravityScale = 1;
     }

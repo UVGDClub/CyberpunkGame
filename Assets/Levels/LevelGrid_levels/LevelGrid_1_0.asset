@@ -15,7 +15,7 @@ MonoBehaviour:
   scene: {fileID: 102900000, guid: c0f50644f340aca4187a8c10d88c82a9, type: 3}
   loadSceneMode: 1
   backgroundMusic: {fileID: 8300000, guid: a51eb35c601c9344fa1bec21af102219, type: 3}
-  fadeRate: 0.05
+  fadeRate: 0.01
   enemySpawnInfo:
   - name: 
     position: {x: 0, y: 0}
