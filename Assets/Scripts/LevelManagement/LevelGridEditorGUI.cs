@@ -20,6 +20,16 @@ public class LevelGridEditorGUI : Editor  {
             if (value == dimensions.vector2IntValue)
                 return;
 
+            if (value.x <= 0)
+                value = new Vector2Int(1, value.y);
+            else if (value.x > char.MaxValue)
+                value = new Vector2Int(char.MaxValue, value.y);
+
+            if (value.y <= 0)
+                value = new Vector2Int(value.x, 1);
+            else if (value.y > char.MaxValue)
+                value = new Vector2Int(value.x, char.MaxValue);
+
             dimensions.vector2IntValue = value;
 
             levels.arraySize = Dimensions.x * Dimensions.y;
@@ -52,8 +62,6 @@ public class LevelGridEditorGUI : Editor  {
             if (gridPrefab == null)
                 return;
         }
-            
-
 
         Init();
 
@@ -107,10 +115,8 @@ public class LevelGridEditorGUI : Editor  {
         if (GUI.Button(GUILayoutUtility.GetRect(50, 20), "Populate Grid"))
         {
             PopulateGrid();
-            PopulateGrid();
             return;
-        }
-            
+        }            
 
         EditorGUILayout.Separator();
 
@@ -296,8 +302,7 @@ public class LevelGridEditorGUI : Editor  {
                // Debug.Log("current path = " + path + indicesPlusExtension);
 
                 Level level = (Level)AssetDatabase.LoadAssetAtPath(path + indicesPlusExtension, typeof(Level));
-                SerializedProperty spLevel = levels.GetArrayElementAtIndex(x + Dimensions.x * y);                
-                spLevel.objectReferenceValue = level;
+                levels.GetArrayElementAtIndex(x + Dimensions.x * y).objectReferenceValue = level;                
 
                // Debug.Log("level updated for (x,y) " + x + ", " + y);
                // Debug.Log("new array index = " + (x + Dimensions.x * y));
@@ -306,40 +311,41 @@ public class LevelGridEditorGUI : Editor  {
     }
 
     void PopulateGrid()
-    {
-        RefreshLevels();
-
-        for(int x = 0; x < Dimensions.x; x++)
+    {        
+        for (int x = 0; x < Dimensions.x; x++)
         {
             for(int y = 0; y < Dimensions.y; y++)
             {
                 if (GetLevelAsset(x, y) == false)
                     CreateLevelAsset(x, y);
-                
-                Level _level = (Level)levels.GetArrayElementAtIndex(x + Dimensions.x * y).objectReferenceValue;
-
-                EditorUtility.SetDirty(_level);
-                myTarget.ApplyModifiedProperties();
-
-                SerializedObject soLevel = new SerializedObject(_level);                
 
                 SceneAsset scene = GetSceneAsset(x, y);
                 if (scene == null)
                     scene = CreateSceneAsset(x, y);
 
-                Debug.Log("scene != null " + scene != null);
-                
-                SerializedProperty spScene = soLevel.FindProperty("scene");
-                spScene.objectReferenceValue = scene;
+                //race conditions where new scenes aren't created fast enough to do in one nested loop...
+                //there are callbacks for scene creation, maybe that's a better solution?
+            }
+        }
 
-                foreach (Object obj in soLevel.targetObjects)
-                {
-                    EditorUtility.SetDirty(obj);
-                }
-                
-                soLevel.ApplyModifiedProperties();
+        string path = AssetDatabase.GetAssetPath(target.GetInstanceID());
+        path = path.Substring(0, path.Length - target.name.Length - 6);
+        path += target.name + "_levels/" + target.name + "_";
+        string indicesPlusExtension;
+        for (int x = 0; x < Dimensions.x; x++)
+        {
+            for (int y = 0; y < Dimensions.y; y++)
+            {
+                indicesPlusExtension = x + "_" + y + ".asset";
+                Level level = (Level)AssetDatabase.LoadAssetAtPath(path + indicesPlusExtension, typeof(Level));
 
-                levels.GetArrayElementAtIndex(x + Dimensions.x * y).objectReferenceValue = soLevel.targetObject;
+                SceneAsset scene = GetSceneAsset(x, y);
+                if (scene == null)
+                    scene = CreateSceneAsset(x, y);
+
+                level.scene = scene;
+                level.RefreshSceneIndex();
+                levels.GetArrayElementAtIndex(x + Dimensions.x * y).objectReferenceValue = level;
             }
         }
     }

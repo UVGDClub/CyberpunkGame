@@ -47,4 +47,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Levels/New Level Grid_scenes/New Level Grid_(1,0).unity
     guid: c870ccd2fce7a7245a0add4cbdf29f97
+  - enabled: 1
+    path: Assets/Levels/New Level Grid_scenes/New Level Grid_(1,1).unity
+    guid: cbc06df379ea15543907c0895f07a161
+  - enabled: 1
+    path: Assets/Levels/New Level Grid_scenes/New Level Grid_(0,1).unity
+    guid: 9b9a14ecc83ac72448e96df059f7920c
   m_configObjects: {}
