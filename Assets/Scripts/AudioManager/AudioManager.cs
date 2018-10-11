@@ -1,13 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour {
 
-    public AudioSource active_source;
-    public AudioSource inactive_source;
+    public AudioSource sfx;
+    public AudioSource activeBGM;
+    public AudioSource inactiveBGM;
     bool crossfading = false;
     public float cutoffThreshold = 0.05f;
+
+    //Quick and dirty testing UI
+    public Slider bgmVolume;
+    public Slider sfxVolume;
 
     private void Awake()
     {
@@ -18,40 +24,74 @@ public class AudioManager : MonoBehaviour {
         }
     }
 
-    public void CrossFade(AudioClip clip, float fade_rate)
+    public void CrossFade(LevelAudioSettings las)
     {
         if (crossfading)
             return;
 
-        StartCoroutine(ICrossFade(clip, fade_rate));
+        StartCoroutine(ICrossFade(las));
     }
 
-    IEnumerator ICrossFade(AudioClip clip, float fade_rate)
+    IEnumerator ICrossFade(LevelAudioSettings las)
     {
-        /*while(crossfading == true)
-        {
-            yield return null;
-        }*/
-
         crossfading = true;
-        inactive_source.clip = clip;
-        inactive_source.Play();
+        inactiveBGM.clip = las.clip;
+        inactiveBGM.Play();
+        inactiveBGM.pitch = las.pitch;
 
-        while(active_source.volume > cutoffThreshold && fade_rate > 0)
+        while(activeBGM.volume > cutoffThreshold && las.fadeRate > 0)
         {
-            active_source.volume -= fade_rate;
-            inactive_source.volume += fade_rate;
+            activeBGM.volume -= las.fadeRate;
+            inactiveBGM.volume += las.fadeRate;
 
             yield return null;
         }
 
-        active_source.volume = 0;
-        active_source.Stop();
-        AudioSource temp = active_source;
-        active_source = inactive_source;
-        inactive_source = temp;
+        inactiveBGM.volume = 1;
+        activeBGM.volume = 0;
+        activeBGM.Stop();
+        AudioSource temp = activeBGM;
+        activeBGM = inactiveBGM;
+        inactiveBGM = temp;
 
         crossfading = false;
     }
 
+    public void PlaySFX(AudioClip clip)
+    {
+        sfx.PlayOneShot(clip);
+    }
+
+    public void Pause()
+    {
+        activeBGM.Pause();
+        inactiveBGM.Pause();
+        sfx.Pause();
+    }
+
+    public void UnPause()
+    {
+        activeBGM.UnPause();
+        inactiveBGM.UnPause();
+    }
+
+    public void SetVolumeBGM()
+    {
+        activeBGM.volume = bgmVolume.value;
+        inactiveBGM.volume = bgmVolume.value;
+    }
+
+    public void SetVolumeSFX()
+    {
+        sfx.volume = sfxVolume.value;
+    }
+
+}
+
+[System.Serializable]
+public struct LevelAudioSettings
+{
+    public AudioClip clip;
+    public float fadeRate;
+    public float pitch;
 }

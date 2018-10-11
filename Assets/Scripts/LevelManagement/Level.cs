@@ -17,8 +17,7 @@ public class Level : ScriptableObject {
     [HideInInspector] public int sceneIndex = -1;
     public SceneAsset scene;
     public LoadSceneMode loadSceneMode = LoadSceneMode.Additive;
-    public AudioClip backgroundMusic;
-    public float fadeRate = 0.1f;
+    public LevelAudioSettings audioSettings;
     public EnemySpawnInfo[] enemySpawnInfo = new EnemySpawnInfo[1];
 
     [ContextMenu("Refresh Scene Index")]

@@ -9,15 +9,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd90533f010671045bbf784430d53d29, type: 3}
-  m_Name: LevelGrid_1_0
+  m_Name: LevelGrid_6_0
   m_EditorClassIdentifier: 
-  sceneIndex: 3
-  scene: {fileID: 102900000, guid: c0f50644f340aca4187a8c10d88c82a9, type: 3}
+  sceneIndex: 13
+  scene: {fileID: 102900000, guid: 3078e997a2d7af74fba9f28575718b16, type: 3}
   loadSceneMode: 1
-  audioSettings:
-    clip: {fileID: 8300000, guid: a51eb35c601c9344fa1bec21af102219, type: 3}
-    fadeRate: 0.011
-    pitch: 1
+  backgroundMusic: {fileID: 0}
+  fadeRate: 0.1
   enemySpawnInfo:
   - name: 
     position: {x: 0, y: 0}

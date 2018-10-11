@@ -14,8 +14,10 @@ MonoBehaviour:
   sceneIndex: 0
   scene: {fileID: 102900000, guid: eb3d1d59497bd5a4ea5c86034e2efb91, type: 3}
   loadSceneMode: 1
-  backgroundMusic: {fileID: 8300000, guid: e5f365da246713c49b9f49d9852407dd, type: 3}
-  fadeRate: 0.01
+  audioSettings:
+    clip: {fileID: 8300000, guid: e5f365da246713c49b9f49d9852407dd, type: 3}
+    fadeRate: 0.006
+    pitch: 1
   enemySpawnInfo:
   - name: 
     position: {x: 0, y: 0}

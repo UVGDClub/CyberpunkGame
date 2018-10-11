@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 [CreateAssetMenu(menuName = "LevelGrid")]
 public class LevelGrid : ScriptableObject {
+    public Grid gridPrefab;
     [Range(1,char.MaxValue)]
     public int activeRadius = 1;
     public Vector2Int position = Vector2Int.one;
@@ -20,13 +21,13 @@ public class LevelGrid : ScriptableObject {
                 return;
 
             position = value;
-            if(CrossfadeBGM != null && levels[Position.x + dimensions.x * Position.y].backgroundMusic != null )
+            if(CrossfadeBGM != null && levels[Position.x + dimensions.x * Position.y].audioSettings.clip != null )
             {
-                CrossfadeBGM(levels[Position.x + dimensions.x * Position.y].backgroundMusic, levels[Position.x + dimensions.x * Position.y].fadeRate);
+                CrossfadeBGM(levels[Position.x + dimensions.x * Position.y].audioSettings);
             }
         }
     }
-    public delegate void CrossfadeBGM_Delegate(AudioClip clip, float fadeRate);
+    public delegate void CrossfadeBGM_Delegate(LevelAudioSettings las);
     public event CrossfadeBGM_Delegate CrossfadeBGM;
 
     [HideInInspector][SerializeField] Vector2Int dimensions = Vector2Int.one;
@@ -34,11 +35,11 @@ public class LevelGrid : ScriptableObject {
     [HideInInspector][SerializeField] Level[] levels = new Level[25];    
     Dictionary<int, Vector2Int> activeScenes = new Dictionary<int, Vector2Int>();
 
-    public void InitializeActiveGrid(Vector2Int center)
+    public void InitializeActiveGrid(PlayerSpawnInfo spawn)
     {
         //once saving is implemented, set Position based on save data
         //when starting a new game, remember to set the Position accordingly
-        Position = center;
+        Position = spawn.gridPosition;
         activeScenes = new Dictionary<int, Vector2Int>();
         
         currentScene = levels[Position.x + dimensions.x * Position.y].sceneIndex;

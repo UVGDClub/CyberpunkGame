@@ -8,7 +8,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-
+    //for quick and dirty AudioManager testing
+    public GameObject audioPanel;
     public LevelGrid levelgrid;
 
     [Header("Movement")]
@@ -52,9 +53,18 @@ public class Player : MonoBehaviour
     private void Start()
     {
         //once saving/loading is implemented, initialize the grid from the stored position
-        levelgrid.InitializeActiveGrid(Vector2Int.zero);
+        PlayerSpawnInfo spawn = new PlayerSpawnInfo(Vector2Int.zero, new Vector2(-0.669f, 1.429f), Direction.Right);
+        Spawn(spawn);
+
         StartCoroutine(RunStateMachine());
         rigidbody2d.gravityScale = 1;
+    }
+
+    public void Spawn(PlayerSpawnInfo spawn)
+    {
+        levelgrid.InitializeActiveGrid(spawn);
+        rigidbody2d.position = spawn.position;
+        //set facing
     }
 
     //should really be a discrete state in the state machine, apart from "air"
@@ -148,8 +158,27 @@ public class Player : MonoBehaviour
         {
             foreach (var e in stateMachine.Execute())
             {
+                //For quick and dirty testing of audio manager
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    audioPanel.SetActive(!audioPanel.activeSelf);
+
                 yield return null;
             }
         }
+    }
+
+}
+
+public struct PlayerSpawnInfo
+{
+    public Vector2Int gridPosition;
+    public Vector2 position;
+    public Direction facingDir;
+
+    public PlayerSpawnInfo(Vector2Int gridPosition, Vector2 position, Direction facingDir)
+    {
+        this.gridPosition = gridPosition;
+        this.position = position;
+        this.facingDir = facingDir;
     }
 }
