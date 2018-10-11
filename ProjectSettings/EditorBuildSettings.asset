@@ -42,21 +42,9 @@ EditorBuildSettings:
     path: Assets/Levels/scenes/3,2.unity
     guid: 7c336e5704225f3478af17afbe4b51fc
   - enabled: 1
-    path: Assets/Levels/LevelGrid_scenes/LevelGrid_(4,0).unity
-    guid: 597eb9f9e5e1f524c9fd977764fe1839
-  - enabled: 1
-    path: Assets/Levels/LevelGrid_scenes/LevelGrid_(6,0).unity
-    guid: 3078e997a2d7af74fba9f28575718b16
-  - enabled: 1
-    path: Assets/Levels/LevelGrid_scenes/LevelGrid_(5,0).unity
-    guid: bfdbac30613829b47a8852a2105a6cfe
-  - enabled: 1
-    path: Assets/Levels/LevelGrid_scenes/LevelGrid_(8,0).unity
-    guid: ca9f55f6c49fd1346afafa33e8e66a64
-  - enabled: 1
-    path: Assets/Levels/LevelGrid_scenes/LevelGrid_(4,1).unity
-    guid: 596b29da5e604644b8d7d0c280edce7b
-  - enabled: 1
     path: Assets/Levels/New Level Grid_scenes/New Level Grid_(0,0).unity
     guid: d60de3a1e0532514b86d1469395eb411
+  - enabled: 1
+    path: Assets/Levels/New Level Grid_scenes/New Level Grid_(1,0).unity
+    guid: c870ccd2fce7a7245a0add4cbdf29f97
   m_configObjects: {}

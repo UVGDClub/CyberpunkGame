@@ -105,7 +105,12 @@ public class LevelGridEditorGUI : Editor  {
     void DrawLayout()
     {
         if (GUI.Button(GUILayoutUtility.GetRect(50, 20), "Populate Grid"))
+        {
             PopulateGrid();
+            PopulateGrid();
+            return;
+        }
+            
 
         EditorGUILayout.Separator();
 
@@ -161,9 +166,12 @@ public class LevelGridEditorGUI : Editor  {
             {
                 level.scene = (SceneAsset)EditorGUI.ObjectField(sceneSelectRect, "Scene", level.scene, typeof(SceneAsset), true);
 
-                if(level.scene == null && GetSceneAsset(gridIndex.x, gridIndex.y) == false)
+                if(level.scene == null)
                 {
-                    CreateSceneAsset(gridIndex.x, gridIndex.y);
+                    level.scene = GetSceneAsset(gridIndex.x, gridIndex.y);
+
+                    if (level.scene == null)
+                        level.scene = CreateSceneAsset(gridIndex.x, gridIndex.y);
                 }
 
                 level.RefreshSceneIndex();
@@ -245,8 +253,7 @@ public class LevelGridEditorGUI : Editor  {
         Level level = (Level)AssetDatabase.LoadAssetAtPath(path, typeof(Level));
         if (level != null)
         {
-            SerializedProperty levelAtIndex = levels.GetArrayElementAtIndex(x + Dimensions.x * y);
-            levelAtIndex.objectReferenceValue = level;
+            levels.GetArrayElementAtIndex(x + Dimensions.x * y).objectReferenceValue = level;
             return true;
         }
             
@@ -308,14 +315,36 @@ public class LevelGridEditorGUI : Editor  {
             {
                 if (GetLevelAsset(x, y) == false)
                     CreateLevelAsset(x, y);
+                
+                Level _level = (Level)levels.GetArrayElementAtIndex(x + Dimensions.x * y).objectReferenceValue;
 
-                if (GetSceneAsset(x, y) == false)
-                    CreateSceneAsset(x, y);
+                EditorUtility.SetDirty(_level);
+                myTarget.ApplyModifiedProperties();
+
+                SerializedObject soLevel = new SerializedObject(_level);                
+
+                SceneAsset scene = GetSceneAsset(x, y);
+                if (scene == null)
+                    scene = CreateSceneAsset(x, y);
+
+                Debug.Log("scene != null " + scene != null);
+                
+                SerializedProperty spScene = soLevel.FindProperty("scene");
+                spScene.objectReferenceValue = scene;
+
+                foreach (Object obj in soLevel.targetObjects)
+                {
+                    EditorUtility.SetDirty(obj);
+                }
+                
+                soLevel.ApplyModifiedProperties();
+
+                levels.GetArrayElementAtIndex(x + Dimensions.x * y).objectReferenceValue = soLevel.targetObject;
             }
         }
     }
 
-    bool GetSceneAsset(int x, int y)
+    SceneAsset GetSceneAsset(int x, int y)
     {
         string path = AssetDatabase.GetAssetPath(target.GetInstanceID());
         path = path.Substring(0, path.Length - target.name.Length - 6);
@@ -326,18 +355,13 @@ public class LevelGridEditorGUI : Editor  {
             path += "/" + target.name + "_(" + x + "," + y + ").unity";
             scene = (SceneAsset)AssetDatabase.LoadAssetAtPath(path, typeof(SceneAsset));
 
-            if (scene == null)
-                return false;
-
-            SerializedProperty sp_scene = _level.FindProperty("scene");
-            sp_scene.objectReferenceValue = scene;
-            return true;
+            return scene;
         }        
 
-        return false;
+        return null;
     }
 
-    void CreateSceneAsset(int x, int y)
+    SceneAsset CreateSceneAsset(int x, int y)
     {
         string path = AssetDatabase.GetAssetPath(target.GetInstanceID());
         path = path.Substring(0, path.Length - target.name.Length - 6);
@@ -370,9 +394,9 @@ public class LevelGridEditorGUI : Editor  {
 
         EditorSceneManager.SetActiveScene(activeScene);
         EditorSceneManager.CloseScene(newScene, true);
-        
-        SerializedProperty sp_scene = _level.FindProperty("scene");
-        sp_scene.objectReferenceValue = AssetDatabase.LoadAssetAtPath(newScene.path, typeof(SceneAsset));
+
+        return (SceneAsset)AssetDatabase.LoadAssetAtPath(newScene.path, typeof(SceneAsset));
+        //spScene.objectReferenceValue = AssetDatabase.LoadAssetAtPath(newScene.path, typeof(SceneAsset));
     }
 
 }
