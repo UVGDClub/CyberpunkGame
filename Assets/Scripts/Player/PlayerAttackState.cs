@@ -25,7 +25,7 @@ public class PlayerAttackState : IState
 
     public IEnumerable Execute()
     {
-        Debug.Log("Attack!");
+        // Debug.Log("Attack!");
 
         OnBeginExit(this, player.stateTransitions.IdleTransition());
 

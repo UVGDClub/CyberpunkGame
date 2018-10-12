@@ -48,18 +48,18 @@ public class LevelGridEditorGUI : Editor  {
 
     public override void OnInspectorGUI()
     {
-        if (((LevelGrid)target).gridPrefab == null)
+        if (((LevelGrid)target).sceneRefPrefab == null)
         {
-            EditorGUILayout.LabelField("Assign a grid prefab to get started.");
-            Grid gridPrefab = (Grid)EditorGUI.ObjectField(GUILayoutUtility.GetRect(50, 20), "Grid Prefab", ((LevelGrid)target).gridPrefab, typeof(Grid), true);
+            EditorGUILayout.LabelField("Assign a scene ref prefab (LevelSceneRefs, Grid > Tilemap) to get started.");
+            LevelSceneRefs sceneRefPrefab = (LevelSceneRefs)EditorGUI.ObjectField(GUILayoutUtility.GetRect(50, 20), "Scene Ref Prefab", ((LevelGrid)target).sceneRefPrefab, typeof(LevelSceneRefs), true);
 
             LevelGrid lg = (LevelGrid)target;
             myTarget = new UnityEditor.SerializedObject(lg);
-            SerializedProperty spGrid = myTarget.FindProperty("gridPrefab");
-            spGrid.objectReferenceValue = gridPrefab;
+            SerializedProperty spGrid = myTarget.FindProperty("sceneRefPrefab");
+            spGrid.objectReferenceValue = sceneRefPrefab;
             SaveGrid();
 
-            if (gridPrefab == null)
+            if (sceneRefPrefab == null)
                 return;
         }
 
@@ -380,21 +380,29 @@ public class LevelGridEditorGUI : Editor  {
         path += target.name + "_scenes";
 
         //Debug.Log("new scene path = " + path);
-
-        
+       
         Scene newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
 
         Scene activeScene = EditorSceneManager.GetActiveScene();
 
         EditorSceneManager.SetActiveScene(newScene);
 
-        Grid _grid;
-        if (myTarget.FindProperty("gridPrefab").objectReferenceValue == null)
-            _grid = Instantiate(new Grid());
+        LevelSceneRefs sceneRefs;
+        if (myTarget.FindProperty("sceneRefPrefab").objectReferenceValue == null)
+        {
+            Debug.LogError("Couldn't find scene ref prefab; assign it in the inspector!");
+            return null;
+        }       
         else
-            _grid = Instantiate((Grid)myTarget.FindProperty("gridPrefab").objectReferenceValue);
+            sceneRefs = Instantiate((LevelSceneRefs)myTarget.FindProperty("sceneRefPrefab").objectReferenceValue);
 
-        _grid.name = "Grid";
+        sceneRefs.level = (Level)levels.GetArrayElementAtIndex(x + Dimensions.x * y).objectReferenceValue;
+        sceneRefs.grid = sceneRefs.GetComponent<Grid>();
+        sceneRefs.tilemap = sceneRefs.transform.GetChild(0).GetComponent<UnityEngine.Tilemaps.Tilemap>();
+
+        sceneRefs.name = "Grid_" + x + "_" + y;
+
+        sceneRefs.transform.GetChild(0).name += "_" + x + "_" + y;
 
         EditorSceneManager.SaveScene(newScene, path + "/" + target.name + "_(" + x + "," + y + ").unity");
 
@@ -402,7 +410,6 @@ public class LevelGridEditorGUI : Editor  {
         EditorSceneManager.CloseScene(newScene, true);
 
         return (SceneAsset)AssetDatabase.LoadAssetAtPath(newScene.path, typeof(SceneAsset));
-        //spScene.objectReferenceValue = AssetDatabase.LoadAssetAtPath(newScene.path, typeof(SceneAsset));
     }
 
 }

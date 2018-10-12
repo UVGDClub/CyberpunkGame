@@ -7,9 +7,12 @@ using UnityEngine.SceneManagement;
 
 [CreateAssetMenu(menuName = "LevelGrid")]
 public class LevelGrid : ScriptableObject {
-    public Grid gridPrefab;
+    public LevelSceneRefs sceneRefPrefab;
     [Range(1,char.MaxValue)]
     public int activeRadius = 1;
+    
+    //The current index within levels[] = position.x + dimensions.x * position.y
+    [HideInInspector] public int curIndex;
     public Vector2Int position = Vector2Int.one;
     public Vector2Int Position
     {
@@ -30,10 +33,13 @@ public class LevelGrid : ScriptableObject {
     public delegate void CrossfadeBGM_Delegate(LevelAudioSettings las);
     public event CrossfadeBGM_Delegate CrossfadeBGM;
 
-    [HideInInspector][SerializeField] Vector2Int dimensions = Vector2Int.one;
+    [HideInInspector]public Vector2Int dimensions = Vector2Int.one;
     public int currentScene = -1;
-    [HideInInspector][SerializeField] Level[] levels = new Level[25];    
+    [HideInInspector][SerializeField] public Level[] levels = new Level[25];    
     Dictionary<int, Vector2Int> activeScenes = new Dictionary<int, Vector2Int>();
+
+    [HideInInspector] public Grid grid;
+    [HideInInspector] public UnityEngine.Tilemaps.Tilemap tilemap;
 
     public void InitializeActiveGrid(PlayerSpawnInfo spawn)
     {
@@ -41,14 +47,17 @@ public class LevelGrid : ScriptableObject {
         //when starting a new game, remember to set the Position accordingly
         Position = spawn.gridPosition;
         activeScenes = new Dictionary<int, Vector2Int>();
-        
-        currentScene = levels[Position.x + dimensions.x * Position.y].sceneIndex;
-        LoadLevel(Position.x + dimensions.x * Position.y);
+
+        curIndex = Position.x + dimensions.x * Position.y;
+        currentScene = levels[curIndex].sceneIndex;
+        LoadLevel(curIndex);
         activeScenes.Add(currentScene, Position);
+        
 
         Debug.Log("levels length: " + levels.Length);
         Debug.Log("EditorBuildSettingsSceneLength: " + EditorBuildSettings.scenes.Length);
 
+        int index;
         for (int x = Position.x - activeRadius; x <= Position.x + activeRadius; x++)
         {
             if (x < 0 || x >= dimensions.x)
@@ -65,41 +74,42 @@ public class LevelGrid : ScriptableObject {
                     continue;
                 }
 
+                index = x + dimensions.x * y;
                 if (x == Position.x && y == Position.y)
                     continue;
 
-                if (levels[x + dimensions.x*y] == null)
+                if (levels[index] == null)
                 {
                     Debug.Log("level at x,y: " + x + ", " + y + " is null");
                     continue;
                 }
-                if (levels[x + dimensions.x * y].scene == null)
+                if (levels[index].scene == null)
                 {
                     Debug.Log("level at x, y: " + x + ", " + y + " scene is null");
                     continue;
                 }
-                if (levels[x + dimensions.x * y].sceneIndex < 0)
+                if (levels[index].sceneIndex < 0)
                 {
-                    Debug.Log("scene index at x,y: " + x + ", " + y + " is " + levels[x + dimensions.x * y].sceneIndex);
+                    Debug.Log("scene index at x,y: " + x + ", " + y + " is " + levels[index].sceneIndex);
                     continue;
                 }
 
-                if (levels[x + dimensions.x * y].sceneIndex >= EditorBuildSettings.scenes.Length)
+                if (levels[index].sceneIndex >= EditorBuildSettings.scenes.Length)
                 {
-                    Debug.Log("scene index at x,y " + x + ", " + y + " is " + levels[x + dimensions.x * y].sceneIndex + " >= build order length" + EditorBuildSettings.scenes.Length);
+                    Debug.Log("scene index at x,y " + x + ", " + y + " is " + levels[index].sceneIndex + " >= build order length" + EditorBuildSettings.scenes.Length);
                     continue;
                 }
-                Debug.Log("loading " + levels[x + dimensions.x * y].scene.name + " at buildIndex: " + levels[x + dimensions.x * y].sceneIndex);
+                Debug.Log("loading " + levels[index].scene.name + " at buildIndex: " + levels[index].sceneIndex);
 
-                activeScenes.Add(levels[x + dimensions.x * y].sceneIndex, new Vector2Int(x, y));
-                LoadLevel(x + dimensions.x * y);
+                activeScenes.Add(levels[index].sceneIndex, new Vector2Int(x, y));
+                LoadLevel(index);
             }
         }
     }
 
     public void CompareScenePositions(int otherIndex)
     {
-        Debug.Log("otherIndex: " + otherIndex);
+        //Debug.Log("otherIndex: " + otherIndex);
 
         if (otherIndex == currentScene)
             return;
@@ -149,6 +159,7 @@ public class LevelGrid : ScriptableObject {
 
         Debug.Log("\nbefore applying offset, pos = " + Position);
         Position += offset;
+        curIndex = position.x + dimensions.x * position.y;
         Debug.Log("after applying offset, pos = " + Position);
 
         switch (offset.x)
@@ -249,24 +260,26 @@ public class LevelGrid : ScriptableObject {
         xRange *= activeRadius;
         yRange *= activeRadius;
 
-        for(int x = Position.x + xRange.x; x <= Position.x + xRange.y; x++)
+        int index;
+        for (int x = Position.x + xRange.x; x <= Position.x + xRange.y; x++)
         {
             if (x < 0 || x >= dimensions.x)
                 continue; 
 
             for (int y = Position.y + yRange.x; y <= Position.y + yRange.y; y++)
             {
+                index = x + dimensions.x * y;
                 if (y < 0 || y >= dimensions.y
-                    || levels[x + dimensions.x * y] == null
-                    || levels[x + dimensions.x * y].sceneIndex < 0 
-                    || levels[x + dimensions.x * y].sceneIndex >= EditorBuildSettings.scenes.Length
-                    || activeScenes.ContainsKey(levels[x + dimensions.x * y].sceneIndex) == false)
+                    || levels[index] == null
+                    || levels[index].sceneIndex < 0 
+                    || levels[index].sceneIndex >= EditorBuildSettings.scenes.Length
+                    || activeScenes.ContainsKey(levels[index].sceneIndex) == false)
                     continue;
 
-                Debug.Log("unloading scene: " + levels[x + dimensions.x * y].name);
+                Debug.Log("unloading scene: " + levels[index].name);
 
-                activeScenes.Remove(levels[x + dimensions.x * y].sceneIndex);
-                SceneManager.UnloadSceneAsync(levels[x + dimensions.x * y].sceneIndex);
+                activeScenes.Remove(levels[index].sceneIndex);
+                SceneManager.UnloadSceneAsync(levels[index].sceneIndex);
             }
         }
     }
@@ -277,6 +290,7 @@ public class LevelGrid : ScriptableObject {
         xRange *= activeRadius;
         yRange *= activeRadius;
 
+        int index;
         for (int x = Position.x + xRange.x; x <= Position.x + xRange.y; x++)
         {
             if (x < 0 || x >= dimensions.x)
@@ -284,16 +298,17 @@ public class LevelGrid : ScriptableObject {
 
             for (int y = Position.y + yRange.x; y <= Position.y + yRange.y; y++)
             {
+                index = x + dimensions.x * y;
                 if (y < 0 || y >= dimensions.y
-                    || levels[x + dimensions.x * y] == null
-                    || levels[x + dimensions.x * y].scene == null
-                    || levels[x + dimensions.x * y].sceneIndex < 0
-                    || levels[x + dimensions.x * y].sceneIndex >= EditorBuildSettings.scenes.Length
-                    || activeScenes.ContainsKey(levels[x + dimensions.x * y].sceneIndex) == true)
+                    || levels[index] == null
+                    || levels[index].scene == null
+                    || levels[index].sceneIndex < 0
+                    || levels[index].sceneIndex >= EditorBuildSettings.scenes.Length
+                    || activeScenes.ContainsKey(levels[index].sceneIndex) == true)
                     continue;
 
-                activeScenes.Add(levels[x + dimensions.x * y].sceneIndex, new Vector2Int(x,y));
-                LoadLevel(x + dimensions.x * y);
+                activeScenes.Add(levels[index].sceneIndex, new Vector2Int(x,y));
+                LoadLevel(index);
                 //SceneManager.LoadScene(levels[x + dimensions.x * y].sceneIndex, LoadSceneMode.Additive);
             }
         }
@@ -311,7 +326,7 @@ public class LevelGrid : ScriptableObject {
             Debug.Log("Trying to spawn " + levels[gridIndex].enemySpawnInfo[i].name);
             EnemyManager.SpawnEnemy(levels[gridIndex].enemySpawnInfo[i].name,
                                     levels[gridIndex].enemySpawnInfo[i].position,
-                                    levels[gridIndex].enemySpawnInfo[i].facingDir);
+                                    levels[gridIndex].enemySpawnInfo[i].facingDir);            
         }
     }
 

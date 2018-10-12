@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor.SceneManagement;
+using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 
 /*
@@ -11,6 +10,8 @@ using UnityEngine.SceneManagement;
  * should know what music to play
  */
 
+//this should perhaps be a monobehaviour instead, for scene references.
+
 [CreateAssetMenu(menuName = "Level")]
 public class Level : ScriptableObject {
     
@@ -19,6 +20,8 @@ public class Level : ScriptableObject {
     public LoadSceneMode loadSceneMode = LoadSceneMode.Additive;
     public LevelAudioSettings audioSettings;
     public EnemySpawnInfo[] enemySpawnInfo = new EnemySpawnInfo[1];
+    [HideInInspector] public Grid grid;
+    [HideInInspector] public Tilemap tilemap;
 
     [ContextMenu("Refresh Scene Index")]
     public void RefreshSceneIndex()
