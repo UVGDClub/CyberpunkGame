@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-    //122 quiz tuesday
+
 namespace Enemy
 {
     public class PatrolZombie : EnemyBehaviour
@@ -11,12 +11,16 @@ namespace Enemy
         public float agroDist;
         public float overHeadThreshold;
         public GameObject bloodEffect;
-        //public float underFootThreshold = 0;
+        public float knockBackForce;
+        public float underFootThreshold = 2.5f;
+        public float attackRecoilTime = 0.5f;
+        public float attackSlowAmount = 2f;
 
         private bool canAttack = true;
         private float playerDist;
         private Transform player;
         private bool goingRight = false;
+        private bool chasingPlayer;
 
         public void Start()
         {
@@ -35,12 +39,15 @@ namespace Enemy
             else
             {
                 PatrolMove();
+                chasingPlayer = false;
             }
 
         }
 
         public void PatrolMove()
-        //makes the enemy move back and forth, changing direction if it hits an edge
+        /*
+         * makes the enemy move back and forth in accordance with the goingRight bool
+         */
         {
             if (goingRight)
             {
@@ -53,20 +60,14 @@ namespace Enemy
             FaceDirection();
         }
 
-        //returns vector3 pointing in direction of player from enemy
         private Vector3 GetPlayerDirection(bool reversed = false)
+        /*
+         * returns vector3 pointing in direction of the player from the enemy
+         * if you pass it a bool with the value of true it will give the
+         * direction away from the player
+         */
         {
-            if (player.position.x < transform.position.x)
-            {
-                goingRight = false;
-                FaceDirection();
-                if (reversed)
-                {
-                    return Vector2.right.ToV3();
-                }
-                return Vector2.left.ToV3();
-            }
-            else
+            if (IsPlayerToRight())
             {
                 goingRight = true;
                 FaceDirection();
@@ -76,10 +77,34 @@ namespace Enemy
                 }
                 return Vector2.right.ToV3();
             }
+            else
+            {
+                goingRight = false;
+                FaceDirection();
+                if (reversed)
+                {
+                    return Vector2.right.ToV3();
+                }
+                return Vector2.left.ToV3();
+            }
+        }
+
+        private bool IsPlayerToRight()
+        /*
+         * returns true if player is to the right of enemy, otherwise false
+         */
+        {
+            if (player.position.x < transform.position.x)
+            {
+                return false;
+            }
+            return true;
         }
 
         private void FaceDirection()
-        //changes the animation to face the specified way
+        /*
+         * changes the animation to face the specified way
+         */
         {
             SetAnimParameter(AnimParams.moveState, 1);
             if (goingRight)
@@ -93,92 +118,141 @@ namespace Enemy
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
+        /*
+         * on collision damages player 
+         */
         {
             if (collision.tag == "Player" && canAttack)
             {
-                canAttack = false;
                 DamagePlayer();
-
+                StartCoroutine(AttackOnCooldown());
             }
         }
 
         private void OnCollisionExit2D(Collision2D collision)
+        /*
+         * if enemy collider is stopping overlapping with terrain
+         * direction moving is reversed.
+         * note that you must have two colliders below enemy
+         * on left and right.
+         */
         {
-            if (collision.collider.tag == "Player")
-            {
-                canAttack = true;
-            }
-            else if (IsFromGround(collision))
+            if (IsFromGround(collision) && !chasingPlayer)
             {
                 ChangeDirection();
             }
         }
 
         private bool AboveHead()
-        //checks if player is above the enemy a significant amount
-        //returns true if it is, false if it is not
+        /*
+         * checks if player is above the enemy a significant amount
+         * returns true if it is, false if it is not
+         */
         {
             if (player.transform.position.y - transform.position.y > overHeadThreshold)
             {
                 return true;
             }
-            else
+            return false;
+        }
+
+        private bool BelowFeet()
+        /*
+         * checks if player is a significant amount below enemy
+         * returns true if they are out of range
+         */
+        {
+            if (transform.position.y - player.transform.position.y > underFootThreshold)
             {
-                return false;
+                return true;
             }
+            return false;
+        }
+
+        private bool IsFacingPlayer()
+        /*
+         * returns true if zombie is looking towards player, otherwase false
+         */
+        {
+            bool actuallyToRight = IsPlayerToRight();
+            return ((goingRight && actuallyToRight) || (!goingRight && !actuallyToRight));
         }
 
         private void DamagePlayer()
+            /*
+             *is activated when enemy makes contact with player
+             * should be filled out more once player script is done
+             */
         {
-            //fill in once player script is finished
             Debug.Log("PLAYER IS DAMAGED");
             Instantiate(bloodEffect, transform.position, transform.rotation);
-            //do stuff with movement
-            transform.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.right);
         }
 
         private void AttackPattern()
+        /*
+         *is called whenever player is within agro range
+         * can check whichever of the three overriding favtors you want
+         */
         {
-            if (AboveHead())
+            if (AboveHead() || BelowFeet() || !IsFacingPlayer())
             {
                 PatrolMove();
+                chasingPlayer = false;
             }
             else
             {
                 ChasePlayer();
+                chasingPlayer = true;
             }
         }
 
         private void ChasePlayer()
+        /*
+         *moves enemy closer to the player
+         */
         {
             transform.position += GetPlayerDirection() * Time.deltaTime * runSpeed;
         }
 
 
         public void ChangeDirection()
+        /*
+         *reverses the direction
+         */
         {
             goingRight = !goingRight;
         }
 
         private bool IsFromGround(Collision2D hitThing)
+        /*
+         *returns true if the collision is with the terrain below it.
+         * 
+         * note that the leg colliders must have the physics material 
+         * called "zombieLegCollider in order for it to work
+         */
         {
              if(hitThing.gameObject.layer == LayerMask.NameToLayer("Ground"))
-             {
-                /*
-                ContactPoint2D hitPosition = hitThing.GetContact(0);
-                float heightDiff = transform.position.y - hitPosition.point.y;
-
-                if(heightDiff > underFootThreshold)
+             {//if thing it left is on ground layer
+                try
                 {
-                    return true;
-                }*/
-                return true;
+                    if (hitThing.otherCollider.sharedMaterial.name == "zombieLegCollider")
+                    {//if collider has material zombieLegCollider
+                        return true;
+                    }
+                }
+                catch
+                {//throws error if no material
+                    return false;
+                }
             }
-            return false;//is called only if other one isn't
+            return false;
 
         }
 
         private bool IsPlayerInRange()
+        /*
+         *returns true if player is within agro range, otherwise false
+         */
         {
             playerDist = Vector2.Distance(transform.position.ToV2(), player.position.ToV2());
             if (playerDist < agroDist)
@@ -186,6 +260,18 @@ namespace Enemy
                 return true;
             }
             return false;
+        }
+
+        private IEnumerator AttackOnCooldown()
+        /*
+         *slows enemy and makes them unable to attack until recoil time has elapsed
+         */
+        {
+            canAttack = false;
+            runSpeed *= 1/attackSlowAmount;
+            yield return new WaitForSeconds(attackRecoilTime);
+            runSpeed *= attackSlowAmount;
+            canAttack = true;
         }
 
     }

@@ -68,7 +68,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1303623940138274}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.0549998, y: -1.1209037, z: 0}
+  m_LocalPosition: {x: 6.3504367, y: 2.2768157, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4283896721570040}
@@ -128,7 +128,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 1303623940138274}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 8fe791836a7572f4d9e4a7a47e919a61, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -153,7 +153,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 1303623940138274}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 8fe791836a7572f4d9e4a7a47e919a61, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -205,6 +205,10 @@ MonoBehaviour:
   overHeadThreshold: 1
   bloodEffect: {fileID: 1392957193795438, guid: 714a3928552bc014a9b8e37c36620b9f,
     type: 2}
+  knockBackForce: 0
+  underFootThreshold: 4
+  attackRecoilTime: 0.5
+  attackSlowAmount: 2
 --- !u!212 &212736241808451476
 SpriteRenderer:
   m_ObjectHideFlags: 1
