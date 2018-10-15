@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Enemy
-{//MAKE IT SO THAT LEG COLLIDERS DONT DO DAMAGE
+{
     public class PatrolZombie : EnemyBehaviour
     {
         public float walkSpeed = 1;
         public float runSpeed = 3;
         public float agroDist;
+        public float displacementAmount = 5; 
         public float overHeadThreshold;
-        public GameObject bloodEffect;
-        public float knockBackForce;
         public float underFootThreshold = 2.5f;
-        public float attackRecoilTime = 0.5f;
         public float attackSlowAmount = 2f;
+        public GameObject bloodEffect;
 
+        private float attackRecoilTime = 0.5f;
         private bool canAttack = true;
         private float playerDist;
         private Transform player;
@@ -23,15 +23,22 @@ namespace Enemy
         private bool chasingPlayer;
 
         public void Start()
+        /*
+         * starts zombie moving and initializes player
+         * note: player must have the "Player" tag
+         */
         {
             SetAnimParameter(AnimParams.moveState, 1);
             player = GameObject.FindWithTag("Player").transform;
         }
 
         public override void Update()
+        /*
+         * enemy goes into attack mode if within range, otherwise patrols
+         */
         {
             base.Update();
-
+            SetAnimParameter(AnimParams.attackState, (GetAnimParameter<int>(AnimParams.attackState) + 1) % 3);
             if (IsPlayerInRange())
             {
                 AttackPattern();
@@ -62,7 +69,7 @@ namespace Enemy
 
         private Vector3 GetPlayerDirection(bool reversed = false)
         /*
-         * returns vector3 pointing in direction of the player from the enemy
+         * returns vector3 pointing in direction of the player from the enemy.
          * if you pass it a bool with the value of true it will give the
          * direction away from the player
          */
@@ -106,23 +113,32 @@ namespace Enemy
          * changes the animation to face the specified way
          */
         {
-            SetAnimParameter(AnimParams.moveState, 1);
+            if (canAttack)
+            //canAttack is false only during attack animation,
+            //this is here so this wont override it
+            {
+                SetAnimParameter(AnimParams.moveState, 1);
+            }
+
             if (goingRight)
             {
-                FacingDirection = Direction.Left;
+                FacingDirection = Direction.Left;//WHY ARE THESE BACKWARDS
             }
             else
             {
-                FacingDirection = Direction.Right;//WHY ARE THESE BACKWARDS
+                FacingDirection = Direction.Right;
             }
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
+        /*
+         * on a collision if it is the player damages player
+         */
         {
             if(collision.gameObject.tag == "Player" && canAttack && CollidingWithBody(collision))
             {
-                DamagePlayer();
                 StartCoroutine(AttackOnCooldown());
+                DamagePlayer();
             }
         }
 
@@ -181,8 +197,23 @@ namespace Enemy
              * should be filled out more once player script is done
              */
         {
+            StartCoroutine(AttackAnimation());
             Debug.Log("PLAYER IS DAMAGED");
-            Instantiate(bloodEffect, transform.position, transform.rotation);
+        }
+
+        private IEnumerator AttackAnimation()
+        /*
+         * activates the attack animation
+         */
+        {
+            float timer = 0;
+            while (timer < attackRecoilTime)
+            {
+                Debug.Log(timer);
+                timer += Time.deltaTime;
+                SetAnimParameter(AnimParams.attackState, (GetAnimParameter<int>(AnimParams.attackState) + 1) % 3);
+                yield return null;
+            }
         }
 
         private void AttackPattern()
@@ -247,6 +278,10 @@ namespace Enemy
         }
 
         private bool CollidingWithBody(Collision2D hitObj)
+        /*
+         * returns true if object colliding with enemy is colliding
+         * on the main body collider
+        */
         {
             try
             {
@@ -277,14 +312,24 @@ namespace Enemy
 
         private IEnumerator AttackOnCooldown()
         /*
-         *slows enemy and makes them unable to attack until recoil time has elapsed
+         * slows enemy, makes them unable to attack until recoil time has elapsed
+         * and stops walking animation during attack
          */
         {
+            SetAnimParameter(AnimParams.moveState, 0);
             canAttack = false;
             runSpeed *= 1/attackSlowAmount;
+
             yield return new WaitForSeconds(attackRecoilTime);
+
             runSpeed *= attackSlowAmount;
+            Instantiate(bloodEffect, player.transform.position, player.transform.rotation);
             canAttack = true;
+            SetAnimParameter(AnimParams.moveState, 1);
+
+            transform.position += GetPlayerDirection(true) * displacementAmount;
+            //^^ above line teleports enemy away from player, prevents bugs from never leaving
+            //contact with player, should be replaced with better solution or deleted if not needed
         }
 
     }
