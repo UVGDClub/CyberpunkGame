@@ -9,13 +9,13 @@ namespace Enemy
         public float walkSpeed = 1;
         public float runSpeed = 3;
         public float agroDist;
-        public float displacementAmount = 5; 
+        public float displacementAmount = 0.9f; 
         public float overHeadThreshold;
         public float underFootThreshold = 2.5f;
         public float attackSlowAmount = 2f;
         public GameObject bloodEffect;
 
-        private float attackRecoilTime = 0.5f;
+        public float attackRecoilTime = 0.3f;
         private bool canAttack = true;
         private float playerDist;
         private Transform player;
@@ -38,7 +38,7 @@ namespace Enemy
          */
         {
             base.Update();
-            SetAnimParameter(AnimParams.attackState, (GetAnimParameter<int>(AnimParams.attackState) + 1) % 3);
+            //SetAnimParameter(AnimParams.attackState, (GetAnimParameter<int>(AnimParams.attackState) + 1) % 3);
             if (IsPlayerInRange())
             {
                 AttackPattern();
@@ -49,6 +49,19 @@ namespace Enemy
                 chasingPlayer = false;
             }
 
+        }
+
+        private bool IsPlayerInRange()
+        /*
+         *returns true if player is within agro range, otherwise false
+         */
+        {
+            playerDist = Vector2.Distance(transform.position.ToV2(), player.position.ToV2());
+            if (playerDist < agroDist)
+            {
+                return true;
+            }
+            return false;
         }
 
         public void PatrolMove()
@@ -65,6 +78,28 @@ namespace Enemy
                 transform.position += Vector2.left.ToV3() * Time.deltaTime * walkSpeed;
             }
             FaceDirection();
+        }
+
+        private void FaceDirection()
+        /*
+         * changes the animation to face the specified way
+         */
+        {
+            if (canAttack)
+            //canAttack is false only during attack animation,
+            //this is here so movestate wont override it
+            {
+                SetAnimParameter(AnimParams.moveState, 1);
+            }
+
+            if (goingRight)
+            {
+                FacingDirection = Direction.Left;//WHY ARE THESE BACKWARDS
+            }
+            else
+            {
+                FacingDirection = Direction.Right;
+            }
         }
 
         private Vector3 GetPlayerDirection(bool reversed = false)
@@ -108,36 +143,13 @@ namespace Enemy
             return true;
         }
 
-        private void FaceDirection()
-        /*
-         * changes the animation to face the specified way
-         */
-        {
-            if (canAttack)
-            //canAttack is false only during attack animation,
-            //this is here so this wont override it
-            {
-                SetAnimParameter(AnimParams.moveState, 1);
-            }
-
-            if (goingRight)
-            {
-                FacingDirection = Direction.Left;//WHY ARE THESE BACKWARDS
-            }
-            else
-            {
-                FacingDirection = Direction.Right;
-            }
-        }
-
         private void OnCollisionEnter2D(Collision2D collision)
         /*
          * on a collision if it is the player damages player
          */
         {
-            if(collision.gameObject.tag == "Player" && canAttack && CollidingWithBody(collision))
+            if(collision.gameObject.tag == "Player" && canAttack && IsCollidingWithBody(collision))
             {
-                StartCoroutine(AttackOnCooldown());
                 DamagePlayer();
             }
         }
@@ -191,29 +203,12 @@ namespace Enemy
             return ((goingRight && actuallyToRight) || (!goingRight && !actuallyToRight));
         }
 
-        private void DamagePlayer()
-            /*
-             *is activated when enemy makes contact with player
-             * should be filled out more once player script is done
-             */
-        {
-            StartCoroutine(AttackAnimation());
-            Debug.Log("PLAYER IS DAMAGED");
-        }
-
-        private IEnumerator AttackAnimation()
+        public void ChangeDirection()
         /*
-         * activates the attack animation
+         *reverses the direction
          */
         {
-            float timer = 0;
-            while (timer < attackRecoilTime)
-            {
-                Debug.Log(timer);
-                timer += Time.deltaTime;
-                SetAnimParameter(AnimParams.attackState, (GetAnimParameter<int>(AnimParams.attackState) + 1) % 3);
-                yield return null;
-            }
+            goingRight = !goingRight;
         }
 
         private void AttackPattern()
@@ -242,15 +237,6 @@ namespace Enemy
             transform.position += GetPlayerDirection() * Time.deltaTime * runSpeed;
         }
 
-
-        public void ChangeDirection()
-        /*
-         *reverses the direction
-         */
-        {
-            goingRight = !goingRight;
-        }
-
         private bool IsFromGround(Collision2D hitThing)
         /*
          *returns true if the collision is with the terrain below it.
@@ -277,7 +263,7 @@ namespace Enemy
 
         }
 
-        private bool CollidingWithBody(Collision2D hitObj)
+        private bool IsCollidingWithBody(Collision2D hitObj)
         /*
          * returns true if object colliding with enemy is colliding
          * on the main body collider
@@ -297,35 +283,39 @@ namespace Enemy
             return false;
         }
 
-        private bool IsPlayerInRange()
+        private void DamagePlayer()
         /*
-         *returns true if player is within agro range, otherwise false
+         *is activated when enemy makes contact with player
+         * should be filled out more once player script is done
          */
         {
-            playerDist = Vector2.Distance(transform.position.ToV2(), player.position.ToV2());
-            if (playerDist < agroDist)
-            {
-                return true;
-            }
-            return false;
+            StartCoroutine(AttackAnimation());
+            Debug.Log("PLAYER IS DAMAGED");
         }
 
-        private IEnumerator AttackOnCooldown()
+        private IEnumerator AttackAnimation()
         /*
-         * slows enemy, makes them unable to attack until recoil time has elapsed
-         * and stops walking animation during attack
+         * activates the attack animation, slows enemy while it is attacking,
+         * creates blood effect at player and knocks itself back after hit.
          */
         {
             SetAnimParameter(AnimParams.moveState, 0);
             canAttack = false;
-            runSpeed *= 1/attackSlowAmount;
+            runSpeed /= attackSlowAmount;
 
-            yield return new WaitForSeconds(attackRecoilTime);
+            float timer = 0;
+            SetAnimParameter(AnimParams.attackState, 0);//so animation starts from same position every time
+            while (timer <= attackRecoilTime)
+            {
+                timer += Time.deltaTime;
+                SetAnimParameter(AnimParams.attackState, (GetAnimParameter<int>(AnimParams.attackState) + 1) % 3);
+                yield return null;
+            }
 
+            SetAnimParameter(AnimParams.moveState, 1);
+            canAttack = true;
             runSpeed *= attackSlowAmount;
             Instantiate(bloodEffect, player.transform.position, player.transform.rotation);
-            canAttack = true;
-            SetAnimParameter(AnimParams.moveState, 1);
 
             transform.position += GetPlayerDirection(true) * displacementAmount;
             //^^ above line teleports enemy away from player, prevents bugs from never leaving
