@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8631906569a35214b8db05bcf9adf472, type: 3}
+  m_Name: Falling
+  m_EditorClassIdentifier: 
+  Transitions:
+  - {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}
+  CanTransitionOutOf: 1
