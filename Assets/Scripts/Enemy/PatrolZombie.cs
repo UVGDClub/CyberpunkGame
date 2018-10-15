@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Enemy
-{
+{//MAKE IT SO THAT LEG COLLIDERS DONT DO DAMAGE
     public class PatrolZombie : EnemyBehaviour
     {
         public float walkSpeed = 1;
@@ -117,12 +117,9 @@ namespace Enemy
             }
         }
 
-        private void OnTriggerEnter2D(Collider2D collision)
-        /*
-         * on collision damages player 
-         */
+        private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.tag == "Player" && canAttack)
+            if(collision.gameObject.tag == "Player" && canAttack && CollidingWithBody(collision))
             {
                 DamagePlayer();
                 StartCoroutine(AttackOnCooldown());
@@ -247,6 +244,22 @@ namespace Enemy
             }
             return false;
 
+        }
+
+        private bool CollidingWithBody(Collision2D hitObj)
+        {
+            try
+            {
+               if (hitObj.otherCollider.sharedMaterial.name == "zombieLegCollider")
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return true;
+            }
+            return false;
         }
 
         private bool IsPlayerInRange()
