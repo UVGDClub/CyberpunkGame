@@ -8,6 +8,7 @@ namespace Enemy
     {
         [Header("Basic Settings")]
         public float walkSpeed = 1;
+        [Tooltip("for when it sees the player")]
         public float runSpeed = 3;
         public float agroDist;
 
@@ -27,6 +28,9 @@ namespace Enemy
     
         [Header("legit options")]
         public bool checkIfFacingPlayer = true;
+        [Tooltip("LEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEROY JENKINS")]
+        public bool suicidesForPlayer = true;
+        public bool useBloodEffect = true;
 
         private bool canAttack = true;
         private float playerDist;
@@ -174,7 +178,11 @@ namespace Enemy
          * on left and right.
          */
         {
-            if (IsFromGround(collision) && !chasingPlayer)
+            if(collision.gameObject.tag == "Player")
+            {
+                return;
+            }
+            if (IsFromGround(collision) && (!chasingPlayer || !suicidesForPlayer))
             {
                 ChangeDirection();
             }
@@ -274,8 +282,8 @@ namespace Enemy
                 {//throws error if no material
                     return false;
                 }
-            }
-            return false;
+             }
+             return false;
 
         }
 
@@ -331,8 +339,11 @@ namespace Enemy
             SetAnimParameter(AnimParams.moveState, 1);
             canAttack = true;
             runSpeed *= attackSlowAmount;
-            Instantiate(bloodEffect, player.transform.position, player.transform.rotation);//temporary effect,
-            //replace later with better alternative
+            if (useBloodEffect)
+            {
+                //temporary effect,replace with better alternative later
+                Instantiate(bloodEffect, player.transform.position, player.transform.rotation);
+            }
 
             transform.position += GetPlayerDirection(true) * displacementAmount;
             //teleports enemy away from player, prevents bugs from never leaving
