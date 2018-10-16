@@ -9,12 +9,15 @@ public class APlayerState : ScriptableObject {
 
     public void InputCheck(Player player) {
         if (CanTransitionOutOf) {
-            Debug.Log("Can transition");
             for (int i = 0; i < Transitions.Count; i++) {
 
                 if (Transitions[i].CanTransitionInto(player)) {
+                    Debug.Log("Exiting: " + this);
+                    Debug.Log("Entering: " + Transitions[i]);
+                    OnExit(player);
                     player.currentState = Transitions[i];
-                    Transitions[i].Execute(player);
+                    Transitions[i].OnEnter(player);
+                    return;
                 }
 
             }
@@ -22,12 +25,19 @@ public class APlayerState : ScriptableObject {
         }
     }
 
+    public virtual void OnEnter(Player player) {
+
+    }
+
+    public virtual void OnExit( Player player ) {
+
+    }
+
     public virtual void Execute(Player player) {
         
     }
 
     public virtual bool CanTransitionInto(Player player) {
-        Debug.Log("WTF");
-        return false;
+        throw new System.NotImplementedException();
     }
 }

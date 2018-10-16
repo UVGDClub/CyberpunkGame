@@ -12,10 +12,8 @@ MonoBehaviour:
   m_Name: Jump
   m_EditorClassIdentifier: 
   Transitions:
-  - {fileID: 11400000, guid: 89d6350f7d2cd6c4394db0912cadcfe8, type: 2}
   - {fileID: 11400000, guid: db76c1d81954c9a4ea1150767564586f, type: 2}
-  - {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}
   CanTransitionOutOf: 1
   maxTicksForJump: 6
-  JumpVelocityAddition: 0.6
-  airControl: 1
+  JumpVelocityAddition: 1
+  airControl: 0

@@ -16,13 +16,11 @@ public class JumpState : APlayerState {
         return false;
     }
 
-
-    public override void Execute( Player player ) {
-        if(CanTransitionOutOf) {
-            CanTransitionOutOf = false;
-            player.StartCoroutine(Jump(player));
-        }
+    public override void OnEnter( Player player ) {
+        CanTransitionOutOf = false;
+        player.StartCoroutine(Jump(player));
     }
+
 
     IEnumerator Jump(Player player) {
         Debug.Log("Jump");
@@ -39,7 +37,6 @@ public class JumpState : APlayerState {
             }
 
             player.rigidbody2d.velocity = vel;
-            Debug.Log(player.rigidbody2d.velocity);
             numTicks++;
             yield return null;
         }

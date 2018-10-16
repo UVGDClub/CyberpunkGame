@@ -9,8 +9,4 @@ public class FallingState : APlayerState {
         return player.rigidbody2d.velocity.y < 0;
     }
 
-    public override void Execute( Player player ) {
-        Debug.Log("falling");
-    }
-
 }

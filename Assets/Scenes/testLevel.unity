@@ -488,6 +488,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rigidbody2d: {fileID: 1339442853}
   currentState: {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}
+  groundedDistance: 1
+  grounded: 0
 --- !u!4 &1339442852
 Transform:
   m_ObjectHideFlags: 0

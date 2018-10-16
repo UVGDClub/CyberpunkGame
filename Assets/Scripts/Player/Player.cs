@@ -11,6 +11,8 @@ public class Player : MonoBehaviour {
 
     public float groundedDistance = 1f;
 
+    public bool grounded = false;
+
 	// Use this for initialization
 	void Start () {
         rigidbody2d = GetComponent<Rigidbody2D>();
@@ -26,9 +28,8 @@ public class Player : MonoBehaviour {
 
         RaycastHit2D hit;
         if (hit = Physics2D.Raycast(transform.position, Vector2.down, groundedDistance)) {
-            
+            grounded = true;
         }
-
 
         currentState.Execute(this);
 	}
