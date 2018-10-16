@@ -202,13 +202,14 @@ MonoBehaviour:
   walkSpeed: 1
   runSpeed: 2.5
   agroDist: 5
-  displacementAmount: 0
   overHeadThreshold: 1.2
   underFootThreshold: 4
   attackSlowAmount: 5
+  displacementAmount: 1
+  attackRecoilTime: 0.35
   bloodEffect: {fileID: 1392957193795438, guid: 714a3928552bc014a9b8e37c36620b9f,
     type: 2}
-  attackRecoilTime: 0.35
+  checkIfFacingPlayer: 1
 --- !u!212 &212736241808451476
 SpriteRenderer:
   m_ObjectHideFlags: 1

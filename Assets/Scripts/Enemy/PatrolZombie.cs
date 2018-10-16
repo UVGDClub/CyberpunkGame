@@ -6,16 +6,28 @@ namespace Enemy
 {
     public class PatrolZombie : EnemyBehaviour
     {
+        [Header("Basic Settings")]
         public float walkSpeed = 1;
         public float runSpeed = 3;
         public float agroDist;
-        public float displacementAmount = 0.9f; 
-        public float overHeadThreshold;
-        public float underFootThreshold = 2.5f;
-        public float attackSlowAmount = 2f;
-        public GameObject bloodEffect;
 
-        public float attackRecoilTime = 0.3f;
+        [Header("vision and attack")]
+        [Tooltip("how far the zombie can 'see' above it")]
+        public float overHeadThreshold = 1.2f;
+        [Tooltip("how far the zombie can 'see' below it")]
+        public float underFootThreshold = 2.5f;
+        [Tooltip("how slowed the zombie is while attacking")]
+        public float attackSlowAmount = 2f;
+        [Tooltip("how much the zombie is teleported back after attacking")]
+        public float displacementAmount = 0.9f;
+        [Tooltip("how much time is allowed for attack animation, careful here")]
+        public float attackRecoilTime = 0.35f;
+        [Tooltip("BLOOD FOR THE BLOOD GOD")]
+        public GameObject bloodEffect;
+    
+        [Header("legit options")]
+        public bool checkIfFacingPlayer = true;
+
         private bool canAttack = true;
         private float playerDist;
         private Transform player;
@@ -158,7 +170,7 @@ namespace Enemy
         /*
          * if enemy collider is stopping overlapping with terrain
          * direction moving is reversed.
-         * note that you must have two colliders below enemy
+         * note: you must have two colliders below enemy
          * on left and right.
          */
         {
@@ -199,6 +211,10 @@ namespace Enemy
          * returns true if zombie is looking towards player, otherwase false
          */
         {
+            if (!checkIfFacingPlayer)
+            {
+                return true;
+            }
             bool actuallyToRight = IsPlayerToRight();
             return ((goingRight && actuallyToRight) || (!goingRight && !actuallyToRight));
         }
@@ -241,7 +257,7 @@ namespace Enemy
         /*
          *returns true if the collision is with the terrain below it.
          * 
-         * note that the leg colliders must have the physics material 
+         * note: the leg colliders must have the physics material 
          * called "zombieLegCollider in order for it to work
          */
         {
@@ -290,7 +306,7 @@ namespace Enemy
          */
         {
             StartCoroutine(AttackAnimation());
-            Debug.Log("PLAYER IS DAMAGED");
+            Debug.Log("PLAYER DAMAGED");
         }
 
         private IEnumerator AttackAnimation()
@@ -315,10 +331,11 @@ namespace Enemy
             SetAnimParameter(AnimParams.moveState, 1);
             canAttack = true;
             runSpeed *= attackSlowAmount;
-            Instantiate(bloodEffect, player.transform.position, player.transform.rotation);
+            Instantiate(bloodEffect, player.transform.position, player.transform.rotation);//temporary effect,
+            //replace later with better alternative
 
             transform.position += GetPlayerDirection(true) * displacementAmount;
-            //^^ above line teleports enemy away from player, prevents bugs from never leaving
+            //teleports enemy away from player, prevents bugs from never leaving
             //contact with player, should be replaced with better solution or deleted if not needed
         }
 
