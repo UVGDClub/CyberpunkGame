@@ -37,6 +37,7 @@ namespace Enemy
         private Transform player;
         private bool goingRight = false;
         private bool chasingPlayer;
+        private bool isInGround = true;
 
         public void Start()
         /*
@@ -110,7 +111,7 @@ namespace Enemy
 
             if (goingRight)
             {
-                FacingDirection = Direction.Left;//WHY ARE THESE BACKWARDS
+                FacingDirection = Direction.Left;///WHY ARE THESE BACKWARDS
             }
             else
             {
@@ -123,6 +124,9 @@ namespace Enemy
          * returns vector3 pointing in direction of the player from the enemy.
          * if you pass it a bool with the value of true it will give the
          * direction away from the player
+         * 
+         * also sets going right to the approrpiote value and makes animation
+         * match direction it is going.
          */
         {
             if (IsPlayerToRight())
@@ -168,6 +172,10 @@ namespace Enemy
             {
                 DamagePlayer();
             }
+            if (IsFromGround(collision))
+            {
+                isInGround = true;
+            }
         }
 
         private void OnCollisionExit2D(Collision2D collision)
@@ -182,9 +190,13 @@ namespace Enemy
             {
                 return;
             }
-            if (IsFromGround(collision) && (!chasingPlayer || !suicidesForPlayer))
+            if (IsFromGround(collision))
             {
-                ChangeDirection();
+                isInGround = false;
+                if ((!chasingPlayer || !suicidesForPlayer))
+                {
+                    ChangeDirection();
+                }
             }
         }
 
@@ -258,7 +270,17 @@ namespace Enemy
          *moves enemy closer to the player
          */
         {
-            transform.position += GetPlayerDirection() * Time.deltaTime * runSpeed;
+            checkIfFacingPlayer = true;
+            if (suicidesForPlayer || IsFacingPlayer() || isInGround)//XXX
+            {
+                transform.position += GetPlayerDirection() * Time.deltaTime * runSpeed;
+            }
+            else
+            {
+                //FaceDirection();
+            }
+            checkIfFacingPlayer = false;
+
         }
 
         private bool IsFromGround(Collision2D hitThing)
@@ -266,15 +288,15 @@ namespace Enemy
          *returns true if the collision is with the terrain below it.
          * 
          * note: the leg colliders must have the physics material 
-         * called "zombieLegCollider in order for it to work
+         * called "zombieEdgeDetector in order for it to work
          */
         {
              if(hitThing.gameObject.layer == LayerMask.NameToLayer("Ground"))
              {//if thing it left is on ground layer
                 try
                 {
-                    if (hitThing.otherCollider.sharedMaterial.name == "zombieLegCollider")
-                    {//if collider has material zombieLegCollider
+                    if (hitThing.otherCollider.sharedMaterial.name == "zombieEdgeDetector")
+                    {//if collider has material zombieEdgeDetector
                         return true;
                     }
                 }
@@ -295,7 +317,7 @@ namespace Enemy
         {
             try
             {
-               if (hitObj.otherCollider.sharedMaterial.name == "zombieLegCollider")
+               if (hitObj.otherCollider.sharedMaterial.name == "zombieEdgeDetector")
                 {
                     return false;
                 }
