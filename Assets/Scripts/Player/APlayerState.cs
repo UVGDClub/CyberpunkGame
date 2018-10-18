@@ -1,11 +1,11 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class APlayerState : ScriptableObject {
 
     public List<APlayerState> Transitions;
-    public bool CanTransitionOutOf = true;
+    protected bool CanTransitionOutOf = true;
 
     public void InputCheck(Player player) {
         if (CanTransitionOutOf) {

@@ -488,7 +488,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rigidbody2d: {fileID: 1339442853}
   currentState: {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}
-  groundedDistance: 1
+  groundedDistance: 0.64
+  groundCheckOffset: -0.3201
   grounded: 0
 --- !u!4 &1339442852
 Transform:
@@ -546,7 +547,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.64, y: 0.64}
   m_EdgeRadius: 0
 --- !u!212 &1339442855
 SpriteRenderer:

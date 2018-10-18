@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "States/MoveState")]
@@ -12,9 +11,6 @@ public class MoveState : APlayerState {
     }
 
     public override bool CanTransitionInto( Player player ) {
-        if (Input.GetAxis("Horizontal") != 0)
-            return true;
-
-        return false;
+	    return Math.Abs(Input.GetAxis("Horizontal")) > 0.01f && player.grounded;
     }
 }

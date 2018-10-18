@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,7 +10,7 @@ public class Player : MonoBehaviour {
     public APlayerState currentState;
 
     public float groundedDistance = 1f;
-
+	public float groundCheckOffset = -0.3201f;
     public bool grounded = false;
 
 	// Use this for initialization
@@ -25,11 +25,21 @@ public class Player : MonoBehaviour {
 
     // Update is called once per frame
     void FixedUpdate () {
+		RaycastHit2D hit;
 
-        RaycastHit2D hit;
-        if (hit = Physics2D.Raycast(transform.position, Vector2.down, groundedDistance)) {
-            grounded = true;
-        }
+	    var start = new Vector2(transform.position.x - 0.32f, transform.position.y + groundCheckOffset);
+
+	    var direction = new Vector2(0.9f, -0.1f).normalized;
+	    var length = groundedDistance;
+
+		Debug.DrawRay(start, direction*length);
+
+		if (hit = Physics2D.Raycast(start, direction, length)) {
+		    grounded = true;
+	    }
+	    else {
+		    grounded = false;
+	    }
 
         currentState.Execute(this);
 	}
