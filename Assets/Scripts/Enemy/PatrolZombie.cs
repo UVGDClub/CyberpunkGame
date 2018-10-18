@@ -11,6 +11,8 @@ namespace Enemy
         [Tooltip("for when it sees the player")]
         public float runSpeed = 3;
         public float agroDist;
+        public int health = 5;
+        public int damage = 1;
 
         [Header("vision and attack")]
         [Tooltip("how far the zombie can 'see' above it")]
@@ -32,11 +34,12 @@ namespace Enemy
         public bool suicidesForPlayer = true;
         public bool useBloodEffect = true;
 
-        private bool canAttack = true;
-        private float playerDist;
-        private Transform player;
-        private bool goingRight = false;
-        private bool chasingPlayer;
+        protected bool canAttack = true;
+        protected float playerDist;
+        protected Transform player;
+        protected bool goingRight = false;
+        protected bool chasingPlayer;
+        protected bool isInGround = true;
 
         public void Start()
         /*
@@ -67,7 +70,7 @@ namespace Enemy
 
         }
 
-        private bool IsPlayerInRange()
+        protected bool IsPlayerInRange()
         /*
          *returns true if player is within agro range, otherwise false
          */
@@ -96,7 +99,7 @@ namespace Enemy
             FaceDirection();
         }
 
-        private void FaceDirection()
+        protected void FaceDirection()
         /*
          * changes the animation to face the specified way
          */
@@ -118,7 +121,7 @@ namespace Enemy
             }
         }
 
-        private Vector3 GetPlayerDirection(bool reversed = false)
+        protected Vector3 GetPlayerDirection(bool reversed = false)
         /*
          * returns vector3 pointing in direction of the player from the enemy.
          * if you pass it a bool with the value of true it will give the
@@ -147,7 +150,7 @@ namespace Enemy
             }
         }
 
-        private bool IsPlayerToRight()
+        protected bool IsPlayerToRight()
         /*
          * returns true if player is to the right of enemy, otherwise false
          */
@@ -159,7 +162,7 @@ namespace Enemy
             return true;
         }
 
-        private void OnCollisionEnter2D(Collision2D collision)
+        protected virtual void OnCollisionEnter2D(Collision2D collision)
         /*
          * on a collision if it is the player damages player
          */
@@ -168,9 +171,13 @@ namespace Enemy
             {
                 DamagePlayer();
             }
+            if (IsFromGround(collision))
+            {
+                isInGround = true;
+            }
         }
 
-        private void OnCollisionExit2D(Collision2D collision)
+        protected void OnCollisionExit2D(Collision2D collision)
         /*
          * if enemy collider is stopping overlapping with terrain
          * direction moving is reversed.
@@ -182,13 +189,17 @@ namespace Enemy
             {
                 return;
             }
-            if (IsFromGround(collision) && (!chasingPlayer || !suicidesForPlayer))
+            if (IsFromGround(collision))
             {
-                ChangeDirection();
+                isInGround = false;
+                if (!chasingPlayer || !suicidesForPlayer)
+                {
+                    ChangeDirection();
+                }
             }
         }
 
-        private bool AboveHead()
+        protected bool AboveHead()
         /*
          * checks if player is above the enemy a significant amount
          * returns true if it is, false if it is not
@@ -201,7 +212,7 @@ namespace Enemy
             return false;
         }
 
-        private bool BelowFeet()
+        protected bool BelowFeet()
         /*
          * checks if player is a significant amount below enemy
          * returns true if they are out of range
@@ -214,7 +225,7 @@ namespace Enemy
             return false;
         }
 
-        private bool IsFacingPlayer()
+        protected bool IsFacingPlayer()
         /*
          * returns true if zombie is looking towards player, otherwase false
          */
@@ -235,7 +246,7 @@ namespace Enemy
             goingRight = !goingRight;
         }
 
-        private void AttackPattern()
+        protected virtual void AttackPattern()
         /*
          *is called whenever player is within agro range
          * can check whichever of the three overriding favtors you want
@@ -253,15 +264,24 @@ namespace Enemy
             }
         }
 
-        private void ChasePlayer()
+        protected void ChasePlayer()
         /*
          *moves enemy closer to the player
          */
         {
-            transform.position += GetPlayerDirection() * Time.deltaTime * runSpeed;
+            checkIfFacingPlayer = true;
+            if (suicidesForPlayer || IsFacingPlayer() || isInGround)//XXX
+            {
+                transform.position += GetPlayerDirection() * Time.deltaTime * runSpeed;
+            }
+            else
+            {
+                //FaceDirection();
+            }
+            checkIfFacingPlayer = false;
         }
 
-        private bool IsFromGround(Collision2D hitThing)
+        protected bool IsFromGround(Collision2D hitThing)
         /*
          *returns true if the collision is with the terrain below it.
          * 
@@ -287,7 +307,7 @@ namespace Enemy
 
         }
 
-        private bool IsCollidingWithBody(Collision2D hitObj)
+        protected bool IsCollidingWithBody(Collision2D hitObj)
         /*
          * returns true if object colliding with enemy is colliding
          * on the main body collider
@@ -307,7 +327,7 @@ namespace Enemy
             return false;
         }
 
-        private void DamagePlayer()
+        protected void DamagePlayer()
         /*
          *is activated when enemy makes contact with player
          * should be filled out more once player script is done
@@ -317,7 +337,7 @@ namespace Enemy
             Debug.Log("PLAYER DAMAGED");
         }
 
-        private IEnumerator AttackAnimation()
+        protected IEnumerator AttackAnimation()
         /*
          * activates the attack animation, slows enemy while it is attacking,
          * creates blood effect at player and knocks itself back after hit.
@@ -348,6 +368,35 @@ namespace Enemy
             transform.position += GetPlayerDirection(true) * displacementAmount;
             //teleports enemy away from player, prevents bugs from never leaving
             //contact with player, should be replaced with better solution or deleted if not needed
+        }
+
+        public bool DamageZombie(int damage)
+        /*
+         * returns true if enemy is dead, otherwise false
+         */
+        {
+            health -= damage;
+            if(health <= 0)
+            {
+                ThisEnemyDead();
+                return true;
+            }
+            return false;
+        }
+
+        public void ThisEnemyDead()
+        {
+            //destroy game object and play death animation
+            DeathAnim();
+            Debug.Log("enemy is dead");
+        }
+        public void DamagedAnim()
+        {
+            //damaged animation here
+        }
+        protected void DeathAnim()
+        {
+
         }
 
     }

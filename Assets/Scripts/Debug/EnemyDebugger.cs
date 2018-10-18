@@ -22,8 +22,9 @@ namespace Debugging
 				if (Input.GetKeyDown((KeyCode)j))
 				{
 					if (enemies[i] == null)
-						enemies[i] = EnemyManager.SpawnEnemy("PatrolZombie", spawns[i].position, (i % 2 == 0) ? Direction.Right : Direction.Left);
-					else
+                        enemies[i] = EnemyManager.SpawnEnemy("PatrolZombie", spawns[i].position, (i % 2 == 0) ? Direction.Right : Direction.Left);
+                        //enemies[i] = EnemyManager.SpawnEnemy("RangedZombie", spawns[i].position, (i % 2 == 0) ? Direction.Right : Direction.Left);
+                    else
 					{
 						EnemyManager.DestroyEnemy(enemies[i]);
 						enemies[i] = null;
