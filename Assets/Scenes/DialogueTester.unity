@@ -332,6 +332,7 @@ GameObject:
   - component: {fileID: 1650605690}
   - component: {fileID: 1650605689}
   - component: {fileID: 1650605688}
+  - component: {fileID: 1650605694}
   - component: {fileID: 1650605693}
   - component: {fileID: 1650605692}
   m_Layer: 5
@@ -429,8 +430,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72532aa096ae7494285c4e322253e2b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogue: {fileID: 1650605693}
+  dialogue: {fileID: 1650605694}
 --- !u!114 &1650605693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1650605687}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 591f808bbc60cdb41bcfafcfc5c5b572, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueText: {fileID: 2028950458}
+--- !u!114 &1650605694
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -438,7 +451,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1650605687}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 591f808bbc60cdb41bcfafcfc5c5b572, type: 3}
+  m_Script: {fileID: 11500000, guid: 835193124e3b84149924eb0d73d784ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueText: {fileID: 2028950458}

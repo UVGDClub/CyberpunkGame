@@ -13,20 +13,19 @@ using UnityEngine.UI;
  * Last Updated 2018-10-07
  * 
  * Known bugs to fix:
- * -Default text continues to display for first round of dialogue
  * -Words longer than MAX_SENTANCE_LENGTH untested
  */
 public class Dialogue : MonoBehaviour {
 
     public Text dialogueText;
-    float displayStartTime, defaultTimePerLine, displayTimeLength;
+    protected float displayStartTime, defaultTimePerLine, displayTimeLength;
 
 
 	const int MAX_SENTANCE_LENGTH = 80;
-	LinkedList<string> queue;	//LinkedList should hypothetically be nice and efficient for the queue
+	protected LinkedList<string> queue;	//LinkedList should hypothetically be nice and efficient for the queue
 
     // Use this for initialization
-    void Start () {
+    protected void Start () {
 		displayStartTime = 0;
 		defaultTimePerLine = 3;
 		displayTimeLength = defaultTimePerLine;
@@ -35,31 +34,31 @@ public class Dialogue : MonoBehaviour {
 	}
 	
 	void FixedUpdate () {
-		try {
-			if (Time.fixedTime >= displayStartTime + displayTimeLength || dialogueText.text == "")
-			{
-				if (queue.Count < 1 && dialogueText.text != "")
-				{
-					dialogueText.text = "";
-				}
-				else
-				{
-					SetDialogue(queue.First.Value, displayTimeLength);
-					queue.RemoveFirst();
-				}
-			}
-		} catch (System.NullReferenceException ex)
-		{
-			Debug.Log(ex.ToString());
-		}
+		this.UpdateText();
         
     }
+
+	void UpdateText()
+	{
+		if (Time.fixedTime >= displayStartTime + displayTimeLength || dialogueText.text == "")
+		{
+			if (queue.Count < 1 && dialogueText.text != "")
+			{
+				dialogueText.text = "";
+			}
+			else if (queue.Count > 0)
+			{
+				this.SetDialogue(queue.ElementAt(0), displayTimeLength);
+				queue.RemoveFirst();
+			}
+		}
+	}
 
 	/*
 	 * @param dialogue -> the text to be displayed
 	 * @param textTime -> the amount of time that the text should be on the screen
 	 */
-	private void SetDialogue(string dialogue, float textTime)
+	protected virtual void SetDialogue(string dialogue, float textTime)
 	{
 		dialogueText.text = dialogue;
 		displayStartTime = Time.fixedTime;
@@ -71,7 +70,7 @@ public class Dialogue : MonoBehaviour {
      */
 	public void AddDialogue(string dialogue)
     {
-		AddDialogue(new string[] { dialogue });
+		this.AddDialogue(new string[] { dialogue });
     }
 
 	/*
@@ -79,7 +78,7 @@ public class Dialogue : MonoBehaviour {
      */
 	public void AddDialogue(string[] dialogue)
     {
-		AddDialogue(dialogue, defaultTimePerLine);
+		this.AddDialogue(dialogue, defaultTimePerLine);
     }
 
 	/*
@@ -112,7 +111,7 @@ public class Dialogue : MonoBehaviour {
      */
     public string[] LoadTextFile(string name)
     {
-        return ParseText(Resources.Load<TextAsset>("Dialgue/" + name).ToString());
+        return this.ParseText(Resources.Load<TextAsset>("Dialgue/" + name).ToString());
 
     }
 

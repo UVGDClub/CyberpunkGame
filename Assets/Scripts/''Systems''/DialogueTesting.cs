@@ -5,9 +5,7 @@ using UnityEngine;
 
 public class DialogueTesting : MonoBehaviour {
 
-    public Dialogue dialogue;
-    
-
+    public Dialogue_Typed dialogue;
 
     // Use this for initialization
     void Start() {
@@ -17,7 +15,6 @@ public class DialogueTesting : MonoBehaviour {
     void Update() {
         if (dialogue.dialogueText.text == "")
 		{
-			Debug.Log("Updated text");
 			dialogue.AddDialogue(dialogue.LoadTextFile("Pulp Fiction"), 4);
 		}
     }
