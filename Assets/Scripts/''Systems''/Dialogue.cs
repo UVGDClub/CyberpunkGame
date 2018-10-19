@@ -19,25 +19,40 @@ using UnityEngine.UI;
 public class Dialogue : MonoBehaviour {
 
     public Text dialogueText;
-    float displayStartTime = 0;
-    float displayTimeLength = 1;
+    float displayStartTime, defaultTimePerLine, displayTimeLength;
 
-    const int MAX_SENTANCE_LENGTH = 80;
-    LinkedList<string> queue = new LinkedList<string>();	//LinkedList should hypothetically be nice and efficient for the queue
+
+	const int MAX_SENTANCE_LENGTH = 80;
+	LinkedList<string> queue;	//LinkedList should hypothetically be nice and efficient for the queue
 
     // Use this for initialization
     void Start () {
+		displayStartTime = 0;
+		defaultTimePerLine = 3;
+		displayTimeLength = defaultTimePerLine;
+		queue = new LinkedList<string>();
+		this.ClearDialogue();
 	}
 	
 	void FixedUpdate () {
-        if (Time.fixedTime >= displayStartTime + displayTimeLength) {
-            if (queue.Count == 0) {
-                dialogueText.text = "";
-            } else {
-				SetDialogue(queue.First.Value, displayTimeLength);
-                queue.RemoveFirst();
-            }
-        }
+		try {
+			if (Time.fixedTime >= displayStartTime + displayTimeLength || dialogueText.text == "")
+			{
+				if (queue.Count < 1 && dialogueText.text != "")
+				{
+					dialogueText.text = "";
+				}
+				else
+				{
+					SetDialogue(queue.First.Value, displayTimeLength);
+					queue.RemoveFirst();
+				}
+			}
+		} catch (System.NullReferenceException ex)
+		{
+			Debug.Log(ex.ToString());
+		}
+        
     }
 
 	/*
@@ -64,7 +79,7 @@ public class Dialogue : MonoBehaviour {
      */
 	public void AddDialogue(string[] dialogue)
     {
-		AddDialogue(dialogue, dialogue.Length);
+		AddDialogue(dialogue, defaultTimePerLine);
     }
 
 	/*
