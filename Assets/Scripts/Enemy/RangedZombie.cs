@@ -54,16 +54,23 @@ namespace Enemy
         protected override void AttackPattern()
         /*
          *is called whenever player is within agro range
-         * can check whichever of the three overriding favtors you want
+         * can check whichever of the three overriding favtors you want.
+         * Each will cause their respective condition to override the attack
+         * command
          */
         {
+            if (StopForDmg())
+            {
+                return;
+            }
+
             if (AboveHead() || BelowFeet() || !IsFacingPlayer())
             {
                 canAttack = true;
                 timeKeeper = 0;
                 PatrolMove();
             }
-            else
+            else if(!StopForDmg())
             {
                 RangedAttack();
             }
@@ -72,11 +79,12 @@ namespace Enemy
         private float timeKeeper = 0;
         public void RangedAttack()
         {
+
             timeKeeper += Time.deltaTime;
             SetAnimParameter(AnimParams.moveState, 0);
             SetAnimParameter(AnimParams.attackState, (GetAnimParameter<int>(AnimParams.attackState) + 1) % 3);
 
-            bool playerToRight = IsPlayerToRight();
+            bool playerToRight = GetPlayerToRight();
             if (timeKeeper > fireRate)
             {
                 FireProjectile(playerToRight);
@@ -112,9 +120,9 @@ namespace Enemy
          */
         {
 
-            if (collision.gameObject.tag == "Player")
+            if (IsItPlayer(collision))
             {
-                ThisEnemyDead();
+                EnemyDead();
             }
         }
        

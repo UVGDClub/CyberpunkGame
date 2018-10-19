@@ -21,11 +21,11 @@ GameObject:
   - component: {fileID: 4850258446545622}
   - component: {fileID: 50055905894915150}
   - component: {fileID: 61610381551862178}
-  - component: {fileID: 114171925444398472}
   - component: {fileID: 61690136776453400}
   - component: {fileID: 61654303763010736}
+  - component: {fileID: 114839361070136872}
   m_Layer: 9
-  m_Name: PatrolZombie
+  m_Name: SpawnerZombie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68,7 +68,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1303623940138274}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.474777, y: 0.7012843, z: 0}
+  m_LocalPosition: {x: 6.3504367, y: 2.2768157, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4283896721570040}
@@ -188,7 +188,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114171925444398472
+--- !u!114 &114839361070136872
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -196,28 +196,33 @@ MonoBehaviour:
   m_GameObject: {fileID: 1303623940138274}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 784202fcc8c42404ea6457ca4121efd2, type: 3}
+  m_Script: {fileID: 11500000, guid: f8e88cf99d879464d9a28689783cc068, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 1
-  runSpeed: 2.5
-  agroDist: 5
+  runSpeed: 3
+  agroDist: 0
   health: 5
   damage: 1
   overHeadThreshold: 1.2
-  underFootThreshold: 4
-  attackSlowAmount: 5
-  displacementAmount: 1
+  underFootThreshold: 2.5
+  attackSlowAmount: 2
+  displacementAmount: 0.9
   attackRecoilTime: 0.35
   damagedAnimDuration: 0.5
   decompositionTime: 2
   bloodEffect: {fileID: 1392957193795438, guid: 714a3928552bc014a9b8e37c36620b9f,
     type: 2}
-  checkIfFacingPlayer: 0
-  suicidesForPlayer: 0
+  checkIfFacingPlayer: 1
+  suicidesForPlayer: 1
   useBloodEffect: 1
   stopWhileHit: 1
   TakingDamageTest: 0
+  zombToSpawn: {fileID: 1321113354926646, guid: b6a968b7c6c8f85419b66bfcb0148166,
+    type: 2}
+  birthEffect: {fileID: 1392957193795438, guid: b4bb3b385afcbb649bf2c266bd90e69a,
+    type: 2}
+  testingForDeath: 0
 --- !u!212 &212736241808451476
 SpriteRenderer:
   m_ObjectHideFlags: 1

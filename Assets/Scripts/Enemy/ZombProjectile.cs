@@ -6,7 +6,6 @@ public class ZombProjectile : MonoBehaviour {
 
     public GameObject fizzle;//remove this later, I just like it for now
 
-    private float speed;
     private int damage;
     private bool goRight;
     private bool useBlood;
@@ -66,22 +65,20 @@ public class ZombProjectile : MonoBehaviour {
         DestroyProjectile();
     }
 
-    public void SetVars(float speed, int damage, bool goRight,
-        float horizBase, float vertBase, bool useBlood, GameObject blood = null)
+    public void SetVars(float velo, int dmg, bool goRight, float horizBase, 
+        float vertBase, bool useBlood, GameObject blood = null)
     /*
      * sets variables passed from whoever created the object with this script attached
      * This should be done once at the moment it is instantiated so this will also
      * cause the object to have an appropriote initial velocity and starts death coundown
      */
     {
-        this.speed = speed;
-        this.damage = damage;
+        this.damage = dmg;
         this.goRight = goRight;
         this.useBlood = useBlood;
         this.blood = blood;
-        rightVelo = new Vector2(horizBase*speed, vertBase*speed);
-        leftVelo = new Vector2(-horizBase*speed, vertBase*speed);
-
+        rightVelo = new Vector2(horizBase*velo, vertBase*velo);
+        leftVelo = new Vector2(-horizBase*velo, vertBase*velo);
 
         SetVelocity();
     }

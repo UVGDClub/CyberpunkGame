@@ -6,8 +6,8 @@ namespace Enemy
 {
     public class PatrolZombie : EnemyBehaviour
     {
-        [Header("Basic Settings")]
-        public float walkSpeed = 1;
+        [Header("Basic Settings")]//editorguilayout
+        public float walkSpeed = 1;//look at glen fork
         [Tooltip("for when it sees the player")]
         public float runSpeed = 3;
         public float agroDist;
@@ -25,6 +25,8 @@ namespace Enemy
         public float displacementAmount = 0.9f;
         [Tooltip("how much time is allowed for attack animation, careful here")]
         public float attackRecoilTime = 0.35f;
+        public float damagedAnimDuration = 0.5f;
+        public float decompositionTime = 2;
         [Tooltip("BLOOD FOR THE BLOOD GOD")]
         public GameObject bloodEffect;
     
@@ -33,13 +35,17 @@ namespace Enemy
         [Tooltip("LEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEROY JENKINS")]
         public bool suicidesForPlayer = true;
         public bool useBloodEffect = true;
+        public bool stopWhileHit = true;
+
+        public bool TakingDamageTest = false;
 
         protected bool canAttack = true;
-        protected float playerDist;
         protected Transform player;
         protected bool goingRight = false;
         protected bool chasingPlayer;
         protected bool isInGround = true;
+        protected bool beingDamaged = false;
+        protected bool isAlive = true;
 
         public void Start()
         /*
@@ -57,7 +63,21 @@ namespace Enemy
          */
         {
             base.Update();
-            //SetAnimParameter(AnimParams.attackState, (GetAnimParameter<int>(AnimParams.attackState) + 1) % 3);
+            if (!isAlive)
+            {
+                SetAnimParameter(AnimParams.attackState, 0);
+                SetAnimParameter(AnimParams.moveState, 0);
+                SetAnimParameter(AnimParams.isDead, true);
+                return;
+            }
+
+            if (TakingDamageTest)//remove later, solely for testing purposes
+            {
+                TakingDamageTest = false;
+                DamageZombie(1);
+            }
+
+
             if (IsPlayerInRange())
             {
                 AttackPattern();
@@ -75,12 +95,16 @@ namespace Enemy
          *returns true if player is within agro range, otherwise false
          */
         {
-            playerDist = Vector2.Distance(transform.position.ToV2(), player.position.ToV2());
-            if (playerDist < agroDist)
+            if (GetPlayerDist() < agroDist)
             {
                 return true;
             }
             return false;
+        }
+
+        public float GetPlayerDist()
+        {
+            return Vector2.Distance(transform.position.ToV2(), player.position.ToV2());
         }
 
         public void PatrolMove()
@@ -88,6 +112,10 @@ namespace Enemy
          * makes the enemy move back and forth in accordance with the goingRight bool
          */
         {
+            if (StopForDmg())
+            {
+                return;
+            }
             if (goingRight)
             {
                 transform.position += Vector2.right.ToV3() * Time.deltaTime * walkSpeed;
@@ -104,6 +132,7 @@ namespace Enemy
          * changes the animation to face the specified way
          */
         {
+            
             if (canAttack)
             //canAttack is false only during attack animation,
             //this is here so movestate wont override it
@@ -121,17 +150,15 @@ namespace Enemy
             }
         }
 
-        protected Vector3 GetPlayerDirection(bool reversed = false)
+        protected virtual Vector3 GetPlayerDirection(bool reversed = false)
         /*
          * returns vector3 pointing in direction of the player from the enemy.
          * if you pass it a bool with the value of true it will give the
          * direction away from the player
          */
         {
-            if (IsPlayerToRight())
+            if (GetPlayerToRight())
             {
-                goingRight = true;
-                FaceDirection();
                 if (reversed)
                 {
                     return Vector2.left.ToV3();
@@ -140,8 +167,6 @@ namespace Enemy
             }
             else
             {
-                goingRight = false;
-                FaceDirection();
                 if (reversed)
                 {
                     return Vector2.right.ToV3();
@@ -150,14 +175,22 @@ namespace Enemy
             }
         }
 
-        protected bool IsPlayerToRight()
+        protected bool GetPlayerToRight(bool setState = false)
         /*
          * returns true if player is to the right of enemy, otherwise false
          */
         {
             if (player.position.x < transform.position.x)
             {
+                if (setState)
+                {
+                    goingRight = false;
+                }
                 return false;
+            }
+            if (setState)
+            {
+                goingRight = true;
             }
             return true;
         }
@@ -167,17 +200,17 @@ namespace Enemy
          * on a collision if it is the player damages player
          */
         {
-            if(collision.gameObject.tag == "Player" && canAttack && IsCollidingWithBody(collision))
+            if(IsItPlayer(collision) && canAttack && IsCollidingWithBody(collision) && !beingDamaged)
             {
-                DamagePlayer();
+                StartCoroutine(AttackAnimation());
             }
-            if (IsFromGround(collision))
+            else if (IsFromGround(collision))
             {
                 isInGround = true;
             }
         }
 
-        protected void OnCollisionExit2D(Collision2D collision)
+        protected virtual void OnCollisionExit2D(Collision2D collision)
         /*
          * if enemy collider is stopping overlapping with terrain
          * direction moving is reversed.
@@ -185,7 +218,7 @@ namespace Enemy
          * on left and right.
          */
         {
-            if(collision.gameObject.tag == "Player")
+            if(IsItPlayer(collision))
             {
                 return;
             }
@@ -197,6 +230,15 @@ namespace Enemy
                     ChangeDirection();
                 }
             }
+        }
+
+        public bool IsItPlayer(Collision2D hit)
+        {
+            if(hit.gameObject.tag == "Player")
+            {
+                return true;
+            }
+            return false;
         }
 
         protected bool AboveHead()
@@ -234,7 +276,7 @@ namespace Enemy
             {
                 return true;
             }
-            bool actuallyToRight = IsPlayerToRight();
+            bool actuallyToRight = GetPlayerToRight();
             return ((goingRight && actuallyToRight) || (!goingRight && !actuallyToRight));
         }
 
@@ -264,15 +306,21 @@ namespace Enemy
             }
         }
 
-        protected void ChasePlayer()
+        protected virtual void ChasePlayer()
         /*
          *moves enemy closer to the player
          */
         {
             checkIfFacingPlayer = true;
-            if (suicidesForPlayer || IsFacingPlayer() || isInGround)//XXX
+            if (suicidesForPlayer || IsFacingPlayer() || isInGround)
             {
+                if(StopForDmg())
+                {
+                    return;
+                }
                 transform.position += GetPlayerDirection() * Time.deltaTime * runSpeed;
+                GetPlayerToRight(true);
+                FaceDirection();
             }
             else
             {
@@ -333,8 +381,7 @@ namespace Enemy
          * should be filled out more once player script is done
          */
         {
-            StartCoroutine(AttackAnimation());
-            Debug.Log("PLAYER DAMAGED");
+            //do damage
         }
 
         protected IEnumerator AttackAnimation()
@@ -343,6 +390,10 @@ namespace Enemy
          * creates blood effect at player and knocks itself back after hit.
          */
         {
+            if(StopForDmg())
+            {
+                yield break;
+            }
             SetAnimParameter(AnimParams.moveState, 0);
             canAttack = false;
             runSpeed /= attackSlowAmount;
@@ -365,12 +416,20 @@ namespace Enemy
                 Instantiate(bloodEffect, player.transform.position, player.transform.rotation);
             }
 
+            DamagePlayer();
             transform.position += GetPlayerDirection(true) * displacementAmount;
+            GetPlayerToRight(true);
+            FaceDirection();
             //teleports enemy away from player, prevents bugs from never leaving
             //contact with player, should be replaced with better solution or deleted if not needed
         }
 
-        public bool DamageZombie(int damage)
+        protected virtual bool StopForDmg()
+        {
+            return stopWhileHit && beingDamaged;
+        }
+
+        public virtual bool DamageZombie(int damage)
         /*
          * returns true if enemy is dead, otherwise false
          */
@@ -378,25 +437,40 @@ namespace Enemy
             health -= damage;
             if(health <= 0)
             {
-                ThisEnemyDead();
+                EnemyDead();
                 return true;
             }
+            StartCoroutine(DamagedAnim());
             return false;
         }
 
-        public void ThisEnemyDead()
-        {
-            //destroy game object and play death animation
-            DeathAnim();
-            Debug.Log("enemy is dead");
-        }
-        public void DamagedAnim()
-        {
-            //damaged animation here
-        }
-        protected void DeathAnim()
-        {
 
+        public IEnumerator DamagedAnim()
+        {
+            beingDamaged = true;
+            SetAnimParameter(AnimParams.attackState, 0);
+            SetAnimParameter(AnimParams.moveState, 0);
+            SetAnimParameter(AnimParams.takeDamage, true);
+
+            yield return new WaitForSeconds(damagedAnimDuration);
+
+            SetAnimParameter(AnimParams.takeDamage, false);
+            SetAnimParameter(AnimParams.moveState, 1);
+            beingDamaged = false;
+        }
+        public virtual void EnemyDead()
+        {
+            isAlive = false;
+            SetAnimParameter(AnimParams.moveState, 0);
+            SetAnimParameter(AnimParams.isDead, true);
+            Debug.Log("enemy is dead");
+            StartCoroutine(DeathAnim());
+        }
+
+        protected virtual IEnumerator DeathAnim()
+        {
+            yield return new WaitForSeconds(decompositionTime);
+            Destroy(this.gameObject);
         }
 
     }
