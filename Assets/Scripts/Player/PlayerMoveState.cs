@@ -55,7 +55,7 @@ public class PlayerMoveState : IState
                 yield break;
             }
 
-            if(Input.GetMouseButtonDown(0))
+            if(Input.GetButton("Attack"))
             {
                 OnBeginExit(this, player.stateTransitions.AttackTransition());
                 yield break;

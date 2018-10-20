@@ -25,41 +25,33 @@ using UnityEditor;
  * 		L	|	Left		(Direction)
  * 		R	|	Right		(Direction)
  *
- * NOTE: I used structs to organize my variables into tabs in the inspector. 
- * This turned out to be kind of ugly from a programmers point of view but it saves time scrolling through variables to change stuff. 
- * As a result, a lot of variables have a 1 letter prefix that can tell you that category they belong to. To list them all:
- * d - Debug Variables.
- * m - Movement Variables; These are the adjustable parameters that govern movement characteristics.
- * o - ObjectRefs - I put all my references to external gameobjects here for easy retrieval.
- * phys - The nitty gritty physics state variables. Velocity, surface contact information, etc.
- * v - Visual/Audio specific variables. Never effects actual gameplay.
 */
 
 [System.Serializable]
 public class FighterChar : MonoBehaviour
 {        
     [Header("Debug Variables:")]
-    [Tooltip("Debug Variables")][SerializeField] public DebugVars d; // Struct containing debug variables.
+    [Tooltip("Debug Variables")][SerializeField] public DebugVars d;
 
     [Header("Movement Variables:")]
-    [Tooltip("Movement Variables")][SerializeField] public MovementVars m; // Struct containing movement variables.
+    [Tooltip("Movement Variables")][SerializeField] public MovementVars m;
 
     [Header("Object References:")]
-    [Tooltip("Object References")][SerializeField] public ObjectRefs o; // Struct containing object references.
+    [Tooltip("Object References")][SerializeField] public ObjectRefs o;
 
     [Header("Physics Variables:")]
-    [Tooltip("Physics Variables")][SerializeField] public PhysicsVars phys; // Struct containing physics parameters.
+    [Tooltip("Physics Variables")][SerializeField] public PhysicsVars phys;
 
     [Header("Audio/Visual Variables:")]
-    [Tooltip("Audio/Visual Variables")][SerializeField] public AudioVisualVars v; // Struct containing audiovisual variables.
+    [Tooltip("Audio/Visual Variables")][SerializeField] public AudioVisualVars v;
 
     //############################################################################################################################################################################################################
     // KINEMATIC VARIABLES
     //###########################################################################################################################################################################
     #region KINEMATIC VARIABLES
     [Header("Kinematic Components:")]
-    [SerializeField] protected bool k_IsKinematic; 						//Dictates whether the player is moving in normal movement mode or in some sort of specially controlled fashion, such as in cutscenes.
-    [SerializeField] protected int k_KinematicAnim; 					//Designates the kinematic movement state being used. -1 for normal movement.
+    [SerializeField] protected bool k_IsKinematic; 						//Dictates whether the player is moving in physical fighterchar mode or in some sort of specially controlled fashion, such as in cutscenes or strand jumps
+    [SerializeField] protected int k_KinematicAnim; 					//Designates the kinematic animation being played.
     #endregion
     //############################################################################################################################################################################################################
     // OBJECT REFERENCES
@@ -86,7 +78,7 @@ public class FighterChar : MonoBehaviour
 
     [HideInInspector]public Transform m_CeilingFoot; 		// Ceiling collider, middle.
     [HideInInspector]public Vector2 m_CeilingFootOffset;		// Ceiling raycast endpoint.
-    [ReadOnlyAttribute] public float m_CeilingFootLength;		// Ceiling raycast length.
+    [ReadOnlyAttribute]public float m_CeilingFootLength;		// Ceiling raycast length.
 
     [HideInInspector]public Transform m_LeftSide; 			// LeftWall collider.
     [HideInInspector]public Vector2 m_LeftSideOffset;		// LeftWall raycast endpoint.
@@ -227,79 +219,73 @@ public class FighterChar : MonoBehaviour
 
     protected virtual void FixedUpdatePhysics() //FUP
     {
-
-    
         this.transform.position = FighterState.FinalPos;
         phys.distanceTravelled = Vector2.zero;
 
         phys.initialVel = FighterState.Vel;
         v.wallSliding = false; // Set to false, and changed to true in WallTraction().
 
-        //Physics adds new forces first before solving collisions.
-        //This section adds character movement forces.
-        if (phys.grounded)
-        {// Calls Traction(), which applies forces to the player when they're on the ground.
+
+
+        if(phys.grounded)
+        {//Locomotion!
             Traction(CtrlH, CtrlV);
             m.airborneDelayTimer = m.airborneDelay;
-            v.primarySurface = 0; // This is the surface you are 'on' for animations purposes. -1=airborne, 0=ground, 1=ceiling, 2=leftwall, 3=rightwall.
+            v.primarySurface = 0;
+            v.truePrimarySurface = 0;
         }
         else if(phys.leftWalled)
-        {// Calls WallTraction(), which applies forces to the player when they're on a wall.
+        {//Wallsliding!
             //print("Walltraction!");
             WallTraction(CtrlH, CtrlV, m_LeftNormal);
             m.airborneDelayTimer = m.airborneDelay;
             v.primarySurface = 2;
+            v.truePrimarySurface = 2;
         }
         else if(phys.rightWalled)
-        {// Calls WallTraction(), which applies forces to the player when they're on a wall.
+        {//Wallsliding!
             WallTraction(CtrlH, CtrlV, m_RightNormal);
             m.airborneDelayTimer = m.airborneDelay;
             v.primarySurface = 3;
+            v.truePrimarySurface = 3;
         }
-		//else if(phys.ceilinged)
-		//{ // Running along the ceiling is not supported yet. You just hit it and fall.
-
-  //  	}
+//		else if(phys.ceilinged)
+//		{
+//			WallTraction(CtrlH, m_CeilingNormal);
+//		}
         else if(d.gravityEnabled)
         { // Airborne with gravity!
-            if(m.airborneDelayTimer>0) // Sets a short period before the player is declared airborne, to prevent tiny bumps from activating your fall animation.
+            if(m.airborneDelayTimer>0)
             {
-                m.airborneDelayTimer -= Time.fixedDeltaTime; //Counting down.
+                m.airborneDelayTimer -= Time.fixedDeltaTime;
             }
             else
             {			
-                v.primarySurface = -1; //Once the grace period ends, primarySurface is set to none, aka airborne.
+                v.primarySurface = -1;
             }
-            AirControl(CtrlH); // This is where air strafing force is added.
-            FighterState.Vel = new Vector2 (FighterState.Vel.x, FighterState.Vel.y - m.gravityStrength); // Gravity is added.
+            v.truePrimarySurface = -1;
+            AirControl(CtrlH);
+            FighterState.Vel = new Vector2 (FighterState.Vel.x, FighterState.Vel.y - 1f);
         }	
             
 
-        d.errorDetectingRecursionCount = 0; // Unimportant debug thing.
+        d.errorDetectingRecursionCount = 0; //Used for WorldCollizion(); (note: colliZion is used to help searches for the keyword 'collision' by filtering out extraneous matches)
 
-        //print("Velocity before collision: "+FighterState.Vel);
-        //print("Position before collision: "+this.transform.position);
+        //print("Velocity before Collizion: "+FighterState.Vel);
+        //print("Position before Collizion: "+this.transform.position);
 
         phys.remainingVelM = 1f;
         phys.remainingMovement = FighterState.Vel*Time.fixedDeltaTime;
         Vector2 startingPos = this.transform.position;
 
+        WorldCollision();
 
-
-
-        WorldCollision(); // This is where all collision with world geometry is handled. 
-
-
-
-
-
-        //print("Per frame velocity at end of collision() "+FighterState.Vel*Time.fixedDeltaTime);
-        //print("Velocity at end of collision() "+FighterState.Vel);
+        //print("Per frame velocity at end of Collizion() "+FighterState.Vel*Time.fixedDeltaTime);
+        //print("Velocity at end of Collizion() "+FighterState.Vel);
         //print("Per frame velocity at end of updatecontactnormals "+FighterState.Vel*Time.fixedDeltaTime);
         //print("phys.remainingMovement after collision: "+phys.remainingMovement);
 
         phys.distanceTravelled = new Vector2(this.transform.position.x-startingPos.x,this.transform.position.y-startingPos.y);
-
         //print("phys.distanceTravelled: "+phys.distanceTravelled);
         //print("phys.remainingMovement: "+phys.remainingMovement);
         //print("phys.remainingMovement after removing phys.distanceTravelled: "+phys.remainingMovement);
@@ -329,12 +315,12 @@ public class FighterChar : MonoBehaviour
 
         if(phys.worldImpact)
         {
-           // Put falldamage or other game logic here.
+           // Put falldamage or other gamelogic code here.
         }
 
         this.transform.position = new Vector2(this.transform.position.x+phys.remainingMovement.x, this.transform.position.y+phys.remainingMovement.y);
 
-        UpdateContactNormals(true); // Raycasting to determine surface contacts is done here, as well as final position correction if embedding in geometry occurred.
+        UpdateContactNormals(true);
 
         FighterState.FinalPos = this.transform.position;
 
@@ -381,7 +367,7 @@ public class FighterChar : MonoBehaviour
     }
 
     protected virtual void FixedUpdateKinematic() //FUK
-    { // Use this to bypass the conventional physics and build your own. Useful for situations when the normal player movement doesn't apply, such as during a grappling hook swing, dash move, or scripted sequence.
+    { // Use this to bypass the conventional physics and build your own. Useful for situations when the normal player movement doesn't apply, such as during a grappling hook swing or scripted sequence.
         switch (k_KinematicAnim)
         {
         case -1:
@@ -1101,10 +1087,10 @@ public class FighterChar : MonoBehaviour
             phys.kneeling = true;
             horizontalInput = 0;
         }
-		else
-		{
-			v.cameraMode = v.defaultCameraMode;
-		}
+//		else
+//		{
+//			v.cameraMode = v.defaultCameraMode;
+//		}
 
         if(groundPara.x > 0)
         {
@@ -1214,6 +1200,18 @@ public class FighterChar : MonoBehaviour
                 }
                 else
                 {
+//					//print("ExpAccel-> " + rawSpeed);
+//					float eqnX = (1+Mathf.Abs((1/m.tractionChangeT )*rawSpeed));
+//					float curveMultiplier = 1+(1/(eqnX*eqnX)); // Goes from 1/4 to 1, increasing as speed approaches 0.
+//
+//					float addedSpeed = curveMultiplier*(m_Acceleration);
+//					if(FighterState.Vel.y > 0)
+//					{ // If climbing, recieve uphill movement penalty.
+//						addedSpeed = curveMultiplier*(m_Acceleration)*(1-slopeMultiplier);
+//					}
+//					if(d.sendTractionMessages){print("Addedspeed:"+addedSpeed);}
+//					FighterState.Vel = (FighterState.Vel.normalized)*(rawSpeed+addedSpeed);
+//					if(d.sendTractionMessages){print("FighterState.Vel:"+FighterState.Vel);}
                     if(d.sendTractionMessages){print("HardAccel-> " + rawSpeed);}
                     if(FighterState.Vel.y > 0)
                     { 	// If climbing, recieve uphill movement penalty.
@@ -1275,7 +1273,6 @@ public class FighterChar : MonoBehaviour
 
     protected void AirControl(float horizontalInput)
     {
-        // Put code here later to stop player from accelerating too much with aircontrol.
         FighterState.Vel += new Vector2(horizontalInput*m.airControlStrength, 0);
     }
         
@@ -1291,6 +1288,10 @@ public class FighterChar : MonoBehaviour
         {
             phys.kneeling = true;
             hInput = 0;
+//			if(v.defaultCameraMode==3)
+//			{
+//				v.cameraMode = 2;
+//			}
         }
 
         if(phys.leftWalled) 	// If going up the left side wall, reverse horizontal input. This makes it so when control scheme is rotated 90 degrees, the key facing the wall will face up always. 
@@ -1358,6 +1359,44 @@ public class FighterChar : MonoBehaviour
             m.timeSpentHanging = 0;
             m.maxTimeHanging = 0;
         }
+
+
+        //
+        // This code block is likely unnecessary
+        // Anti-Jitter code for transitioning to a steep slope that is too steep to climb.
+        //
+        //		if (this.GetSpeed () <= 0.0001f) 
+        //		{
+        //			print ("RIDING WALL SLOWLY, CONSIDERING CORRECTION");
+        //			if ((phys.leftWalled) && (hInput < 0)) 
+        //			{
+        //				if (steepnessAngle >= m.tractionLossMaxAngle) { //If the wall surface the player is running
+        //					print ("Wall steepness of " + steepnessAngle + " was too steep for speed " + this.GetSpeed () + ", stopping.");
+        //					//FighterState.Vel = Vector2.zero;
+        //					phys.leftWallBlocked = true;
+        //					hInput = 0;
+        //					phys.surfaceCling = false;
+        //				}
+        //			} 
+        //			else if ((phys.rightWalled) && (hInput > 0)) 
+        //			{
+        //				print ("Trying to run up right wall slowly.");
+        //				if (steepnessAngle >= m.tractionLossMaxAngle) { //If the wall surface the player is running
+        //					print ("Wall steepness of " + steepnessAngle + " was too steep for speed " + this.GetSpeed () + ", stopping.");
+        //					//FighterState.Vel = Vector2.zero;
+        //					phys.rightWallBlocked = true;
+        //					hInput = 0;
+        //					phys.surfaceCling = false;
+        //				}
+        //			} 
+        //			else 
+        //			{
+        //				print ("Not trying to move up a wall; Continue as normal.");
+        //			}
+        //		}
+
+
+        //print("Wall Steepness Angle:"+steepnessAngle);
 
         ///////////////////
         // Movement code //
@@ -1571,9 +1610,36 @@ public class FighterChar : MonoBehaviour
             //throw new Exception("Existence is suffering");
             if(d.sendCollisionMessages)
             {
-                print("Ground to ground VERTICAL :O");
+                //print("GtG VERTICAL :O");
             }
         }
+
+//		if(phys.ceilinged)
+//		{
+//			if(d.sendCollisionMessages)
+//			{
+//				print("CeilGroundWedge detected during ground collision.");
+//			}
+//			OmniWedge(0,1);
+//		}
+//
+//		if(phys.leftWalled)
+//		{
+//			if(d.sendCollisionMessages)
+//			{
+//				print("LeftGroundWedge detected during ground collision.");
+//			}
+//			OmniWedge(0,2);
+//		}
+//
+//		if(phys.rightWalled)
+//		{
+//			if(d.sendCollisionMessages)
+//			{
+//				print("RightGroundWedge detected during groundcollision.");
+//			}
+//			OmniWedge(0,3);
+//		}
 
         if((GetSteepness(groundCheck2.normal)>=((m.tractionLossMaxAngle+m.tractionLossMinAngle)/2)) && this.GetSpeed()<=0.001f) 
         { //If going slow and hitting a steep slope, don't move to the new surface, and treat the new surface as a wall on that side.
@@ -1648,6 +1714,33 @@ public class FighterChar : MonoBehaviour
 
         m_CeilingNormal = ceilingCheck2.normal;
 
+//		if(phys.grounded)
+//		{
+//			if(d.sendCollisionMessages)
+//			{
+//				print("CeilGroundWedge detected during ceiling collision.");
+//			}
+//			OmniWedge(0,1);
+//		}
+//
+//		if(phys.leftWalled)
+//		{
+//			if(d.sendCollisionMessages)
+//			{
+//				print("LeftCeilWedge detected during ceiling collision.");
+//			}
+//			OmniWedge(2,1);
+//		}
+//
+//		if(phys.rightWalled)
+//		{
+//			if(d.sendCollisionMessages)
+//			{
+//				print("RightGroundWedge detected during ceiling collision.");
+//			}
+//			OmniWedge(3,1);
+//		}
+        //print ("Final Position2:  " + this.transform.position);
         return true;
     }
 
@@ -2132,7 +2225,7 @@ public class FighterChar : MonoBehaviour
     }
 
     protected void AntiTunneler(RaycastHit2D[] contacts)
-    { //Designed to prevent the player from tunneling into objects and getting stuck.
+    {
         bool[] isEmbedded = {false, false, false, false};
         int contactCount = 0;
         if(phys.groundContact){contactCount++;}
@@ -2321,7 +2414,7 @@ public class FighterChar : MonoBehaviour
             {// Multiply/Divide the bottom vector so that its x = -1.
                 if(gPara.x == 0)
                 {
-                    //throw new Exception("Your ground has no horizontalness. What are you even doing?");
+                    //throw new Exception("Your ground has no horizontality. What are you even doing?");
                     return new Vector2(0, embedDistance);
                 }
                 else
@@ -2379,7 +2472,7 @@ public class FighterChar : MonoBehaviour
         }
         //
         // Now, the equation for repositioning two points that are embedded in a corner, so that both points are touching the lines that comprise the corner
-        // In other words, here is the glorious UNWEDGER ALGORITHM.
+        // In other words, here is the glorious UNWEDGER algorithm.
         //
         float B = gPara.y;
         float A = cPara.y;
@@ -2679,7 +2772,7 @@ public class FighterChar : MonoBehaviour
     [SerializeField][ReadOnlyAttribute]public int facingDirectionV; 	// 1 means up, -1 means down, and 0 means horizontal.
     [SerializeField][Range(0,10)]public float reversingSlideT;		// How fast the fighter must be going to go into a slide posture when changing directions.
     [SerializeField][Range(0,1)] public int cameraMode; 			 	// What camera control type is in use.
-    [SerializeField][Range(0,5)] public int defaultCameraMode;		// What camera control type to default to in normal gameplay.
+    [SerializeField][Range(0,1)] public int defaultCameraMode;		// What camera control type to default to in normal gameplay.
     [SerializeField][Range(0,1)] public float cameraXLeashM; 			// How close the player can get to the edge of the screen horizontally. 1 is at the edge, whereas 0 is locked to the center of the screen.
     [SerializeField][Range(0,1)] public float cameraYLeashM; 			// How close the player can get to the edge of the screen horizontally. 1 is at the edge, whereas 0 is locked to the center of the screen.
     [SerializeField][Range(0,1)] public float cameraXLeashLim; 	 	// MUST BE SET HIGHER THAN LEASHM. Same as above, except when it reaches this threshold it instantly stops the camera at the edge rather than interpolating it there.
@@ -2698,7 +2791,7 @@ public class FighterChar : MonoBehaviour
     public void SetDefaults()
     {
         reversingSlideT = 5;			// How fast the fighter must be going to go into a slide posture when changing directions.
-        defaultCameraMode = 0;		// What camera control type to default to in normal gameplay.
+        defaultCameraMode = 1;		// What camera control type to default to in normal gameplay.
         cameraXLeashM = 0.5f; 		// How close the player can get to the edge of the screen horizontally. 1 is at the edge, whereas 0 is locked to the center of the screen.
         cameraYLeashM = 0.5f; 		// How close the player can get to the edge of the screen horizontally. 1 is at the edge, whereas 0 is locked to the center of the screen.
         cameraXLeashLim = 0.8f; 	 	// MUST BE SET HIGHER THAN LEASHM. Same as above, except when it reaches this threshold it instantly stops the camera at the edge rather than interpolating it there.
@@ -2834,7 +2927,7 @@ public class FighterChar : MonoBehaviour
     [Tooltip("Max time the fighter can cling to a wall.")]
     [ReadOnlyAttribute]public float maxTimeHanging;					
 
-    [Tooltip("WARNING: Dangerous to change this. How deep into a surface the character can be before actually colliding with it")]
+    [Tooltip("How deep into objects the character can be before actually colliding with the ")]
     [Range(0,0.5f)][SerializeField]public float maxEmbed;			
 
     [Tooltip("How deep into objects the character will sit by default. A value of zero will cause physics errors because the fighter is not technically *touching* the surface.")]
@@ -2843,8 +2936,6 @@ public class FighterChar : MonoBehaviour
     [Tooltip("How much horizontal movement control the player has while airborne")]
     [Range(0.01f, 0.9f)] [SerializeField] public float airControlStrength;
 
-    [Tooltip("Strength of gravity.")]
-    [Range(0f, 5f)] [SerializeField] public float gravityStrength;
 
     [Space(10)]
 
@@ -2869,7 +2960,7 @@ public class FighterChar : MonoBehaviour
     [Tooltip("Time remaining before the player is treated as airborne upon leaving a surface.")]
     [SerializeField][ReadOnlyAttribute] public float airborneDelayTimer;
 
-    
+
 
     public void SetDefaults()
     {
@@ -2907,7 +2998,7 @@ public class FighterChar : MonoBehaviour
         jumpBufferFrameAmount = 10; 			//Dictates the duration of the jump buffer (in physics frames).
         airborneDelay = 0.5f;                   //Amount of time after leaving the ground that the player behaves as if they are airborne. Prevents jittering caused by small bumps in the environment.
         airControlStrength = 0.05f;
-        gravityStrength = 1f;
+
 }
 }
 [System.Serializable] public struct ObjectRefs 
