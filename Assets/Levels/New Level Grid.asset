@@ -19,7 +19,7 @@ MonoBehaviour:
   dimensions: {x: 1, y: 1}
   currentScene: -1
   levels:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: f560dc22746f8f247b17040d8fe2d3da, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

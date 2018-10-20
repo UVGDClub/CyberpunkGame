@@ -10,7 +10,6 @@ public class TileInfo : MonoBehaviour {
     Vector3 mousePos;
     Vector3Int tilePos;
 
-
     private void Update()
     {
         if(Input.GetMouseButton(0))
@@ -25,7 +24,13 @@ public class TileInfo : MonoBehaviour {
             TileBase tb = levelGrid.levels[levelGrid.curIndex].tilemap.GetTile(tilePos);
 
             if (tb != null)
+            {
                 Debug.Log(tilePos + " " + tb.name);
+                if (tb.name == "breakable")
+                {
+                    levelGrid.levels[levelGrid.curIndex].tilemap.SetTile(tilePos, null);
+                }
+            }
             else
                 Debug.Log("can't get tilebase at " + tilePos);
         }
@@ -42,4 +47,12 @@ public class TileInfo : MonoBehaviour {
         Gizmos.DrawWireCube(mousePos, levelGrid.levels[levelGrid.curIndex].grid.cellSize);
     }
 
+
+    /*
+     * SwapTile for prisoner breakout -- swaps all tiles of <tilebase>A on a tilemap with <tilebase>B
+     * 
+     * SetTiles for breakable walls -- swap tile <tilebase>A at position with <tilebase>B
+     * 
+     * 
+     */ 
 }

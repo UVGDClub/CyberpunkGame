@@ -123,7 +123,7 @@ Prefab:
     - target: {fileID: 8195094281453953230, guid: 0efd29d24361df347afb1d182f1b85bb,
         type: 2}
       propertyPath: m_Tiles.Array.size
-      value: 31
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4363117744572902, guid: 0efd29d24361df347afb1d182f1b85bb, type: 2}
       propertyPath: m_LocalPosition.x
@@ -285,7 +285,7 @@ Prefab:
     - target: {fileID: 8195094281453953230, guid: 0efd29d24361df347afb1d182f1b85bb,
         type: 2}
       propertyPath: m_TileAssetArray.Array.data[10].m_RefCount
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8195094281453953230, guid: 0efd29d24361df347afb1d182f1b85bb,
         type: 2}
@@ -295,12 +295,12 @@ Prefab:
     - target: {fileID: 8195094281453953230, guid: 0efd29d24361df347afb1d182f1b85bb,
         type: 2}
       propertyPath: m_TileSpriteArray.Array.data[10].m_RefCount
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8195094281453953230, guid: 0efd29d24361df347afb1d182f1b85bb,
         type: 2}
       propertyPath: m_TileMatrixArray.Array.data[2].m_RefCount
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8195094281453953230, guid: 0efd29d24361df347afb1d182f1b85bb,
         type: 2}
@@ -310,7 +310,7 @@ Prefab:
     - target: {fileID: 8195094281453953230, guid: 0efd29d24361df347afb1d182f1b85bb,
         type: 2}
       propertyPath: m_TileColorArray.Array.data[0].m_RefCount
-      value: 31
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 8195094281453953230, guid: 0efd29d24361df347afb1d182f1b85bb,
         type: 2}
@@ -2358,6 +2358,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4363117744572902, guid: 0efd29d24361df347afb1d182f1b85bb,
     type: 2}
   m_PrefabInternal: {fileID: 645016577}
+--- !u!1839735485 &645016579 stripped
+Tilemap:
+  m_CorrespondingSourceObject: {fileID: 8195094281453953230, guid: 0efd29d24361df347afb1d182f1b85bb,
+    type: 2}
+  m_PrefabInternal: {fileID: 645016577}
 --- !u!1 &1934246348
 GameObject:
   m_ObjectHideFlags: 0
@@ -2367,6 +2372,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1934246350}
   - component: {fileID: 1934246349}
+  - component: {fileID: 1934246351}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -2399,3 +2405,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1934246351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1934246348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0ce384352f67674bbdf8dc27e9c99e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  level: {fileID: 11400000, guid: 54f46552056977248ad51e70f58417ab, type: 2}
+  grid: {fileID: 1934246349}
+  tilemap: {fileID: 645016579}

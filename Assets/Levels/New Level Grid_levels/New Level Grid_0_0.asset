@@ -11,8 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd90533f010671045bbf784430d53d29, type: 3}
   m_Name: New Level Grid_0_0
   m_EditorClassIdentifier: 
-  sceneIndex: -1
-  scene: {fileID: 0}
+  sceneIndex: 16
+  scene: {fileID: 102900000, guid: 131b9481e3524644b8218b3d1617c006, type: 3}
   loadSceneMode: 1
   audioSettings:
     clip: {fileID: 0}

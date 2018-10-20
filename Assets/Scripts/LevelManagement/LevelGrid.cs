@@ -40,6 +40,7 @@ public class LevelGrid : ScriptableObject {
 
     [HideInInspector] public Grid grid;
     [HideInInspector] public UnityEngine.Tilemaps.Tilemap tilemap;
+    [HideInInspector] public TileInfo tileInfo;
 
     public void InitializeActiveGrid(PlayerSpawnInfo spawn)
     {
@@ -51,8 +52,7 @@ public class LevelGrid : ScriptableObject {
         curIndex = Position.x + dimensions.x * Position.y;
         currentScene = levels[curIndex].sceneIndex;
         LoadLevel(curIndex);
-        activeScenes.Add(currentScene, Position);
-        
+        activeScenes.Add(currentScene, Position);        
 
         Debug.Log("levels length: " + levels.Length);
         Debug.Log("EditorBuildSettingsSceneLength: " + EditorBuildSettings.scenes.Length);

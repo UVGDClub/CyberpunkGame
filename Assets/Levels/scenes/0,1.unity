@@ -2358,6 +2358,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4363117744572902, guid: 0efd29d24361df347afb1d182f1b85bb,
     type: 2}
   m_PrefabInternal: {fileID: 1286949983}
+--- !u!1839735485 &1286949985 stripped
+Tilemap:
+  m_CorrespondingSourceObject: {fileID: 8195094281453953230, guid: 0efd29d24361df347afb1d182f1b85bb,
+    type: 2}
+  m_PrefabInternal: {fileID: 1286949983}
 --- !u!1 &1693980841
 GameObject:
   m_ObjectHideFlags: 0
@@ -2368,6 +2373,7 @@ GameObject:
   - component: {fileID: 1693980843}
   - component: {fileID: 1693980842}
   - component: {fileID: 1693980844}
+  - component: {fileID: 1693980845}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -2415,3 +2421,17 @@ MonoBehaviour:
   level: {fileID: 11400000, guid: f73a0783a3a84774097559adce370cb8, type: 2}
   colour: {r: 1, g: 0, b: 0.08614111, a: 1}
   scale: 0.1
+--- !u!114 &1693980845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1693980841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0ce384352f67674bbdf8dc27e9c99e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  level: {fileID: 11400000, guid: f73a0783a3a84774097559adce370cb8, type: 2}
+  grid: {fileID: 1693980842}
+  tilemap: {fileID: 1286949985}

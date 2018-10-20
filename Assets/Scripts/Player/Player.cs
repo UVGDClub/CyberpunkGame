@@ -47,7 +47,9 @@ public class Player : MonoBehaviour
         struckState.player = this;
         idleState.player = this;
         moveState.player = this;
-        stateMachine = new StateMachine(idleState); 
+        stateMachine = new StateMachine(idleState);
+
+        FindObjectOfType<TileInfo>().levelGrid = levelgrid;
     }
 
     private void Start()

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311918, g: 0.3807398, b: 0.35872716, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2352,6 +2352,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4363117744572902, guid: 0efd29d24361df347afb1d182f1b85bb,
     type: 2}
   m_PrefabInternal: {fileID: 127225193}
+--- !u!1839735485 &127225195 stripped
+Tilemap:
+  m_CorrespondingSourceObject: {fileID: 8195094281453953230, guid: 0efd29d24361df347afb1d182f1b85bb,
+    type: 2}
+  m_PrefabInternal: {fileID: 127225193}
 --- !u!1 &1952583150
 GameObject:
   m_ObjectHideFlags: 0
@@ -2361,6 +2366,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1952583152}
   - component: {fileID: 1952583151}
+  - component: {fileID: 1952583153}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -2393,3 +2399,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1952583153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1952583150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0ce384352f67674bbdf8dc27e9c99e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  level: {fileID: 11400000, guid: c39b50533111f064b980102abf7efcd0, type: 2}
+  grid: {fileID: 1952583151}
+  tilemap: {fileID: 127225195}
