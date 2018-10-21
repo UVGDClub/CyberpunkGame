@@ -16,6 +16,13 @@ public class Player : MonoBehaviour
     public float moveSpeed = 3f;
     public float jumpForce = 5f;
     public int maxJumpIterations = 5;
+    public Direction facing = Direction.Right;
+
+    [Header("Attack")]
+    public Vector2 attackBoxSize = Vector2.one;
+    public ContactFilter2D attackFilter = new ContactFilter2D();
+    public float maxAttackDistance = 1f;
+    public LayerMask attackLayerMask;
 
     [Header("Collision")]
     public BoxCollider2D collider;
@@ -86,6 +93,8 @@ public class Player : MonoBehaviour
     {
         if (dir == 0)
             return Vector2.zero;
+
+        facing = dir < 0 ? Direction.Left : Direction.Right;
 
         Vector2 raycastOrigin = dir < 0 ? new Vector2(-collider.bounds.extents.x, -collider.bounds.extents.y) : new Vector2(collider.bounds.extents.x, -collider.bounds.extents.y);
 
@@ -167,6 +176,13 @@ public class Player : MonoBehaviour
                 yield return null;
             }
         }
+    }
+
+    //for testing
+    public void RESET_GAME()
+    {
+        levelgrid.CrossfadeBGM -= FindObjectOfType<AudioManager>().CrossFade;
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Init");
     }
 
 }

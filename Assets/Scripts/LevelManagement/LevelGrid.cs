@@ -24,7 +24,7 @@ public class LevelGrid : ScriptableObject {
                 return;
 
             position = value;
-            if(CrossfadeBGM != null && levels[Position.x + dimensions.x * Position.y].audioSettings.clip != null )
+            if(CrossfadeBGM != null && levels[Position.x + dimensions.x * Position.y].audioSettings.clip != null)
             {
                 CrossfadeBGM(levels[Position.x + dimensions.x * Position.y].audioSettings);
             }

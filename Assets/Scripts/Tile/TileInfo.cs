@@ -10,6 +10,7 @@ public class TileInfo : MonoBehaviour {
     Vector3 mousePos;
     Vector3Int tilePos;
 
+    //@TODO Implement checking only if tilemap contains special tile of type using tilemap.ContainsTile
     private void Update()
     {
         if(Input.GetMouseButton(0))
@@ -20,19 +21,13 @@ public class TileInfo : MonoBehaviour {
             Debug.Log("mouse x,y at tilemap z pos = " + mousePos);
 
             tilePos = levelGrid.levels[levelGrid.curIndex].grid.WorldToCell(mousePos);
-            //grid.CellToWorld(tilePos);
-            TileBase tb = levelGrid.levels[levelGrid.curIndex].tilemap.GetTile(tilePos);
 
-            if (tb != null)
-            {
-                Debug.Log(tilePos + " " + tb.name);
-                if (tb.name == "breakable")
-                {
-                    levelGrid.levels[levelGrid.curIndex].tilemap.SetTile(tilePos, null);
-                }
-            }
-            else
-                Debug.Log("can't get tilebase at " + tilePos);
+            TileBase tile = levelGrid.levels[levelGrid.curIndex].tilemap.GetTile(tilePos);
+
+            if (tile == null)
+                return;
+
+            Debug.Log(tile.name + " " + tilePos);            
         }
     }
 
@@ -53,6 +48,6 @@ public class TileInfo : MonoBehaviour {
      * 
      * SetTiles for breakable walls -- swap tile <tilebase>A at position with <tilebase>B
      * 
-     * 
+     * could use TilemapCollider.getContacts to find out where what's touching and where
      */ 
 }
