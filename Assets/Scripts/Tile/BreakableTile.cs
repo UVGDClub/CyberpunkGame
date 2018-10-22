@@ -14,7 +14,7 @@ namespace UnityEngine.Tilemaps
     [CreateAssetMenu(fileName = "New Breakable Tile", menuName = "Tiles/Breakable Tile")]
     public class BreakableTile : Tile
     {
-        [SerializeField] public GameObject m_Prefab;
+        [SerializeField] public GameObject prefab;
 
         [Tooltip("sprites[0] is the initial, unbroken sprite, sprites[1]...[n] are animated, ending on sprite[n] when the tile is 'broken'.")]
         public Sprite[] sprites;
@@ -43,7 +43,7 @@ namespace UnityEngine.Tilemaps
             framewait = new WaitForSeconds(1 / frameDelta);
 
             if (go == null)
-                go = Instantiate(m_Prefab);
+                go = Instantiate(prefab);
 
             Tilemap map = tilemap.GetComponent<Tilemap>();
 
@@ -53,10 +53,14 @@ namespace UnityEngine.Tilemaps
 
         public override void GetTileData(Vector3Int location, ITilemap tileMap, ref TileData tileData)
         {
-            tileData.sprite = null;
+            if (Application.isPlaying)
+                tileData.sprite = null;
+            else            
+                tileData.sprite = sprites[0];
+
             tileData.color = this.color;
             tileData.transform = this.transform;
-            tileData.gameObject = m_Prefab;
+            tileData.gameObject = prefab;
             tileData.flags = this.flags;
 
             tileData.colliderType = this.colliderType;
@@ -72,6 +76,9 @@ namespace UnityEngine.Tilemaps
     [CustomEditor(typeof(BreakableTile))]
     public class LevelGridEditorGUI : Editor
     {
+        bool showSprites = false;
+        bool showColours = false;
+
         public BreakableTile Target
         {
             get { return this.target as BreakableTile; }
@@ -79,9 +86,52 @@ namespace UnityEngine.Tilemaps
 
         public override void OnInspectorGUI()
         {
-            DrawDefaultInspector();
-            //RenderStaticPreview(AssetDatabase.GetAssetPath(Target.sprite[0].GetInstanceID()), null, Target.sprite[0].texture.width, Target.sprite[0].texture.height);
+            //Target.sprite = (Sprite)EditorGUILayout.ObjectField("Sprite (usually leave null)", Target.sprite, typeof(Sprite), false);
+
+            SerializedObject soTarget = new SerializedObject(Target);
+
+            SerializedProperty spPrefab = soTarget.FindProperty("prefab");
+            EditorGUILayout.ObjectField(spPrefab);
+
+            SerializedProperty spSprites = soTarget.FindProperty("sprites");
+            EditorGUILayout.BeginHorizontal();
+            showSprites = EditorGUILayout.Foldout(showSprites, "Sprites");
+            EditorGUILayout.IntField(spSprites.arraySize);
+            EditorGUILayout.EndHorizontal();
+
+            if(showSprites)
+            {
+                for (int i = 0; i < spSprites.arraySize; i++)
+                {
+                    GUIContent label = new GUIContent(((Sprite)spSprites.GetArrayElementAtIndex(i).objectReferenceValue).texture);
+                    EditorGUILayout.ObjectField(spSprites.GetArrayElementAtIndex(i), typeof(Sprite), label);
+                }
+            }
+
+            Target.lerpColour = EditorGUILayout.Toggle("Lerp Colours", Target.lerpColour);
+
+            SerializedProperty spColours = soTarget.FindProperty("colourTransition");
+
+            EditorGUILayout.BeginHorizontal();
+            showColours = EditorGUILayout.Foldout(showColours, "Transition Colours");
+            EditorGUILayout.IntField(spColours.arraySize);
+            EditorGUILayout.EndHorizontal();
+
+            if(showColours)
+            {
+                for(int i = 0; i < spColours.arraySize; i++)
+                {
+                    EditorGUILayout.ColorField(spColours.GetArrayElementAtIndex(i).colorValue);
+                }
+            }
+
+            Target.colliderType = (Tile.ColliderType)EditorGUILayout.EnumPopup("Collider Type", Target.colliderType);
+            Target.frameDelta = EditorGUILayout.IntSlider(Target.frameDelta, 0, 60);
+            Target.nullWhenBroken = EditorGUILayout.Toggle("Null When Broken", Target.nullWhenBroken);
+            
+            soTarget.ApplyModifiedProperties();
             EditorUtility.SetDirty(Target);
+
             Repaint();
         }
 

@@ -13,11 +13,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneRefPrefab: {fileID: 114548597771973104, guid: 4d4b1fd89d278b3419d2626d6b81727d,
     type: 2}
-  activeRadius: 1
-  curIndex: 1
-  position: {x: 1, y: 0}
+  activeRadius: 9
+  curIndex: 11
+  position: {x: 1, y: 2}
   dimensions: {x: 5, y: 5}
-  currentScene: 3
+  currentScene: 5
   levels:
   - {fileID: 11400000, guid: add9a4e124f8979439e210f78f26e721, type: 2}
   - {fileID: 11400000, guid: 730cf0ea579e6b34db4cd4f940bd8df6, type: 2}
@@ -46,3 +46,4 @@ MonoBehaviour:
   - {fileID: 0}
   grid: {fileID: 0}
   tilemap: {fileID: 0}
+  tileInfo: {fileID: 0}
