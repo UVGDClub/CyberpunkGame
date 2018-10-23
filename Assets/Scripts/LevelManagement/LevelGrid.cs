@@ -62,7 +62,7 @@ public class LevelGrid : ScriptableObject {
         {
             if (x < 0 || x >= dimensions.x)
             {
-                Debug.Log("x: " + x + " outside bounds");
+                //Debug.Log("x: " + x + " outside bounds");
                 continue;
             }
 
@@ -70,7 +70,7 @@ public class LevelGrid : ScriptableObject {
             {
                 if (y < 0 || y >= dimensions.y)
                 {
-                    Debug.Log("y: " + y + " outside bounds");
+                    //Debug.Log("y: " + y + " outside bounds");
                     continue;
                 }
 
@@ -80,26 +80,26 @@ public class LevelGrid : ScriptableObject {
 
                 if (levels[index] == null)
                 {
-                    Debug.Log("level at x,y: " + x + ", " + y + " is null");
+                    //Debug.Log("level at x,y: " + x + ", " + y + " is null");
                     continue;
                 }
                 if (levels[index].scene == null)
                 {
-                    Debug.Log("level at x, y: " + x + ", " + y + " scene is null");
+                    //Debug.Log("level at x, y: " + x + ", " + y + " scene is null");
                     continue;
                 }
                 if (levels[index].sceneIndex < 0)
                 {
-                    Debug.Log("scene index at x,y: " + x + ", " + y + " is " + levels[index].sceneIndex);
+                    //Debug.Log("scene index at x,y: " + x + ", " + y + " is " + levels[index].sceneIndex);
                     continue;
                 }
 
                 if (levels[index].sceneIndex >= EditorBuildSettings.scenes.Length)
                 {
-                    Debug.Log("scene index at x,y " + x + ", " + y + " is " + levels[index].sceneIndex + " >= build order length" + EditorBuildSettings.scenes.Length);
+                    //Debug.Log("scene index at x,y " + x + ", " + y + " is " + levels[index].sceneIndex + " >= build order length" + EditorBuildSettings.scenes.Length);
                     continue;
                 }
-                Debug.Log("loading " + levels[index].scene.name + " at buildIndex: " + levels[index].sceneIndex);
+                //Debug.Log("loading " + levels[index].scene.name + " at buildIndex: " + levels[index].sceneIndex);
 
                 activeScenes.Add(levels[index].sceneIndex, new Vector2Int(x, y));
                 LoadLevel(index);

@@ -31,39 +31,47 @@ namespace UnityEngine.Tilemaps
         [Tooltip("When this tile is broken, set the tile to null in the tileset (do this if you want no sprite in place as the end result).")]
         public bool nullWhenBroken = true;
 
-        [HideInInspector] public WaitForSeconds framewait;
+        public AudioClip breakSFX;
 
-        /*private void OnEnable()
-        {
-            sprite = sprites[0];
-        }*/
+        [HideInInspector] public WaitForSeconds framewait;
 
         public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go)
         {
             framewait = new WaitForSeconds(1 / frameDelta);
 
-            if (go == null)
+            if (Application.isPlaying)
                 go = Instantiate(prefab);
 
             Tilemap map = tilemap.GetComponent<Tilemap>();
+            go.transform.position = map.CellToWorld(position) + Vector3.up * 0.5f * map.cellSize.y + Vector3.right * 0.5f * map.cellSize.x;
 
-            go.transform.position = map.CellToWorld(position) + Vector3.up * 0.16f + Vector3.right * 0.16f;
-            return base.StartUp(position, tilemap, go);
+            if (Application.isPlaying)
+                go.transform.parent = map.transform;
+
+            if (!EditorApplication.isPlayingOrWillChangePlaymode)
+                return base.StartUp(position, tilemap, null);
+
+            map.RefreshTile(position);  //Refresh the tile so that the sprite is null
+
+            return true; // base.StartUp(position, tilemap, null);
         }
 
         public override void GetTileData(Vector3Int location, ITilemap tileMap, ref TileData tileData)
         {
-            if (Application.isPlaying)
-                tileData.sprite = null;
-            else            
-                tileData.sprite = sprites[0];
+            if (!EditorApplication.isPlayingOrWillChangePlaymode)
+                tileData.sprite = sprites[0];             
+            else
+                tileData.sprite = null;                
 
             tileData.color = this.color;
             tileData.transform = this.transform;
-            tileData.gameObject = prefab;
+
+            tileData.gameObject = this.prefab;
+
             tileData.flags = this.flags;
 
             tileData.colliderType = this.colliderType;
+
         }
 
         public override bool GetTileAnimationData(Vector3Int location, ITilemap tileMap, ref TileAnimationData tileAnimationData)
@@ -87,6 +95,8 @@ namespace UnityEngine.Tilemaps
         public override void OnInspectorGUI()
         {
             //Target.sprite = (Sprite)EditorGUILayout.ObjectField("Sprite (usually leave null)", Target.sprite, typeof(Sprite), false);
+
+            Target.sprite = null;
 
             SerializedObject soTarget = new SerializedObject(Target);
 
@@ -124,11 +134,14 @@ namespace UnityEngine.Tilemaps
                     EditorGUILayout.ColorField(spColours.GetArrayElementAtIndex(i).colorValue);
                 }
             }
-
-            Target.colliderType = (Tile.ColliderType)EditorGUILayout.EnumPopup("Collider Type", Target.colliderType);
-            Target.frameDelta = EditorGUILayout.IntSlider(Target.frameDelta, 0, 60);
-            Target.nullWhenBroken = EditorGUILayout.Toggle("Null When Broken", Target.nullWhenBroken);
             
+            Target.colliderType = (Tile.ColliderType)EditorGUILayout.EnumPopup("Collider Type", Target.colliderType);
+            Target.frameDelta = EditorGUILayout.IntSlider("Frame Delta", Target.frameDelta, 0, 60);
+            Target.nullWhenBroken = EditorGUILayout.Toggle("Null When Broken", Target.nullWhenBroken);
+
+            SerializedProperty spSFX = soTarget.FindProperty("breakSFX");
+            EditorGUILayout.ObjectField(spSFX);
+
             soTarget.ApplyModifiedProperties();
             EditorUtility.SetDirty(Target);
 

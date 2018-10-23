@@ -33,7 +33,7 @@ MonoBehaviour:
   m_InstancedGameObject: {fileID: 1330159672299058, guid: 7546b56b96c5d264481fddabeb3412c2,
     type: 2}
   m_Flags: 2
-  m_ColliderType: 1
+  m_ColliderType: 0
   prefab: {fileID: 1330159672299058, guid: 7546b56b96c5d264481fddabeb3412c2, type: 2}
   sprites:
   - {fileID: 21300000, guid: 532eef4c40bf2a44984e90bdaffa44df, type: 3}
@@ -48,3 +48,4 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   frameDelta: 6
   nullWhenBroken: 1
+  breakSFX: {fileID: 8300000, guid: e3128690b48cfcf4c91421fd09ee5959, type: 3}

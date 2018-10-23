@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour {
 
+    public static AudioManager instance = null;
+
     public AudioSource sfx;
     public AudioSource activeBGM;
     public AudioSource inactiveBGM;
@@ -17,6 +19,11 @@ public class AudioManager : MonoBehaviour {
 
     private void Awake()
     {
+        if (instance != null)
+            Destroy(this);
+
+        instance = this;
+
         Player player = FindObjectOfType<Player>();
         if (player != null)
         {

@@ -81,7 +81,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b62aba0698f13f49aa23c240a4dba72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileRef: {fileID: 11400000, guid: d1bb83c312cc2164daed7f0e1996a450, type: 2}
+  tileRef: {fileID: 11400000, guid: 69b31767ed75e254fa3f7e8fc40e84d5, type: 2}
   spriteRenderer: {fileID: 212810446583470746}
 --- !u!212 &212810446583470746
 SpriteRenderer:

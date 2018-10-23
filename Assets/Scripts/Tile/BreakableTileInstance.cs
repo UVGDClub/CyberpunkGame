@@ -18,7 +18,9 @@ public class BreakableTileInstance : MonoBehaviour {
 
     public IEnumerator BreakTile()
     {
-        
+        if (tileRef.breakSFX != null)
+            AudioManager.instance.PlaySFX(tileRef.breakSFX);
+
         int index = 1;
         while (index < tileRef.sprites.Length)
         {
