@@ -47,8 +47,7 @@ namespace UnityEngine.Tilemaps
 
             if (Application.isPlaying)
                 go.transform.parent = map.transform;
-
-            if (!EditorApplication.isPlayingOrWillChangePlaymode)
+            else
                 return base.StartUp(position, tilemap, null);
 
             map.RefreshTile(position);  //Refresh the tile so that the sprite is null
@@ -58,10 +57,10 @@ namespace UnityEngine.Tilemaps
 
         public override void GetTileData(Vector3Int location, ITilemap tileMap, ref TileData tileData)
         {
-            if (!EditorApplication.isPlayingOrWillChangePlaymode)
-                tileData.sprite = sprites[0];             
+            if (Application.isPlaying)
+                tileData.sprite = null;
             else
-                tileData.sprite = null;                
+                tileData.sprite = sprites[0];
 
             tileData.color = this.color;
             tileData.transform = this.transform;
