@@ -44,7 +44,7 @@ public class BreakableTileInstance : MonoBehaviour {
         if (index < 0 || index > tileRef.sprites.Length)
             return;
 
-        Debug.Log("Updating sprite, index = " + index);
+        //Debug.Log("Updating sprite, index = " + index);
 
         spriteRenderer.sprite = tileRef.sprites[index];
 

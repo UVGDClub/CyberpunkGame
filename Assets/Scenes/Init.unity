@@ -2038,6 +2038,10 @@ Prefab:
       propertyPath: maxAttackDistance
       value: 0.15
       objectReference: {fileID: 0}
+    - target: {fileID: 1614648830056780, guid: cd75af5db10fde9479c1f4a6e86884e7, type: 2}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd75af5db10fde9479c1f4a6e86884e7, type: 2}
   m_IsPrefabAsset: 0

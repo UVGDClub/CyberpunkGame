@@ -136,7 +136,7 @@ public class LevelGrid : ScriptableObject {
                 
         }
 
-        Debug.Log(newPosition + " - " + Position + " = " + (newPosition - Position));
+        //Debug.Log(newPosition + " - " + Position + " = " + (newPosition - Position));
 
         UpdateActiveGrid(newPosition - Position);
         currentScene = otherIndex;
@@ -155,12 +155,12 @@ public class LevelGrid : ScriptableObject {
     /// <param name="offset"></param>    
     public void UpdateActiveGrid(Vector2Int offset)
     {
-        Debug.Log("offset: " + offset);
+        //Debug.Log("offset: " + offset);
 
-        Debug.Log("\nbefore applying offset, pos = " + Position);
+        //Debug.Log("\nbefore applying offset, pos = " + Position);
         Position += offset;
         curIndex = position.x + dimensions.x * position.y;
-        Debug.Log("after applying offset, pos = " + Position);
+        //Debug.Log("after applying offset, pos = " + Position);
 
         switch (offset.x)
         {

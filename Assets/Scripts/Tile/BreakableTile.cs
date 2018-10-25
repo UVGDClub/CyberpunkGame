@@ -81,7 +81,7 @@ namespace UnityEngine.Tilemaps
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(BreakableTile))]
-    public class LevelGridEditorGUI : Editor
+    public class BreakableTileEditorGUI : Editor
     {
         bool showSprites = false;
         bool showColours = false;

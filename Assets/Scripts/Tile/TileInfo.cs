@@ -6,16 +6,62 @@ using UnityEditor;
 
 public class TileInfo : MonoBehaviour {
 
+    Player player;
+    Vector3Int playerCellPosition;
     public LevelGrid levelGrid;
 
     Vector3 mousePos;
     Vector3Int tilePos;
-    
 
-    //@TODO Implement checking only if tilemap contains special tile of type using tilemap.ContainsTile
+    OccludableTile occludableTile;
+    bool activeOcclusion = false;
+    int occludedLevelIndex;
+    Vector3Int occludedTilePos;
+    List<Vector3Int> visited = new List<Vector3Int>();
+
+    private void Start()
+    {
+        player = FindObjectOfType<Player>();
+        StartCoroutine(HandleOccludableTiles());
+    }
+
+    IEnumerator HandleOccludableTiles()
+    {
+        while (levelGrid.levels[levelGrid.curIndex] == null || levelGrid.levels[levelGrid.curIndex].grid == null)
+            yield return null;
+
+        while(true)
+        {
+            playerCellPosition = levelGrid.levels[levelGrid.curIndex].grid.WorldToCell(player.rigidbody2d.position);
+            if (!activeOcclusion)
+            {
+                if (levelGrid.levels[levelGrid.curIndex].tilemap.GetTile<OccludableTile>(playerCellPosition))
+                {
+                    visited.Clear();
+                    occludableTile = (OccludableTile)levelGrid.levels[levelGrid.curIndex].tilemap.GetTile(playerCellPosition);
+                    occludableTile.Occlude(playerCellPosition, levelGrid.levels[levelGrid.curIndex].tilemap, true, visited);
+                    activeOcclusion = true;
+                    occludedLevelIndex = levelGrid.curIndex;
+                    occludedTilePos = playerCellPosition;
+                }
+            }
+            else if (occludedLevelIndex > 0)
+            {
+                if (!levelGrid.levels[occludedLevelIndex].tilemap.GetTile<OccludableTile>(playerCellPosition))
+                {
+                    visited.Clear();
+                    occludableTile.Occlude(occludedTilePos, levelGrid.levels[occludedLevelIndex].tilemap, false, visited);
+                    activeOcclusion = false;
+                }
+            }
+            yield return null;
+        }
+    }
+
+    //FOR DEBUGGING
     private void Update()
     {
-        if(Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0))
         {
             //Debug.Log(Input.mousePosition);
             mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
