@@ -8,8 +8,7 @@ public class ZombProjectile : MonoBehaviour {
 
     private int damage;
     private bool goRight;
-    private bool useBlood;
-    private GameObject blood;
+
 
     private Vector2 rightVelo;
     private Vector2 leftVelo;
@@ -57,16 +56,13 @@ public class ZombProjectile : MonoBehaviour {
      * completed once player script is done
      */
     {
-        if (useBlood)
-        {
-            Instantiate(blood, theHit.otherCollider.transform.position, transform.rotation);
-        }
+        Debug.Log("Player damaged by bullet");
         //theHit.otherCollider.gameObject.GetComponent<Player>().addDamage(damage);
         DestroyProjectile();
     }
 
     public void SetVars(float velo, int dmg, bool goRight, float horizBase, 
-        float vertBase, bool useBlood, GameObject blood = null)
+        float vertBase)
     /*
      * sets variables passed from whoever created the object with this script attached
      * This should be done once at the moment it is instantiated so this will also
@@ -75,8 +71,6 @@ public class ZombProjectile : MonoBehaviour {
     {
         this.damage = dmg;
         this.goRight = goRight;
-        this.useBlood = useBlood;
-        this.blood = blood;
         rightVelo = new Vector2(horizBase*velo, vertBase*velo);
         leftVelo = new Vector2(-horizBase*velo, vertBase*velo);
 

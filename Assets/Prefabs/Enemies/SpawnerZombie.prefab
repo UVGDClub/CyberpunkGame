@@ -200,29 +200,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 1
-  runSpeed: 3
-  agroDist: 0
+  damagedDuration: 2
   health: 5
-  damage: 1
+  deathDuration: 1
+  damageTest: 0
+  agroDist: 2
   overHeadThreshold: 1.2
   underFootThreshold: 2.5
+  checkIfFacingPlayer: 1
   attackSlowAmount: 2
   displacementAmount: 0.9
+  timeForAttackAnim: 0.35
   attackRecoilTime: 0.35
-  damagedAnimDuration: 0.5
-  decompositionTime: 2
-  bloodEffect: {fileID: 1392957193795438, guid: 714a3928552bc014a9b8e37c36620b9f,
-    type: 2}
-  checkIfFacingPlayer: 1
+  damageAmount: 0
+  runSpeed: 3
   suicidesForPlayer: 1
-  useBloodEffect: 1
-  stopWhileHit: 1
-  TakingDamageTest: 0
-  zombToSpawn: {fileID: 1321113354926646, guid: b6a968b7c6c8f85419b66bfcb0148166,
-    type: 2}
+  birthDelay: 0.8
+  zombToSpawn: SpawnerZombie
   birthEffect: {fileID: 1392957193795438, guid: b4bb3b385afcbb649bf2c266bd90e69a,
     type: 2}
-  testingForDeath: 0
 --- !u!212 &212736241808451476
 SpriteRenderer:
   m_ObjectHideFlags: 1

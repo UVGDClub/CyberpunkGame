@@ -4,19 +4,29 @@ using UnityEngine;
 
 namespace Enemy
 {
-    public class RangedZombie : PatrolZombie
+    public class RangedZombie : PatrolAttacker
     {
         [Header("RangedThings")]
+        [Tooltip("rate of shooting bullets, higher number means faster shooting. *Note changing it mid game won't change it")]
         public float fireRate = 0.75f;
+        [Tooltip("speed multiplier of bullet, keep it pretty big, like more than 100")]
         public float bulletSpeed = 120;
+        public int bulletDamage = 1;
+        [Tooltip("vertical component of speed of bullet")]
         public float baseVertSpeed = 1;
+        [Tooltip("horizontal component of speed of bullet")]
         public float baseHorizSpeed = 2;
+        [Tooltip("used to check if player was recently in range, probably don't change this")]
+        public float smallTimeAmount = 0.1f;
         public GameObject projectile;
 
 
         private Transform leftFirePos;
         private Transform rightFirePos;
         private Quaternion rotator;
+        private float lastTime = -1;
+        private float trueFireRate;
+        private float timeKeeper = 0;
 
         private new void Start()
         {
@@ -32,51 +42,30 @@ namespace Enemy
                     rightFirePos = child;
                 }
             }
-            fireRate = 1 / fireRate;
+            trueFireRate = 1 / fireRate;
             rotator.SetEulerAngles(0, 0, 1.57f);
         }
 
         public override void Update()
         {
-            if (IsPlayerInRange())
-            {
-                canAttack = false;
-                //^otherwise will keep walking while firing 
-                //and isn't use for anything else here
-            }
-            else
-            {
-                canAttack = true;
-            }
             base.Update();
         }
 
         protected override void AttackPattern()
         /*
          *is called whenever player is within agro range
-         * can check whichever of the three overriding favtors you want.
-         * Each will cause their respective condition to override the attack
-         * command
+         * 
          */
         {
-            if (StopForDmg())
+            if((Time.time - lastTime > smallTimeAmount) || lastTime == -1)
             {
-                return;
-            }
-
-            if (AboveHead() || BelowFeet() || !IsFacingPlayer())
-            {
-                canAttack = true;
                 timeKeeper = 0;
-                PatrolMove();
             }
-            else if(!StopForDmg())
-            {
-                RangedAttack();
-            }
+            lastTime = Time.time;
+
+            RangedAttack();
         }
 
-        private float timeKeeper = 0;
         public void RangedAttack()
         {
 
@@ -84,8 +73,8 @@ namespace Enemy
             SetAnimParameter(AnimParams.moveState, 0);
             SetAnimParameter(AnimParams.attackState, (GetAnimParameter<int>(AnimParams.attackState) + 1) % 3);
 
-            bool playerToRight = GetPlayerToRight();
-            if (timeKeeper > fireRate)
+            bool playerToRight = IsPlayerToRight();
+            if (timeKeeper > trueFireRate)
             {
                 FireProjectile(playerToRight);
                 timeKeeper = 0;
@@ -109,22 +98,7 @@ namespace Enemy
                 tempObj = Instantiate(projectile, leftFirePos.transform.position, rotator);
             }
             tempObj.GetComponent<ZombProjectile>().
-                SetVars(bulletSpeed, damage, rightSide, baseHorizSpeed, baseVertSpeed, 
-                useBloodEffect, bloodEffect);
+                SetVars(bulletSpeed, bulletDamage, rightSide, baseHorizSpeed, baseVertSpeed);
         }
-
-
-        protected override void OnCollisionEnter2D(Collision2D collision)
-        /*
-         * on a collision this enemy dies
-         */
-        {
-
-            if (IsItPlayer(collision))
-            {
-                EnemyDead();
-            }
-        }
-       
     }
 }

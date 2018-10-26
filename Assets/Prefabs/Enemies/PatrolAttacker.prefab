@@ -23,29 +23,14 @@ GameObject:
   - component: {fileID: 61610381551862178}
   - component: {fileID: 61690136776453400}
   - component: {fileID: 61654303763010736}
-  - component: {fileID: 114983909845720658}
+  - component: {fileID: 114697187021935402}
   m_Layer: 9
-  m_Name: RangedZombie
-  m_TagString: Enemy
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!1 &1420544468937278
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4219635845396478}
-  m_Layer: 9
-  m_Name: leftFirePoint
+  m_Name: PatrolAttacker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1571089075643510
 GameObject:
   m_ObjectHideFlags: 0
@@ -63,34 +48,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1971151059377890
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4502399656386912}
-  m_Layer: 9
-  m_Name: rightFirePoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4219635845396478
-Transform:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1420544468937278}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.17, y: 0.92, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4850258446545622}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4283896721570040
 Transform:
   m_ObjectHideFlags: 1
@@ -104,19 +61,6 @@ Transform:
   m_Father: {fileID: 4850258446545622}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4502399656386912
-Transform:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1971151059377890}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.17, y: 0.92, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4850258446545622}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4850258446545622
 Transform:
   m_ObjectHideFlags: 1
@@ -124,12 +68,10 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1303623940138274}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.331312, y: -5.88033, z: 0}
+  m_LocalPosition: {x: 6.474777, y: 0.7012843, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4283896721570040}
-  - {fileID: 4219635845396478}
-  - {fileID: 4502399656386912}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -246,7 +188,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114983909845720658
+--- !u!114 &114697187021935402
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -254,7 +196,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1303623940138274}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02ad78b891bfb3a45bfb15d5ffa88c6f, type: 3}
+  m_Script: {fileID: 11500000, guid: dd9672cf15a32af4ca310590f659fed4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 1
@@ -262,17 +204,10 @@ MonoBehaviour:
   health: 5
   deathDuration: 1
   damageTest: 0
-  agroDist: 3
+  agroDist: 4
   overHeadThreshold: 1.2
   underFootThreshold: 2.5
   checkIfFacingPlayer: 1
-  fireRate: 1
-  bulletSpeed: 120
-  bulletDamage: 1
-  baseVertSpeed: 1
-  baseHorizSpeed: 2
-  smallTimeAmount: 0.1
-  projectile: {fileID: 1097285159838368, guid: 544dc01b0634e074ea8534bee6511c77, type: 2}
 --- !u!212 &212736241808451476
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -26,6 +26,9 @@ namespace Debugging
                         enemies[i] = EnemyManager.SpawnEnemy("RangedZombie", spawns[i].position, (i % 2 == 0) ? Direction.Right : Direction.Left);
                         //enemies[i] = EnemyManager.SpawnEnemy("SuicideZombie", spawns[i].position, (i % 2 == 0) ? Direction.Right : Direction.Left);
                         //enemies[i] = EnemyManager.SpawnEnemy("SpawnerZombie", spawns[i].position, (i % 2 == 0) ? Direction.Right : Direction.Left);
+                        //enemies[i] = EnemyManager.SpawnEnemy("PatrolAttacker", spawns[i].position, (i % 2 == 0) ? Direction.Right : Direction.Left);
+                        //enemies[i] = EnemyManager.SpawnEnemy("RushZombie", spawns[i].position, (i % 2 == 0) ? Direction.Right : Direction.Left);
+
                     else
 					{
 						EnemyManager.DestroyEnemy(enemies[i]);

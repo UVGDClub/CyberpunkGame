@@ -200,27 +200,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 1
-  runSpeed: 3
-  agroDist: 3
+  damagedDuration: 2
   health: 5
-  damage: 1
+  deathDuration: 1
+  damageTest: 0
+  agroDist: 3
   overHeadThreshold: 4
   underFootThreshold: 2.5
-  attackSlowAmount: 2
-  displacementAmount: 0.9
-  attackRecoilTime: 0.35
-  bloodEffect: {fileID: 1392957193795438, guid: 714a3928552bc014a9b8e37c36620b9f,
-    type: 2}
-  checkIfFacingPlayer: 0
-  suicidesForPlayer: 1
-  useBloodEffect: 1
+  checkIfFacingPlayer: 1
   explosionRadius: 3
   delayBeforeBoom: 2
+  explosionDamage: 1
   explosionEffect: {fileID: 1392957193795438, guid: a5fc03a7c38d86940ac30db57f67a5ca,
     type: 2}
   rageEffect: {fileID: 1392957193795438, guid: 5adaa317de1ac154ebc1e4d2ec485be3, type: 2}
-  minimumDist: 1
+  regularRunSpeed: 2
+  suicideRunSpeed: 3
   rageEffectHeight: 0.7
+  minDistToPlayer: 1
 --- !u!212 &212736241808451476
 SpriteRenderer:
   m_ObjectHideFlags: 1

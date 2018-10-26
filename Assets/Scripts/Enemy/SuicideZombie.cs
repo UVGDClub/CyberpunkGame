@@ -4,94 +4,35 @@ using UnityEngine;
 
 namespace Enemy
 {
-    public class SuicideZombie : PatrolZombie
+    public class SuicideZombie : PatrolAttacker
     {
         [Header("suicide zombie specific")]
         public float explosionRadius = 2;
         public float delayBeforeBoom = 3;
+        public float explosionDamage = 1;
         public GameObject explosionEffect;
         public GameObject rageEffect;
-        public float minimumDist;
+        public float regularRunSpeed = 2;
+        public float suicideRunSpeed = 3;
         public float rageEffectHeight = 0.7f;
-        public float redShift = 5;
         Transform centerPos;
+        public float minDistToPlayer = 1;
 
         private bool explodingSoon = false;
 
-        new void Start()
-        {
-            base.Start();
-        }
 
-        public override void Update()
+        protected override void AttackPattern()
         {
-            base.Update();
-        }
-
-        public IEnumerator AboutToExplode()
-        {
-            if (explodingSoon)
+            if (!explodingSoon)
             {
-                yield break;
-            }
-            explodingSoon = true;
-
-            StartCoroutine(EnragedAnim());
-            CreateRage();
-
-            yield return new WaitForSeconds(delayBeforeBoom);
-            ExplodeNow();
-        }
-
-        public void CreateRage()
-        {
-            GameObject temp = Instantiate(rageEffect, transform.up, transform.rotation);
-            temp.transform.parent = transform;
-            temp.transform.localPosition = new Vector3(0, rageEffectHeight, 0);
-        }
-
-        private IEnumerator EnragedAnim()
-        {
-            SetAnimParameter(AnimParams.moveState, 0);
-            while (true)
-            {
-                SetAnimParameter(AnimParams.moveState, 1);
-                yield return null;
+                Move(GetPlayerDirection(), regularRunSpeed);
+                FacePlayer();
+                FaceDirection();
             }
         }
 
-        protected void ExplodeNow()
-        {
-            if(GetPlayerDist() < explosionRadius && IsLineOfSight())
-            {
-                DamagePlayer();
-            }
-            Instantiate(explosionEffect, transform.position, transform.rotation);
-            Destroy(this.gameObject);
-        }
 
-        private bool IsLineOfSight()
-        {
-            return true;//fix this mess at some point
-            int layermask = (LayerMask.GetMask("Enemy"));
-            RaycastHit2D hitPlayer = Physics2D.Raycast(centerPos.position, GetPlayerDir(), explosionRadius+1, layermask);
-            Debug.Log(hitPlayer.transform.name);
-            if(hitPlayer.collider.tag == "player")
-            {
-                return true;
-            }
-            return false;
-        }
-        private Vector2 GetPlayerDir()
-        {
-            Vector2 playerDir = Vector2.one;
-            playerDir.x *= transform.position.x - player.transform.position.x;
-            playerDir.y *= transform.position.y - player.transform.position.y;
-            playerDir.Normalize();
-            return playerDir;
-        }
-
-        protected override void OnCollisionEnter2D(Collision2D collision)
+        protected void OnCollisionEnter2D(Collision2D collision)
         {
             if (explodingSoon)
             {
@@ -108,15 +49,64 @@ namespace Enemy
             }
         }
 
-        public override bool DamageZombie(int damage)
+
+        public IEnumerator AboutToExplode()
         {
-            StartCoroutine(AboutToExplode());
-            return true;
+            if (explodingSoon)
+            {
+                yield break;
+            }
+            explodingSoon = true;
+
+            CreateRage();
+            StartCoroutine(ManiacRun());
+
+            yield return new WaitForSeconds(delayBeforeBoom);
+            ExplodeNow();
         }
 
-        protected override void ChasePlayer()
+        public IEnumerator ManiacRun()
+        /*
+         * note that it never ends because it ends when enemy is dead
+         */
         {
-            transform.position += GetPlayerDirection() * Time.deltaTime * runSpeed;
+            autoPatrol = false;
+            while (true)
+            {
+                if (!PlayerTooClose())
+                {
+                    Move(GetPlayerDirection(), suicideRunSpeed);
+                }
+                yield return null;
+            }
+        }
+
+        public void CreateRage()
+        {
+            GameObject temp = Instantiate(rageEffect, transform.up, transform.rotation);
+            temp.transform.parent = transform;
+            temp.transform.localPosition = new Vector3(0, rageEffectHeight, 0);
+        }
+
+        protected void ExplodeNow()
+        {
+            if(GetDistToPlayer() < explosionRadius)
+            {
+                DamagePlayer(explosionDamage);
+            }
+            Instantiate(explosionEffect, transform.position, transform.rotation);
+            Destroy(this.gameObject);
+        }
+
+
+        public override void DamageEnemy(int damage)
+        {
+            StartCoroutine(AboutToExplode());
+        }
+
+        private bool PlayerTooClose()
+        {
+            return Mathf.Abs(player.transform.position.x - transform.position.x) < minDistToPlayer;
         }
     }
 }
