@@ -13,7 +13,7 @@ public class TileInfo : MonoBehaviour {
     Vector3 mousePos;
     Vector3Int tilePos;
 
-    OccludableTile occludableTile;
+    SecretTile occludableTile;
     bool activeOcclusion = false;
     int occludedLevelIndex;
     Vector3Int occludedTilePos;
@@ -22,10 +22,10 @@ public class TileInfo : MonoBehaviour {
     private void Start()
     {
         player = FindObjectOfType<Player>();
-        StartCoroutine(HandleOccludableTiles());
+        StartCoroutine(HandleTileEvents());
     }
 
-    IEnumerator HandleOccludableTiles()
+    IEnumerator HandleTileEvents()
     {
         while (levelGrid.levels[levelGrid.curIndex] == null || levelGrid.levels[levelGrid.curIndex].grid == null)
             yield return null;
@@ -35,11 +35,11 @@ public class TileInfo : MonoBehaviour {
             playerCellPosition = levelGrid.levels[levelGrid.curIndex].grid.WorldToCell(player.rigidbody2d.position);
             if (!activeOcclusion)
             {
-                if (levelGrid.levels[levelGrid.curIndex].tilemap.GetTile<OccludableTile>(playerCellPosition))
+                if (levelGrid.levels[levelGrid.curIndex].tilemap.GetTile<SecretTile>(playerCellPosition))
                 {
                     visited.Clear();
-                    occludableTile = (OccludableTile)levelGrid.levels[levelGrid.curIndex].tilemap.GetTile(playerCellPosition);
-                    occludableTile.Occlude(playerCellPosition, levelGrid.levels[levelGrid.curIndex].tilemap, true, visited);
+                    occludableTile = (SecretTile)levelGrid.levels[levelGrid.curIndex].tilemap.GetTile(playerCellPosition);
+                    occludableTile.ToggleVisibility(playerCellPosition, levelGrid.levels[levelGrid.curIndex].tilemap, true, visited);
                     activeOcclusion = true;
                     occludedLevelIndex = levelGrid.curIndex;
                     occludedTilePos = playerCellPosition;
@@ -47,10 +47,10 @@ public class TileInfo : MonoBehaviour {
             }
             else if (occludedLevelIndex > 0)
             {
-                if (!levelGrid.levels[occludedLevelIndex].tilemap.GetTile<OccludableTile>(playerCellPosition))
+                if (!levelGrid.levels[occludedLevelIndex].tilemap.GetTile<SecretTile>(playerCellPosition))
                 {
                     visited.Clear();
-                    occludableTile.Occlude(occludedTilePos, levelGrid.levels[occludedLevelIndex].tilemap, false, visited);
+                    occludableTile.ToggleVisibility(occludedTilePos, levelGrid.levels[occludedLevelIndex].tilemap, false, visited);
                     activeOcclusion = false;
                 }
             }
@@ -63,6 +63,9 @@ public class TileInfo : MonoBehaviour {
     {
         if (Input.GetMouseButton(0))
         {
+            if (levelGrid == null || levelGrid.levels[levelGrid.curIndex].grid == null)
+                return;
+
             //Debug.Log(Input.mousePosition);
             mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mousePos = new Vector3(mousePos.x, mousePos.y, 1);

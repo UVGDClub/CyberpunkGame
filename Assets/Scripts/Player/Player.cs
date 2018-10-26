@@ -2,6 +2,7 @@
 /// Created by Glen McManus September 27, 2018
 /// </summary>
 
+using Audio;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,8 @@ public class Player : MonoBehaviour
     //for quick and dirty AudioManager testing
     public GameObject audioPanel;
     public LevelGrid levelgrid;
+    public FileDetails fileDetails = null;
+    public bool initialized = false;
 
     [Header("Movement")]
     public float moveSpeed = 3f;
@@ -45,6 +48,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        fileDetails = null;
         rigidbody2d.gravityScale = 0;
         stateTransitions.player = this;
         airState.player = this;
@@ -57,16 +61,22 @@ public class Player : MonoBehaviour
         stateMachine = new StateMachine(idleState);
 
         FindObjectOfType<TileInfo>().levelGrid = levelgrid;
+
+        StartCoroutine(Initialize());
     }
 
-    private void Start()
+    IEnumerator Initialize()
     {
-        //once saving/loading is implemented, initialize the grid from the stored position
-        PlayerSpawnInfo spawn = new PlayerSpawnInfo(Vector2Int.zero, new Vector2(-0.669f, 1.429f), Direction.Right);
+        while (fileDetails == null)
+            yield return null;
+
+
+        PlayerSpawnInfo spawn = new PlayerSpawnInfo(Vector2Int.zero, new Vector2(fileDetails.position_x, fileDetails.position_y), Direction.Right);
         Spawn(spawn);
 
         StartCoroutine(RunStateMachine());
         rigidbody2d.gravityScale = 1;
+        initialized = true;
     }
 
     public void Spawn(PlayerSpawnInfo spawn)
@@ -171,7 +181,7 @@ public class Player : MonoBehaviour
             {
                 //For quick and dirty testing of audio manager
                 if (Input.GetKeyDown(KeyCode.Escape))
-                    audioPanel.SetActive(!audioPanel.activeSelf);
+                    UI_Manager.instance.MenuTransition();
 
                 yield return null;
             }

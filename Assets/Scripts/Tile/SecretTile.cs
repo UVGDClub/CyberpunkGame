@@ -10,8 +10,8 @@ using UnityEditor;
 
 namespace UnityEngine.Tilemaps
 {
-    [CreateAssetMenu(fileName = "New Occludable Tile", menuName = "Tiles/Occludable Tile")]
-    public class OccludableTile : Tile
+    [CreateAssetMenu(fileName = "New Secret Tile", menuName = "Tiles/Secret Tile")]
+    public class SecretTile : Tile
     {
         public Sprite m_sprite;
         public Color tint = Color.white;
@@ -24,7 +24,7 @@ namespace UnityEngine.Tilemaps
             return false;
         }
 
-        public void Occlude(Vector3Int position, Tilemap tilemap, bool clear, List<Vector3Int> visited)
+        public void ToggleVisibility(Vector3Int position, Tilemap tilemap, bool clear, List<Vector3Int> visited)
         {
             bool nextRevealed = Mathf.Approximately(tilemap.GetColor(position).a, reveal.a);
             if ((nextRevealed && clear) || (!nextRevealed && !clear))
@@ -44,7 +44,7 @@ namespace UnityEngine.Tilemaps
                 {
                     newPosition.Set(position.x + x, position.y + y, position.z);
 
-                    if (position.x == x && position.y == y || !tilemap.GetTile<OccludableTile>(newPosition) || visited.Contains(newPosition))
+                    if (position.x == x && position.y == y || !tilemap.GetTile<SecretTile>(newPosition) || visited.Contains(newPosition))
                         continue;
                     
                     nextRevealed = Mathf.Approximately(tilemap.GetColor(newPosition).a, reveal.a);
@@ -52,7 +52,7 @@ namespace UnityEngine.Tilemaps
                     if ( (nextRevealed && clear) || (!nextRevealed && !clear) )
                         continue;
 
-                    Occlude(newPosition, tilemap, clear, ref visited);
+                    ToggleVisibility(newPosition, tilemap, clear, ref visited);
                     tilemap.RefreshTile(newPosition);
                 }
             }
@@ -60,7 +60,7 @@ namespace UnityEngine.Tilemaps
             tilemap.RefreshTile(position);
         }
 
-        public void Occlude(Vector3Int position, Tilemap tilemap, bool clear, ref List<Vector3Int> visited)
+        public void ToggleVisibility(Vector3Int position, Tilemap tilemap, bool clear, ref List<Vector3Int> visited)
         {
             //Debug.Log("Occlude running at " + position);
 
@@ -80,7 +80,7 @@ namespace UnityEngine.Tilemaps
                 {
                     newPosition.Set(position.x + x, position.y + y, position.z);
 
-                    if (position.x == x && position.y == y || !tilemap.GetTile<OccludableTile>(newPosition) || visited.Contains(newPosition))
+                    if (position.x == x && position.y == y || !tilemap.GetTile<SecretTile>(newPosition) || visited.Contains(newPosition))
                         continue;
 
 
@@ -90,7 +90,7 @@ namespace UnityEngine.Tilemaps
                     if ((nextRevealed && clear) || (!nextRevealed && !clear))
                         continue;
 
-                    Occlude(newPosition, tilemap, clear, ref visited);
+                    ToggleVisibility(newPosition, tilemap, clear, ref visited);
                     tilemap.RefreshTile(newPosition);
                 }
             }
@@ -120,12 +120,12 @@ namespace UnityEngine.Tilemaps
     }
 
 #if UNITY_EDITOR
-    [CustomEditor(typeof(OccludableTile))]
+    [CustomEditor(typeof(SecretTile))]
     public class OccludableTileEditorGUI : Editor
     {
-        public OccludableTile Target
+        public SecretTile Target
         {
-            get { return this.target as OccludableTile; }
+            get { return this.target as SecretTile; }
         }
 
         public override void OnInspectorGUI()
