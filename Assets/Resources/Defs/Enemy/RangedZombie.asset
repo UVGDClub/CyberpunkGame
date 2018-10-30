@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b165fffd030ed5f409ab62581908e5e8, type: 3}
+  m_Name: RangedZombie
+  m_EditorClassIdentifier: 
+  Name: RangedZombie
+  Health: 100
+  Damage: 10
+  SpeedMultiplier: 1
+  PixelsPerUnit: 100
+  CellSize: {x: 64, y: 64}
+  VisibleSize: {x: 0.15, y: 0.4}
+  DefaultFacingDirection: 2
+  DefaultAnchorPoint: 0
+  Scale: 3
+  Animations: {fileID: 22100000, guid: b4abe1d133ac23d4d9633978e6ce7bd8, type: 2}
+  Prefab: {fileID: 1303623940138274, guid: 226e9fdee0218b7488dd1c1f28734346, type: 2}
