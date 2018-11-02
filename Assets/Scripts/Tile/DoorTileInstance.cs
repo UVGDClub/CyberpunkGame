@@ -8,6 +8,7 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(BoxCollider2D))]
 public class DoorTileInstance : MonoBehaviour {
 
+    int index = 0;
     public int cells = 2;
     public DoorTile tileRef;
     public SpriteRenderer spriteRenderer;
@@ -19,32 +20,39 @@ public class DoorTileInstance : MonoBehaviour {
     {
         spriteRenderer.sprite = tileRef.sprites[0];
         polygonCollider = GetComponentInChildren<PolygonCollider2D>();
+        List<Vector2> shape = new List<Vector2>();
+        int point_count = spriteRenderer.sprite.GetPhysicsShape(0, shape);
+        polygonCollider.points = shape.ToArray();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         animating = false;
+        StopAllCoroutines();
         StartCoroutine(OpenDoor());
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         animating = false;
+        StopAllCoroutines();
         StartCoroutine(CloseDoor());
     }
 
     public IEnumerator OpenDoor()
     {
+        polygonCollider.gameObject.SetActive(false);
         animating = true;
         while(animating)
         {
             if (tileRef.openSFX != null)
                 AudioManager.instance.PlaySFX(tileRef.openSFX);
 
-            int index = 1;
+            index++;
             while (index < tileRef.sprites.Length)
             {
-                UpdateSprite(index);
+                //UpdateSprite(index);
+                spriteRenderer.sprite = tileRef.sprites[index];
 
                 yield return tileRef.framewait;
 
@@ -57,16 +65,18 @@ public class DoorTileInstance : MonoBehaviour {
 
     public IEnumerator CloseDoor()
     {
+        polygonCollider.gameObject.SetActive(true);
         animating = true;
         while (animating)
         {
             if (tileRef.openSFX != null)
                 AudioManager.instance.PlaySFX(tileRef.openSFX);
 
-            int index = tileRef.sprites.Length - 2;
+            index--;
             while (index >= 0)
             {
-                UpdateSprite(index);
+                //UpdateSprite(index);
+                spriteRenderer.sprite = tileRef.sprites[index];
 
                 yield return tileRef.framewait;
 
@@ -85,6 +95,12 @@ public class DoorTileInstance : MonoBehaviour {
         //Debug.Log("Updating sprite, index = " + index);
 
         spriteRenderer.sprite = tileRef.sprites[index];
+        /*polygonCollider.gameObject.SetActive(spriteRenderer.sprite != null);
+
+        List<Vector2> shape = new List<Vector2>();
+        int point_count = spriteRenderer.sprite.GetPhysicsShape(0, shape);
+        polygonCollider.points = shape.ToArray();*/
+
     }
 
 

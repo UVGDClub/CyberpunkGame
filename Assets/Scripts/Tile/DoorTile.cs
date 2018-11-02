@@ -25,7 +25,7 @@ namespace UnityEngine.Tilemaps
 
         public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go)
         {
-            framewait = new WaitForSeconds(1 / frameDelta);
+            framewait = new WaitForSeconds(1 / (float)frameDelta);
 
             if (Application.isPlaying)
                 go = Instantiate(prefab);
