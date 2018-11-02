@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "States/Falling")]
@@ -13,7 +11,9 @@ public class FallingState : APlayerState {
 
 	public override void Execute(Player player) {
 		if (referenceState.airControl) {
-			player.rigidbody2d.velocity = new Vector2(Input.GetAxis("Horizontal") * referenceState.airControlSpeed, player.rigidbody2d.velocity.y);
+			player.rigidbody2d.velocity = new Vector2(
+                Input.GetAxis("Horizontal") * referenceState.airControlSpeed, 
+                player.rigidbody2d.velocity.y);
 		}
 	}
 }

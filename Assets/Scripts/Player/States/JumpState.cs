@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "States/JumpState")]
@@ -12,7 +11,7 @@ public class JumpState : APlayerState {
 	public float airControlSpeed = 5f;
 
     public override bool CanTransitionInto( Player player ) {
-        if (Input.GetButton("Jump"))
+        if (Input.GetButtonDown("Jump"))
             return true;
 
         return false;

@@ -14,6 +14,7 @@ MonoBehaviour:
   Transitions:
   - {fileID: 11400000, guid: db76c1d81954c9a4ea1150767564586f, type: 2}
   - {fileID: 11400000, guid: 89d6350f7d2cd6c4394db0912cadcfe8, type: 2}
+  - {fileID: 11400000, guid: 57adfbfdb3a00c943862ccb859cb75f8, type: 2}
   maxTicksForJump: 6
   JumpVelocityAddition: 1
   airControl: 1

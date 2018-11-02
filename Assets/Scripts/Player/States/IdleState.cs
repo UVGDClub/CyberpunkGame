@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(menuName = "States/IdleState")]
 public class IdleState : APlayerState {
 
     public override bool CanTransitionInto( Player player ) {
-        if (player.rigidbody2d.velocity.x == 0 && player.rigidbody2d.velocity.y == 0)
+        if (Mathf.Abs(player.rigidbody2d.velocity.x) < 0.1f && Mathf.Abs(player.rigidbody2d.velocity.y) < 0.1f)
             return true;
 
         return false;
