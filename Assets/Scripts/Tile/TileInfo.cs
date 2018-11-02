@@ -13,10 +13,10 @@ public class TileInfo : MonoBehaviour {
     Vector3 mousePos;
     Vector3Int tilePos;
 
-    SecretTile occludableTile;
-    bool activeOcclusion = false;
-    int occludedLevelIndex;
-    Vector3Int occludedTilePos;
+    SecretTile secretTile;
+    bool activeSecret = false;
+    int secretLevelIndex;
+    Vector3Int secretTilePos;
     List<Vector3Int> visited = new List<Vector3Int>();
 
     private void Start()
@@ -33,27 +33,29 @@ public class TileInfo : MonoBehaviour {
         while(true)
         {
             playerCellPosition = levelGrid.levels[levelGrid.curIndex].grid.WorldToCell(player.rigidbody2d.position);
-            if (!activeOcclusion)
+            if (!activeSecret)
             {
                 if (levelGrid.levels[levelGrid.curIndex].tilemap.GetTile<SecretTile>(playerCellPosition))
                 {
                     visited.Clear();
-                    occludableTile = (SecretTile)levelGrid.levels[levelGrid.curIndex].tilemap.GetTile(playerCellPosition);
-                    occludableTile.ToggleVisibility(playerCellPosition, levelGrid.levels[levelGrid.curIndex].tilemap, true, visited);
-                    activeOcclusion = true;
-                    occludedLevelIndex = levelGrid.curIndex;
-                    occludedTilePos = playerCellPosition;
+                    secretTile = (SecretTile)levelGrid.levels[levelGrid.curIndex].tilemap.GetTile(playerCellPosition);
+                    secretTile.ToggleVisibility(playerCellPosition, levelGrid.levels[levelGrid.curIndex].tilemap, true, visited);
+                    activeSecret = true;
+                    secretLevelIndex = levelGrid.curIndex;
+                    secretTilePos = playerCellPosition;
                 }
             }
-            else if (occludedLevelIndex > 0)
+            else if (secretLevelIndex >= 0)
             {
-                if (!levelGrid.levels[occludedLevelIndex].tilemap.GetTile<SecretTile>(playerCellPosition))
+                if (activeSecret && !levelGrid.levels[secretLevelIndex].tilemap.GetTile<SecretTile>(playerCellPosition))
                 {
                     visited.Clear();
-                    occludableTile.ToggleVisibility(occludedTilePos, levelGrid.levels[occludedLevelIndex].tilemap, false, visited);
-                    activeOcclusion = false;
+                    secretTile.ToggleVisibility(secretTilePos, levelGrid.levels[secretLevelIndex].tilemap, false, visited);
+                    activeSecret = false;
                 }
             }
+
+
             yield return null;
         }
     }
