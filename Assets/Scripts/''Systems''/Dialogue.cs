@@ -33,13 +33,7 @@ public class Dialogue : MonoBehaviour {
 		this.ClearDialogue();
 	}
 	
-	void FixedUpdate () {
-		this.UpdateText();
-        
-    }
-
-	void UpdateText()
-	{
+	protected virtual void FixedUpdate () {
 		if (Time.fixedTime >= displayStartTime + displayTimeLength || dialogueText.text == "")
 		{
 			if (queue.Count < 1 && dialogueText.text != "")
@@ -64,6 +58,7 @@ public class Dialogue : MonoBehaviour {
 		displayStartTime = Time.fixedTime;
 		displayTimeLength = textTime;
 	}
+
 
 	/*
      * @param dialogue -> the text to be displayed
@@ -133,7 +128,11 @@ public class Dialogue : MonoBehaviour {
 		string[] words = text.Split(' ');
 		foreach (string word in words)
         {
-            if (output[output.Count - 1].Length + word.Length > MAX_SENTANCE_LENGTH)
+			if (word.Length > MAX_SENTANCE_LENGTH)
+			{
+				Debug.Log("Word longer than MAX_SENTANCE_LENGTH");
+			}
+			if (output[output.Count - 1].Length + word.Length > MAX_SENTANCE_LENGTH)
             {
                 output.Add("");
             }
