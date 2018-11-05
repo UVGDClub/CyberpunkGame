@@ -20,6 +20,10 @@ namespace Audio
                 source = GetComponent<AudioSource>();
 
             source.volume = minVolume;
+            source.clip = layer;
+
+            if (forceSilence == false)
+                StartCoroutine(CheckCondition());
         }
 
         public virtual IEnumerator CheckCondition()
@@ -28,23 +32,35 @@ namespace Audio
             {
                 if (source.isPlaying && Condition() == false)
                 {
-                    while (source.volume > cutoffThreshold)
+                    /*while (source.volume > cutoffThreshold && Condition() == false)
                     {
                         source.volume -= fade;
                         yield return null;
-                    }
-                    source.volume = minVolume;
-                    source.Stop();
+                    }*/
+                    source.volume -= fade;
 
-                }                 
-                else if(source.isPlaying == false && Condition() == true)
-                {
-                    source.timeSamples = AudioManager.instance.activeBGM.timeSamples;
-                    source.Play();
-                    while(source.volume < maxVolume)
+                    if (source.volume <= cutoffThreshold)
                     {
-                        source.volume += fade;
+                        source.volume = minVolume;
+                        source.Stop();
+                    }                    
+
+                }else if (Condition() == true)
+                {
+                    //Debug.Log("Condition is true, trying to play track!");
+                    if(source.isPlaying == false)
+                    {
+                        source.timeSamples = AudioManager.instance.activeBGM.timeSamples;
+                        source.Play();
                     }
+
+                    if(source.volume < maxVolume)
+                        source.volume += fade;
+
+                   /* while (source.volume < maxVolume && Condition() == true)
+                    {
+                        
+                    }*/
                 }
 
                 yield return null;

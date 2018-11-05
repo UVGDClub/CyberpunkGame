@@ -15,7 +15,7 @@ MonoBehaviour:
   scene: {fileID: 102900000, guid: c0f50644f340aca4187a8c10d88c82a9, type: 3}
   loadSceneMode: 1
   audioSettings:
-    clip: {fileID: 8300000, guid: a51eb35c601c9344fa1bec21af102219, type: 3}
+    clip: {fileID: 0}
     fadeRate: 0.011
     pitch: 1
   enemySpawnInfo:
@@ -24,3 +24,5 @@ MonoBehaviour:
     facingDir: 0
     spawnMode: 0
     respawnTime: 0
+  grid: {fileID: 0}
+  tilemap: {fileID: 0}
