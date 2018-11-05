@@ -6,6 +6,72 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+    path: Assets/Levels/scenes/0,0.unity
+    guid: eb3d1d59497bd5a4ea5c86034e2efb91
+  - enabled: 1
+    path: Assets/Levels/scenes/0,1.unity
+    guid: d5eac27d2f7e7e64e9dedcf3dfc1bfd5
+  - enabled: 1
+    path: Assets/Levels/scenes/0,2.unity
+    guid: 60f7950d9a96af444b02cc94abaee19b
+  - enabled: 1
+    path: Assets/Levels/scenes/1,0.unity
+    guid: c0f50644f340aca4187a8c10d88c82a9
+  - enabled: 1
+    path: Assets/Levels/scenes/1,1.unity
+    guid: ebcc0799f119f2f488a842f487c695d4
+  - enabled: 1
+    path: Assets/Levels/scenes/1,2.unity
+    guid: 6757c42716054db4a9f7fab3460783b7
+  - enabled: 1
+    path: Assets/Levels/scenes/2,0.unity
+    guid: d6e58fab2121c6542ba4a9e6e984e00e
+  - enabled: 1
+    path: Assets/Levels/scenes/2,1.unity
+    guid: f8361fd9982420e42b4476590c2ae1c5
+  - enabled: 1
+    path: Assets/Levels/scenes/2,2.unity
+    guid: fde8bbc7f4d5dce4b8ab064ffa342982
+  - enabled: 1
+    path: Assets/Levels/scenes/3,0.unity
+    guid: 6fad6d9866683084ca49bb68bf0623b7
+  - enabled: 1
+    path: Assets/Levels/scenes/3,1.unity
+    guid: 0054697ca6119a1419e31b51a9041a01
+  - enabled: 1
+    path: Assets/Levels/scenes/3,2.unity
+    guid: 7c336e5704225f3478af17afbe4b51fc
+  - enabled: 1
+    path: 
+    guid: d60de3a1e0532514b86d1469395eb411
+  - enabled: 1
+    path: 
+    guid: c870ccd2fce7a7245a0add4cbdf29f97
+  - enabled: 1
+    path: 
+    guid: cbc06df379ea15543907c0895f07a161
+  - enabled: 1
+    path: 
+    guid: 9b9a14ecc83ac72448e96df059f7920c
+  - enabled: 1
+    path: Assets/Levels/New Level Grid_scenes/New Level Grid_(0,0).unity
+    guid: 131b9481e3524644b8218b3d1617c006
+  - enabled: 1
+    path: 
+    guid: 9fee270949d3cf04e859a5b70d562a3d
+  - enabled: 1
+    path: 
+    guid: fd2ce473bdd5a0a4894c0de43efab180
+  - enabled: 1
+    path: 
+    guid: e927672b2a1dc044e998cf7235832fdc
+  - enabled: 1
+    path: Assets/Levels/New Level Grid_scenes/New Level Grid_(0,1).unity
+    guid: 927801d36fc102a478adf2aa9a96b3e4
+  - enabled: 1
+    path: Assets/Levels/New Level Grid_scenes/New Level Grid_(1,0).unity
+    guid: 8818c88b3e25a06449a5f87515d59bfa
+  - enabled: 1
+    path: Assets/Levels/New Level Grid_scenes/New Level Grid_(1,1).unity
+    guid: 2951c294b37d6254a8ef63b95c5ce4c9
   m_configObjects: {}
