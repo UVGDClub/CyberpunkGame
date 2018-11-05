@@ -72,8 +72,8 @@ namespace UnityEngine.Tilemaps
     [CustomEditor(typeof(DoorTile))]
     public class DoorTileEditorGUI : Editor
     {
-        bool showSprites = false;
-        bool showColours = false;
+        //bool showSprites = false;
+        //bool showColours = false;
 
         public DoorTile Target
         {
@@ -97,7 +97,7 @@ namespace UnityEngine.Tilemaps
 
             Texture2D tex = new Texture2D(width, height);
 
-            EditorUtility.CopySerialized(Target.sprites[0], tex);
+            EditorUtility.CopySerialized(Target.sprites[0].texture, tex);
 
             return tex;
         }

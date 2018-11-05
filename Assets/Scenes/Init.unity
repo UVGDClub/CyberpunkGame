@@ -1503,6 +1503,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 1131653638}
   offset: {x: 0, y: 0, z: -1.5}
+  following: 1
+  defaultShakeIterations: 45
+  defaultShakeIntensity: {x: 0.1, y: 0.1}
+  defaultPanOffset: {x: 3, y: 0, z: 0}
+  defaultPanRate: 0.005
 --- !u!81 &834632115
 AudioListener:
   m_ObjectHideFlags: 0

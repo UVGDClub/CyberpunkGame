@@ -43,4 +43,4 @@ MonoBehaviour:
   prefab: {fileID: 1985232680527582, guid: f5fcc6177bf8e7744bea816ee1a3a277, type: 2}
   openSFX: {fileID: 8300000, guid: 75746b3438973424887c0b73d79b7520, type: 3}
   closeSFX: {fileID: 8300000, guid: 75746b3438973424887c0b73d79b7520, type: 3}
-  frameDelta: 6
+  frameDelta: 12
