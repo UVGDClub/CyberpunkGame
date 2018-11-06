@@ -19,12 +19,7 @@ namespace Enemy
         protected bool beingDamaged = false;
         protected bool isDead = false;
 
-        private bool canAttack = true;
-        private float playerDist;
-        private Transform player;
-        private bool goingRight = false;
-        private bool chasingPlayer;
-        private bool isInGround = true;
+        public bool damageTest = false;
 
         protected virtual void Start()
         {
@@ -87,65 +82,6 @@ namespace Enemy
 
         protected void OnCollisionExit2D(Collision2D collision)
         /*
-         * returns vector3 pointing in direction of the player from the enemy.
-         * if you pass it a bool with the value of true it will give the
-         * direction away from the player
-         * 
-         * also sets going right to the approrpiote value and makes animation
-         * match direction it is going.
-         */
-        {
-            if (IsPlayerToRight())
-            {
-                goingRight = true;
-                FaceDirection();
-                if (reversed)
-                {
-                    return Vector2.left.ToV3();
-                }
-                return Vector2.right.ToV3();
-            }
-            else
-            {
-                goingRight = false;
-                FaceDirection();
-                if (reversed)
-                {
-                    return Vector2.right.ToV3();
-                }
-                return Vector2.left.ToV3();
-            }
-        }
-
-        private bool IsPlayerToRight()
-        /*
-         * returns true if player is to the right of enemy, otherwise false
-         */
-        {
-            if (player.position.x < transform.position.x)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private void OnCollisionEnter2D(Collision2D collision)
-        /*
-         * on a collision if it is the player damages player
-         */
-        {
-            if(collision.gameObject.tag == "Player" && canAttack && IsCollidingWithBody(collision))
-            {
-                DamagePlayer();
-            }
-            if (IsFromGround(collision))
-            {
-                isInGround = true;
-            }
-        }
-
-        private void OnCollisionExit2D(Collision2D collision)
-        /*
          * if enemy collider is stopping overlapping with terrain
          * direction moving is reversed.
          * note: you must have two colliders below enemy
@@ -156,13 +92,10 @@ namespace Enemy
             {
                 return;
             }
-            if (IsFromGround(collision))
+            else if (IsFromGround(collision))
             {
                 isInGround = false;
-                if ((!chasingPlayer || !suicidesForPlayer))
-                {
-                    ChangeDirection();
-                }
+                ChangeDirection();
             }
         }
 
@@ -183,7 +116,7 @@ namespace Enemy
         public virtual void DamageEnemy(int damage)
         {
             health -= damage;
-            if(health <= 0)
+            if (health <= 0)
             {
                 SetAnimParameter(AnimParams.isDead, true);
                 SetAnimParameter(AnimParams.takeDamage, true);//just so you can see it, is dead doesn't work rn
@@ -198,17 +131,9 @@ namespace Enemy
 
         protected virtual IEnumerator KillEnemy()
         {
-            checkIfFacingPlayer = true;
-            if (suicidesForPlayer || IsFacingPlayer() || isInGround)//XXX
-            {
-                transform.position += GetPlayerDirection() * Time.deltaTime * runSpeed;
-            }
-            else
-            {
-                //FaceDirection();
-            }
-            checkIfFacingPlayer = false;
-
+            isDead = true;
+            yield return new WaitForSeconds(deathDuration);
+            Destroy(this.gameObject);
         }
 
         protected IEnumerator DamagedAnim()
@@ -241,23 +166,6 @@ namespace Enemy
                 }
                 catch
                 {//throws error if no material
-                    return false;
-                }
-             }
-             return false;
-
-        }
-
-        private bool IsCollidingWithBody(Collision2D hitObj)
-        /*
-         * returns true if object colliding with enemy is colliding
-         * on the main body collider
-        */
-        {
-            try
-            {
-               if (hitObj.otherCollider.sharedMaterial.name == "zombieEdgeDetector")
-                {
                     return false;
                 }
             }
