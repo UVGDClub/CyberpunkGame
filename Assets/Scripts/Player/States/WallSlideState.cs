@@ -1,8 +1,11 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "States/WallSlide")]
 public class WallSlideState : APlayerState {
+
+	public FallingState FallingPlayerState;
+	public JumpState JumpPlayerState;
 
     public float fallSpeed = 1f;
     public float distanceAfterJumpOff = 0.5f;
@@ -13,8 +16,24 @@ public class WallSlideState : APlayerState {
     }
 
     public override void Execute( Player player ) {
-        player.rigidbody2d.velocity = new Vector2(0, -fallSpeed);
-    }
+
+	    if (Input.GetButtonDown("Jump")) {
+
+			if (player.left)
+				player.transform.position -= Vector3.left * distanceAfterJumpOff;
+			else if (player.right)
+				player.transform.position -= Vector3.right * distanceAfterJumpOff;
+
+			player.TransferToState(JumpPlayerState);
+
+		} else if ((player.left && Input.GetAxisRaw("Horizontal") < -0.1f) || (player.right && Input.GetAxisRaw("Horizontal") > 0.1f)) {
+		    player.rigidbody2d.velocity = new Vector2(0, -fallSpeed);
+	    }
+	    else {
+		    player.TransferToState(FallingPlayerState);
+		}
+
+	}
 
     public override void OnEnter( Player player ) {
         // Set animation
@@ -25,14 +44,5 @@ public class WallSlideState : APlayerState {
     IEnumerator WaitToTransitionOut() {
         yield return new WaitForSeconds(delayBetweenTransitions);
         CanTransitionOutOf = true;
-    }
-
-    public override void OnExit( Player player ) {
-        if(Input.GetButtonDown("Jump")) {
-            if(player.left) player.transform.position -= Vector3.left * distanceAfterJumpOff;
-            if (player.right) player.transform.position -= Vector3.right * distanceAfterJumpOff;
-        }
-    }
-
-    
+    }    
 }

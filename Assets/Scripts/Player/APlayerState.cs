@@ -12,11 +12,7 @@ public class APlayerState : ScriptableObject {
             for (int i = 0; i < Transitions.Count; i++) {
 
                 if (Transitions[i].CanTransitionInto(player)) {
-                    Debug.Log("Exiting: " + this);
-                    Debug.Log("Entering: " + Transitions[i]);
-                    OnExit(player);
-                    player.currentState = Transitions[i];
-                    Transitions[i].OnEnter(player);
+                    player.TransferToState(Transitions[i]);
                     return;
                 }
 

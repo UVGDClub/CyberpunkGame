@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -53,8 +54,6 @@ public class Player : MonoBehaviour {
         boxCollider.bounds.GetBottomLeft(ref start);
         boxCollider.bounds.GetBottomRight(ref end);
         grounded = ParallelCast(hits, start, end, 1, numCastsHorizontal);
-
-        
         
         currentState.Execute(this);
 	}
@@ -74,5 +73,13 @@ public class Player : MonoBehaviour {
         }
         return false;
     }
+
+	public void TransferToState(APlayerState state) {
+		Debug.Log("Exiting: " + currentState);
+		Debug.Log("Entering: " + state);
+		currentState.OnExit(this);
+		currentState = state;
+		currentState.OnEnter(this);
+	}
 
 }
