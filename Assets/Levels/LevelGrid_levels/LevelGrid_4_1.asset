@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd90533f010671045bbf784430d53d29, type: 3}
+  m_Name: LevelGrid_4_1
+  m_EditorClassIdentifier: 
+  sceneIndex: 16
+  scene: {fileID: 102900000, guid: 596b29da5e604644b8d7d0c280edce7b, type: 3}
+  loadSceneMode: 1
+  audioSettings:
+    clip: {fileID: 0}
+    fadeRate: 0
+    pitch: 0
+  enemySpawnInfo:
+  - name: 
+    position: {x: 0, y: 0}
+    facingDir: 0
+    spawnMode: 0
+    respawnTime: 0
