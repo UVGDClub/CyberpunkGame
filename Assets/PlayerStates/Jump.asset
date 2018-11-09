@@ -8,11 +8,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cc8edeb6263b7a4889a4dceb57f0c4d, type: 3}
-  m_Name: Move
+  m_Script: {fileID: 11500000, guid: 8163c39a367954844bddbb0b10b5e1db, type: 3}
+  m_Name: Jump
   m_EditorClassIdentifier: 
   Transitions:
   - {fileID: 11400000, guid: db76c1d81954c9a4ea1150767564586f, type: 2}
-  - {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}
-  - {fileID: 11400000, guid: 154c1e031af72da43a506e92e7743730, type: 2}
-  moveSpeed: 5
+  - {fileID: 11400000, guid: 89d6350f7d2cd6c4394db0912cadcfe8, type: 2}
+  - {fileID: 11400000, guid: 57adfbfdb3a00c943862ccb859cb75f8, type: 2}
+  maxTicksForJump: 6
+  JumpVelocityAddition: 0.64
+  airControl: 1
+  airControlSpeed: 1

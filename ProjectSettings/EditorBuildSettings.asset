@@ -41,37 +41,37 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Levels/scenes/3,2.unity
     guid: 7c336e5704225f3478af17afbe4b51fc
-  - enabled: 1
+  - enabled: 0
     path: 
-    guid: d60de3a1e0532514b86d1469395eb411
-  - enabled: 1
+    guid: 00000000000000000000000000000000
+  - enabled: 0
     path: 
-    guid: c870ccd2fce7a7245a0add4cbdf29f97
-  - enabled: 1
+    guid: 00000000000000000000000000000000
+  - enabled: 0
     path: 
-    guid: cbc06df379ea15543907c0895f07a161
-  - enabled: 1
+    guid: 00000000000000000000000000000000
+  - enabled: 0
     path: 
-    guid: 9b9a14ecc83ac72448e96df059f7920c
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Levels/New Level Grid_scenes/New Level Grid_(0,0).unity
     guid: 131b9481e3524644b8218b3d1617c006
-  - enabled: 1
+  - enabled: 0
     path: 
-    guid: 9fee270949d3cf04e859a5b70d562a3d
-  - enabled: 1
+    guid: 00000000000000000000000000000000
+  - enabled: 0
     path: 
-    guid: fd2ce473bdd5a0a4894c0de43efab180
-  - enabled: 1
+    guid: 00000000000000000000000000000000
+  - enabled: 0
     path: 
-    guid: e927672b2a1dc044e998cf7235832fdc
-  - enabled: 1
-    path: Assets/Levels/New Level Grid_scenes/New Level Grid_(0,1).unity
-    guid: 927801d36fc102a478adf2aa9a96b3e4
-  - enabled: 1
-    path: Assets/Levels/New Level Grid_scenes/New Level Grid_(1,0).unity
-    guid: 8818c88b3e25a06449a5f87515d59bfa
-  - enabled: 1
-    path: Assets/Levels/New Level Grid_scenes/New Level Grid_(1,1).unity
-    guid: 2951c294b37d6254a8ef63b95c5ce4c9
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects: {}

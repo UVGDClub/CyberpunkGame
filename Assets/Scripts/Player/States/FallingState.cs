@@ -6,7 +6,7 @@ public class FallingState : APlayerState {
 	public JumpState referenceState;
 
     public override bool CanTransitionInto( Player player ) {
-        return player.rigidbody2d.velocity.y < 0;
+        return !player.bottomHit && player.rigidbody2d.velocity.y < 0;
     }
 
 	public override void Execute(Player player) {

@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(menuName = "States/InitState")]
 public class InitState : APlayerState {
 
     public override void OnEnter( Player player ) {
         CanTransitionOutOf = false;
         player.rigidbody2d.gravityScale = 0;
+
+        player.StartCoroutine(Initialize(player));
     }
 
     IEnumerator Initialize(Player player) {

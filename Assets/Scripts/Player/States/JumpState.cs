@@ -7,6 +7,7 @@ public class JumpState : APlayerState {
     public int maxTicksForJump = 6;
     public float JumpVelocityAddition = 0.6f;
 
+    public bool retainVelocityY = false;
     public bool airControl = true;
 	public float airControlSpeed = 5f;
 
@@ -33,7 +34,8 @@ public class JumpState : APlayerState {
 	IEnumerator Jump(Player player) {
 
         int numTicks = 0;
-        player.rigidbody2d.velocity = new Vector2(player.rigidbody2d.velocity.x, 0);
+
+        player.rigidbody2d.velocity = new Vector2(player.rigidbody2d.velocity.x, retainVelocityY ? player.rigidbody2d.velocity.y : 0);
 
         while (Input.GetButton("Jump") && numTicks <= maxTicksForJump) {
 

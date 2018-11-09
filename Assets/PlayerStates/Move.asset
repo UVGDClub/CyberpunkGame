@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc8edeb6263b7a4889a4dceb57f0c4d, type: 3}
+  m_Name: Move
+  m_EditorClassIdentifier: 
+  Transitions:
+  - {fileID: 11400000, guid: db76c1d81954c9a4ea1150767564586f, type: 2}
+  - {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}
+  - {fileID: 11400000, guid: 154c1e031af72da43a506e92e7743730, type: 2}
+  moveSpeed: 2

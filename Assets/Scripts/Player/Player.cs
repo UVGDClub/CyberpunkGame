@@ -12,23 +12,21 @@ public class Player : MonoBehaviour {
     public FileDetails fileDetails = null;
     public bool initialized = false;
 
+    public Direction facing = Direction.Right;
+
     [Header("Attack")]
-    public Vector2 attackBoxSize = Vector2.one;
+    public Vector2 attackBoxSize = new Vector2(0.16f, 0.32f);
     public ContactFilter2D attackFilter = new ContactFilter2D();
     public float maxAttackDistance = 1f;
     public LayerMask attackLayerMask;
 
     [Header("Collision")]
-    public BoxCollider2D collider;
-    public float groundDistance = 0.01f;
     public float maxForwardSlopeCastDistance = 0.3f;
     public float maxDownSlopeCastDistance = 0.1f;
     public LayerMask collisionMask;
 
     public Rigidbody2D rigidbody2d;
     public APlayerState currentState;
-
-    public LayerMask layerMask;
 
     public float castDist = 0.05f;
     public RaycastHit2D bottomHit;
@@ -93,6 +91,28 @@ public class Player : MonoBehaviour {
         }
 
         currentState.Execute(this);
+
+        if(Input.GetKey(KeyCode.Mouse0))
+        {
+            Vector2 direction = facing == Direction.Left ? Vector2.left : Vector2.right;
+
+            Debug.DrawRay(rigidbody2d.position, direction * maxAttackDistance, Color.red);
+
+            RaycastHit2D[] hits = Physics2D.BoxCastAll(rigidbody2d.position, attackBoxSize, 0, direction, maxAttackDistance, attackLayerMask);
+
+            foreach (RaycastHit2D hit in hits)
+            {
+                //maintain a list of objects that can be attacked in a scriptable object?
+                //using:
+                //hit.collider.GetInstanceID()
+                //and a scriptable object?
+                BreakableTileInstance bti = hit.collider.GetComponent<BreakableTileInstance>();
+                if (bti == null)
+                    continue;
+
+                bti.StartCoroutine(bti.BreakTile());
+            }
+        }
 	}
 
 
@@ -105,7 +125,7 @@ public class Player : MonoBehaviour {
             Vector2 origin = Vector2.Lerp(startPoint, endPoint, i / (float)numCasts);
 
             Debug.DrawRay(origin, direction);
-            if (Physics2D.RaycastNonAlloc(origin, direction, hits, castDist, layerMask) > 0)
+            if (Physics2D.RaycastNonAlloc(origin, direction, hits, castDist, collisionMask) > 0)
                 return hits[0];
 
         }
