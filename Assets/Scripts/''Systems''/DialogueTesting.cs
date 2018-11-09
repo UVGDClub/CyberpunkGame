@@ -5,18 +5,12 @@ using UnityEngine;
 
 public class DialogueTesting : MonoBehaviour {
 
-    public Dialogue_Typed dialogue;
+    public Dialogue dialogue;
 
     // Use this for initialization
     void Start() {
+		dialogue.AddDialogue(dialogue.LoadTextFile("Pulp Fiction"));
+		StartCoroutine(dialogue.UpdateText());
 	}
-
-    // Update is called once per frame
-    void Update() {
-        if (dialogue.dialogueText.text == "")
-		{
-			dialogue.AddDialogue(dialogue.LoadTextFile("Pulp Fiction"), 4);
-		}
-    }
 
 }

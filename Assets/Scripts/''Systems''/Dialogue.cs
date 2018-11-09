@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +8,7 @@ using UnityEngine.UI;
  * Written by Alexander Aldridge
  * for the use of UVic GameDev "Cyberpunk" 2018-19 project
  * Modified by: Nobody so far
- * Last Updated 2018-10-07
+ * Last Updated 2018-11-08
  * 
  * Known bugs to fix:
  * -Words longer than MAX_SENTANCE_LENGTH untested
@@ -18,72 +16,47 @@ using UnityEngine.UI;
 public class Dialogue : MonoBehaviour {
 
     public Text dialogueText;
-    protected float displayStartTime, defaultTimePerLine, displayTimeLength;
+	protected WaitForSeconds waitTime;
+	public float displayTime = 3.0f;
 
 
 	const int MAX_SENTANCE_LENGTH = 80;
-	protected LinkedList<string> queue;	//LinkedList should hypothetically be nice and efficient for the queue
+	protected LinkedList<string> queue = new LinkedList<string>();	//LinkedList should hypothetically be nice and efficient for the queue
 
     // Use this for initialization
-    protected void Start () {
-		displayStartTime = 0;
-		defaultTimePerLine = 3;
-		displayTimeLength = defaultTimePerLine;
-		queue = new LinkedList<string>();
-		this.ClearDialogue();
+    protected void Awake () {
+		waitTime = new WaitForSeconds(displayTime);
 	}
 	
-	protected virtual void FixedUpdate () {
-		if (Time.fixedTime >= displayStartTime + displayTimeLength || dialogueText.text == "")
+	public IEnumerator UpdateText() {
+		while (queue.Count() > 0)
 		{
-			if (queue.Count < 1 && dialogueText.text != "")
-			{
-				dialogueText.text = "";
-			}
-			else if (queue.Count > 0)
-			{
-				this.SetDialogue(queue.ElementAt(0), displayTimeLength);
-				queue.RemoveFirst();
-			}
+			NextInQueue();
+			yield return waitTime;
 		}
 	}
 
-	/*
-	 * @param dialogue -> the text to be displayed
-	 * @param textTime -> the amount of time that the text should be on the screen
-	 */
-	protected virtual void SetDialogue(string dialogue, float textTime)
+	protected virtual void NextInQueue()
 	{
-		dialogueText.text = dialogue;
-		displayStartTime = Time.fixedTime;
-		displayTimeLength = textTime;
+		dialogueText.text = queue.ElementAt(0);
+		queue.RemoveFirst();
 	}
 
 
 	/*
      * @param dialogue -> the text to be displayed
      */
-	public void AddDialogue(string dialogue)
+	public virtual void AddDialogue(string dialogue)
     {
-		this.AddDialogue(new string[] { dialogue });
-    }
-
-	/*
-     * @param dialogue -> the text to be displayed
-     */
-	public void AddDialogue(string[] dialogue)
-    {
-		this.AddDialogue(dialogue, defaultTimePerLine);
+		AddDialogue(ParseText(dialogue));
     }
 
 	/*
 	 * @param dialogue -> the text to be displayed
      * @param textTime -> the amount of time that the text should be on the screen
      */
-	public void AddDialogue(string[] dialogue, float timePerLine)
+	public virtual void AddDialogue(string[] dialogue)
     {
-        displayTimeLength = timePerLine;
-
         foreach (string line in dialogue)
         {
             queue.AddLast(line);

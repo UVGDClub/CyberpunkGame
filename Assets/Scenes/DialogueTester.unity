@@ -437,24 +437,27 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1650605687}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 591f808bbc60cdb41bcfafcfc5c5b572, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueText: {fileID: 2028950458}
+  displayTime: 2
 --- !u!114 &1650605694
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1650605687}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 835193124e3b84149924eb0d73d784ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueText: {fileID: 2028950458}
+  displayTime: 3
+  charWaitTime: 0.1
 --- !u!1 &2028950456
 GameObject:
   m_ObjectHideFlags: 0
@@ -511,9 +514,9 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 6222a7e4b6dcda84a998fb603a08340e, type: 3}
-    m_FontSize: 12
+    m_FontSize: 20
     m_FontStyle: 0
-    m_BestFit: 1
+    m_BestFit: 0
     m_MinSize: 0
     m_MaxSize: 40
     m_Alignment: 4
