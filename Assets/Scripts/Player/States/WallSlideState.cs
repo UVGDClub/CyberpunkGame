@@ -7,6 +7,7 @@ public class WallSlideState : APlayerState
 
     public FallingState FallingPlayerState;
     public JumpState JumpPlayerState;
+    public IdleState IdleState;
 
     public float fallSpeed = 1f;
     public Vector2 distanceAfterJumpOff = new Vector3(0.02f, 0.02f, 0);
@@ -14,15 +15,29 @@ public class WallSlideState : APlayerState
 
     public override bool CanTransitionInto(Player player)
     {
-        return Input.GetAxis("Horizontal") < 0 && player.left || Input.GetAxis("Horizontal") > 0 && player.right;
+        return !player.bottomHit && ((Input.GetAxisRaw("Horizontal") < 0 && player.left && player.left.normal.normalized.y == 0)
+            || (Input.GetAxisRaw("Horizontal") > 0 && player.right && player.right.normal.normalized.y == 0));
     }
 
+    public override void OnEnter( Player player ) {
+        if (Input.GetButton("Jump"))
+            processedJump = true;
+    }
+
+    private bool processedJump;
     public override void Execute(Player player)
     {
+        if(player.bottomHit) {
+            player.TransferToState(IdleState);
+            return;
+        }
 
-        if (Input.GetButtonDown("Jump"))
+        if (!Input.GetButton("Jump"))
+            processedJump = false;
+
+        if ((Input.GetButton("Jump") || Input.GetButtonDown("Jump")) && !processedJump)
         {
-
+            processedJump = true;
             if (player.left)
                 player.rigidbody2d.velocity += distanceAfterJumpOff;
             else if (player.right)
@@ -31,7 +46,8 @@ public class WallSlideState : APlayerState
             player.TransferToState(JumpPlayerState);
 
         }
-        else if ((player.left && Input.GetAxisRaw("Horizontal") < -0.1f) || (player.right && Input.GetAxisRaw("Horizontal") > 0.1f))
+        else if ((player.left && player.left.normal.y == 0 && Input.GetAxisRaw("Horizontal") < -0.1f) || 
+            (player.right && player.right.normal.y == 0 && Input.GetAxisRaw("Horizontal") > 0.1f))
         {
             player.rigidbody2d.velocity = new Vector2(0, -fallSpeed);
         }

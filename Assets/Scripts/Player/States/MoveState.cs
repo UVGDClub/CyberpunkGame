@@ -5,6 +5,7 @@ using UnityEngine;
 public class MoveState : APlayerState {
 
     public float moveSpeed = 5f;
+    public float maxSlopeDegree = 46f;
 
     public override void Execute(Player player) {
         player.rigidbody2d.velocity = GetForwardVelocity(Input.GetAxisRaw("Horizontal"), player) * moveSpeed;
@@ -17,7 +18,16 @@ public class MoveState : APlayerState {
         player.facing = dir > 0 ? Direction.Right : Direction.Left;
         RaycastHit2D hitForward = dir > 0 ? player.right : player.left;
 
-        if (hitForward && !Mathf.Approximately(hitForward.normal.y, 0) && hitForward.distance <= player.maxForwardSlopeCastDistance) {
+        float SlopeDeg = Vector2.Angle(dir > 0 ? Vector2.left : Vector2.right, hitForward.normal);
+
+        if (SlopeDeg > maxSlopeDegree) {
+            return Vector2.zero;
+        }
+
+        if (hitForward && hitForward.distance <= player.maxForwardSlopeCastDistance) {
+            if(Mathf.Approximately(hitForward.normal.y, 0)) {
+                return Vector2.right * dir;
+            }
             //Debug.Log("Ascending slope (normal) : " + hitForward.normal);
             return Vector2.Perpendicular(hitForward.normal) * -dir;
         }
@@ -34,6 +44,11 @@ public class MoveState : APlayerState {
 
 
     public override bool CanTransitionInto( Player player ) {
-	    return Math.Abs(Input.GetAxisRaw("Horizontal")) > 0.01f && player.bottomHit;
+        if (!player.bottomHit) return false;
+
+        // If you're trying to walk up something you can't, stop trying.
+        if (Input.GetAxisRaw("Horizontal") > 0f && (!player.right || Vector2.Angle(Vector2.left, player.right.normal) < maxSlopeDegree)) return true;
+        if (Input.GetAxisRaw("Horizontal") < 0f && (!player.left || Vector2.Angle(Vector2.right, player.left.normal) < maxSlopeDegree)) return true;
+        return false;
     }
 }

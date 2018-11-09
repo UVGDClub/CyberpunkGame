@@ -11,11 +11,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8163c39a367954844bddbb0b10b5e1db, type: 3}
   m_Name: WallJump
   m_EditorClassIdentifier: 
+  DebugColor: {r: 0.13399053, g: 1, b: 0, a: 0}
   Transitions:
   - {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}
   - {fileID: 11400000, guid: db76c1d81954c9a4ea1150767564586f, type: 2}
   maxTicksForJump: 2
   JumpVelocityAddition: 0.6
+  releaseToCancelJump: 1
   retainVelocityY: 1
   airControl: 1
   airControlSpeed: 0.5

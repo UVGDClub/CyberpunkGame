@@ -11,10 +11,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d524dd5da1639a7498ba44b898906d22, type: 3}
   m_Name: WallSlide
   m_EditorClassIdentifier: 
+  DebugColor: {r: 1, g: 0, b: 0.67774296, a: 0}
   Transitions:
   - {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}
   FallingPlayerState: {fileID: 11400000, guid: db76c1d81954c9a4ea1150767564586f, type: 2}
   JumpPlayerState: {fileID: 11400000, guid: 7298364dd2d4a5240831de31207ff122, type: 2}
+  IdleState: {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}
   fallSpeed: 1
   distanceAfterJumpOff: {x: 10, y: 3}
   delayBetweenTransitions: 0

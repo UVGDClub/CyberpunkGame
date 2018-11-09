@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class APlayerState : ScriptableObject {
 
+    public Color DebugColor;
+
     public List<APlayerState> Transitions;
     protected bool CanTransitionOutOf = true;
 

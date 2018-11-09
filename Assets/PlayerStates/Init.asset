@@ -11,5 +11,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f882d6c41c0ec044a055528a2bb10a1, type: 3}
   m_Name: Init
   m_EditorClassIdentifier: 
+  DebugColor: {r: 1, g: 1, b: 1, a: 0}
   Transitions:
   - {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}

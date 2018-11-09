@@ -11,8 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afa137269a2fa4343accdacab9eda716, type: 3}
   m_Name: Idle
   m_EditorClassIdentifier: 
+  DebugColor: {r: 1, g: 1, b: 1, a: 0}
   Transitions:
   - {fileID: 11400000, guid: 154c1e031af72da43a506e92e7743730, type: 2}
   - {fileID: 11400000, guid: 89d6350f7d2cd6c4394db0912cadcfe8, type: 2}
   - {fileID: 11400000, guid: db76c1d81954c9a4ea1150767564586f, type: 2}
-  CanTransitionOutOf: 1

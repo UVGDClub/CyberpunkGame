@@ -37,6 +37,9 @@ public class Player : MonoBehaviour {
     public int numCastsVertical = 8;
     public int numCastsHorizontal = 4;
 
+    [Header("States")]
+    public bool debug = false;
+
     private BoxCollider2D boxCollider;
 
     private void Awake() {
@@ -91,6 +94,9 @@ public class Player : MonoBehaviour {
         }
 
         currentState.Execute(this);
+        if (debug)
+            GetComponent<MeshRenderer>().material.color = currentState.DebugColor;
+
 
         if(Input.GetKey(KeyCode.Mouse0))
         {
@@ -121,15 +127,17 @@ public class Player : MonoBehaviour {
         Vector2 direction = Vector2.Perpendicular((startPoint - endPoint).normalized) * directionMultipler;
         Debug.DrawLine(start, end, Color.blue);
 
+        RaycastHit2D lastRay = default(RaycastHit2D);
+
         for (int i = 0; i <= numCasts; i++) {
             Vector2 origin = Vector2.Lerp(startPoint, endPoint, i / (float)numCasts);
 
             Debug.DrawRay(origin, direction);
             if (Physics2D.RaycastNonAlloc(origin, direction, hits, castDist, collisionMask) > 0)
-                return hits[0];
+                lastRay = hits[0];
 
         }
-        return default(RaycastHit2D);
+        return lastRay;
     }
 
     public void TransferToState( APlayerState state ) {

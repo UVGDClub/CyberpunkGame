@@ -7,6 +7,8 @@ public class JumpState : APlayerState {
     public int maxTicksForJump = 6;
     public float JumpVelocityAddition = 0.6f;
 
+    public bool releaseToCancelJump = false;
+
     public bool retainVelocityY = false;
     public bool airControl = true;
 	public float airControlSpeed = 5f;
@@ -26,8 +28,13 @@ public class JumpState : APlayerState {
 	public override void Execute(Player player) {
 		Vector2 vel = player.rigidbody2d.velocity;
 		if (airControl) {
-			vel.x = Input.GetAxis("Horizontal") * airControlSpeed;
+			vel.x = Input.GetAxisRaw("Horizontal") * airControlSpeed;
 		}
+        if(releaseToCancelJump && !Input.GetButton("Jump")) {
+            Debug.Log("Cancelled");
+            CanTransitionOutOf = true;
+            vel.y = 0;
+        }
 		player.rigidbody2d.velocity = vel;
 	}
 

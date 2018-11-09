@@ -11,8 +11,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cc8edeb6263b7a4889a4dceb57f0c4d, type: 3}
   m_Name: Move
   m_EditorClassIdentifier: 
+  DebugColor: {r: 1, g: 0, b: 0, a: 0}
   Transitions:
   - {fileID: 11400000, guid: db76c1d81954c9a4ea1150767564586f, type: 2}
   - {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}
   - {fileID: 11400000, guid: 154c1e031af72da43a506e92e7743730, type: 2}
   moveSpeed: 2
+  maxSlopeDegree: 50

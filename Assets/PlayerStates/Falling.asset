@@ -11,6 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8631906569a35214b8db05bcf9adf472, type: 3}
   m_Name: Falling
   m_EditorClassIdentifier: 
+  DebugColor: {r: 1, g: 0.83938456, b: 0, a: 0}
   Transitions:
   - {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}
   - {fileID: 11400000, guid: 89d6350f7d2cd6c4394db0912cadcfe8, type: 2}
