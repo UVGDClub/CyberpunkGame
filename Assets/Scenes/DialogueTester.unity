@@ -430,7 +430,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72532aa096ae7494285c4e322253e2b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogue: {fileID: 1650605694}
+  dialogue: {fileID: 1650605693}
 --- !u!114 &1650605693
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -450,14 +450,16 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1650605687}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 835193124e3b84149924eb0d73d784ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueText: {fileID: 2028950458}
-  displayTime: 3
-  charWaitTime: 0.1
+  displayTime: 1
+  charWaitTime: 0.05
+  blinkDelay: 6
+  adaptiveDisplayTime: 1
 --- !u!1 &2028950456
 GameObject:
   m_ObjectHideFlags: 0

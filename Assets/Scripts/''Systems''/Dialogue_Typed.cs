@@ -1,58 +1,66 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Dialogue_Typed : Dialogue
-{
-	// Use this for initialization
+public class Dialogue_Typed : Dialogue {
+	
 	private char fullBlock = '\x2588';
-	bool allCharRevealed = true;
 	string finalText;
-	WaitForSeconds charRevealTime;
-	public float charWaitTime = 0.1f;
+	public float charWaitTime = 0.05f;
+	public int blinkDelay = 6;
+	public bool adaptiveDisplayTime = true;
+	const float endPause = 2.0f;
 
-	new void Awake()
-	{
-		base.Awake();
-		charRevealTime = new WaitForSeconds(charWaitTime);
-	}
-
+	/**
+	 * Gets the next string in the queue
+	 * and starts the TypeText coroutine
+	 */
 	protected override void NextInQueue()
 	{
 		finalText = queue.ElementAt(0).Trim();
-		if (displayTime < charWaitTime * finalText.Length)
+		if (adaptiveDisplayTime && displayTime < charWaitTime * MAX_SENTANCE_LENGTH)
 		{
-			waitTime = new WaitForSeconds(charWaitTime * finalText.Length + 0.5f);
-			displayTime = charWaitTime * finalText.Length + 0.5f;
+			displayTime = charWaitTime * finalText.Length + endPause;
 		}
 		queue.RemoveFirst();
 		dialogueText.text = fullBlock.ToString();
 		StartCoroutine(TypeText());
 	}
 
+	/**
+	 * Reveals the text one character at a time
+	 */
 	public IEnumerator TypeText()
 	{
-		allCharRevealed = false;
+		int blink = -1;
+		bool allCharRevealed = false;
 		while (!allCharRevealed)
 		{
 			string currentText = dialogueText.text;
-			int index = currentText.IndexOf(fullBlock);
-			if (currentText.Length > finalText.Length)
+			int index = currentText.Length-1;
+			if (currentText.Length - 1 > finalText.Length)
 			{
 				allCharRevealed = true;
 			}
-			else
+			else if (index != -1)
 			{
-				if (index != -1)
+				currentText = currentText.Substring(0, index);
+				currentText += finalText[index].ToString();
+				if (blink < 0)
 				{
-					currentText = currentText.Substring(0, index);
-					currentText += finalText[index].ToString() + fullBlock.ToString();
+					currentText += fullBlock;
+				} else if (blink < blinkDelay)
+				{
+					currentText += ' ';
+				} else
+				{
+					blink = -blinkDelay;
 				}
+				blink++;
 			}
 
 			dialogueText.text = currentText;
-			yield return charRevealTime;
+			yield return new WaitForSeconds(charWaitTime);
 		}
 	}
 }

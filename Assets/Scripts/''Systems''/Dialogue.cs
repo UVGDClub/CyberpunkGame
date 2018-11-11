@@ -16,23 +16,21 @@ using UnityEngine.UI;
 public class Dialogue : MonoBehaviour {
 
     public Text dialogueText;
-	protected WaitForSeconds waitTime;
-	public float displayTime = 3.0f;
+	public float displayTime = 4.6f;
 
 
-	const int MAX_SENTANCE_LENGTH = 80;
+	protected const int MAX_SENTANCE_LENGTH = 64;
 	protected LinkedList<string> queue = new LinkedList<string>();	//LinkedList should hypothetically be nice and efficient for the queue
 
     // Use this for initialization
     protected void Awake () {
-		waitTime = new WaitForSeconds(displayTime);
 	}
 	
 	public IEnumerator UpdateText() {
 		while (queue.Count() > 0)
 		{
 			NextInQueue();
-			yield return waitTime;
+			yield return new WaitForSeconds(displayTime);
 		}
 	}
 
