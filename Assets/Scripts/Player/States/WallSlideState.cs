@@ -24,6 +24,11 @@ public class WallSlideState : APlayerState
             processedJump = true;
 
         player.animator.SetBool("WallSliding", true);
+
+        if (player.facing == Direction.Left)
+            player.facing = Direction.Right;
+        else
+            player.facing = Direction.Left;
     }
 
     public override void OnExit(Player player)
@@ -44,6 +49,11 @@ public class WallSlideState : APlayerState
 
         if ((Input.GetButton("Jump") || Input.GetButtonDown("Jump")) && !processedJump)
         {
+            if (player.facing == Direction.Left)
+                player.facing = Direction.Right;
+            else
+                player.facing = Direction.Left;
+
             processedJump = true;
             if (player.left)
                 player.rigidbody2d.velocity += distanceAfterJumpOff;

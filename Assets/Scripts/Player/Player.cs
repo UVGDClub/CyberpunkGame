@@ -104,7 +104,7 @@ public class Player : MonoBehaviour {
             GetComponent<MeshRenderer>().material.color = currentState.DebugColor;
 
 
-        if(Input.GetKey(KeyCode.Mouse0))
+        if(Input.GetKey(KeyCode.Mouse0) && animator.GetBool("Attack") == false)
         {
             animator.SetBool("Attack", true);
             Vector2 direction = facing == Direction.Left ? Vector2.left : Vector2.right;
