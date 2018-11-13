@@ -120,7 +120,7 @@ public class Player : MonoBehaviour {
                 //hit.collider.GetInstanceID()
                 //and a scriptable object?
                 BreakableTileInstance bti = hit.collider.GetComponent<BreakableTileInstance>();
-                if (bti == null)
+                if (bti == null || bti.spriteRenderer.sprite != bti.tileRef.sprites[0])
                     continue;
 
                 bti.StartCoroutine(bti.BreakTile());
