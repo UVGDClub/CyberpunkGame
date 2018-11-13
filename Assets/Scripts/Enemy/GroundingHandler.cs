@@ -14,8 +14,11 @@ public class GroundingHandler
 	public bool IsGrounded { get; private set; }
 	public bool WasGroundedLastFrame { get; private set; }
 	public Vector2 GroundSlope { get; private set; }
+    public Vector2 LeftSlope { get; private set; }
+    public Vector2 RightSlope { get; private set; }
 
-	private readonly Action onBecomeGrounded;
+
+    private readonly Action onBecomeGrounded;
 	private readonly Action onBecomeAirborne;
 
 	private readonly Transform transform;
@@ -66,7 +69,13 @@ public class GroundingHandler
 
 		CheckForStateChange();
 
-		if (followMovingObjects)
+        //adding forward slope handling
+        Vector2 forward = facingDir == Direction.Left ? Vector2.left : Vector2.right;
+        var forwardRay = new Ray2D(rightPoint + Vector2.up * heightOffset, forward);
+        CastInfo forwardCast = RaycastUtils.Raycast(forwardRay, castLength, GameUtils.Layers.GroundMask);
+        SetForwardSlope(forwardCast, facingDir);
+
+        if (followMovingObjects)
 		{
 			///Cover the case of moving platforms!
 			if (IsGrounded && castInfo.didHit)
@@ -116,6 +125,33 @@ public class GroundingHandler
 			if (Vector2.Dot(GroundSlope, facing) < 0f) GroundSlope = -GroundSlope;
 		}
 	}
+
+    private void SetForwardSlope(CastInfo castInfo, Direction facingDir)
+    {
+        if(!castInfo.didHit)
+        {
+            LeftSlope = Vector2.zero;
+            RightSlope = Vector2.zero;
+        }
+        else
+        {
+            if (facingDir == Direction.Left)
+            {
+                RightSlope = Vector2.zero;
+                LeftSlope = castInfo.hitInfo.normal.GetNormal();
+                if (Vector2.Dot(LeftSlope, Vector2.left) < 0f) LeftSlope = -LeftSlope;
+            }
+            else if (facingDir == Direction.Right)
+            {
+                LeftSlope = Vector2.zero;
+                RightSlope = castInfo.hitInfo.normal.GetNormal();
+                if (Vector2.Dot(RightSlope, Vector2.right) < 0f) RightSlope = -RightSlope;
+            }
+        }
+
+        //Debug.Log("Left slope: " + LeftSlope);
+        //Debug.Log("Right slope: " + RightSlope);
+    }
 
 	private void CheckForStateChange()
 	{

@@ -80,7 +80,7 @@ public class TileInfo : MonoBehaviour {
             if (tile == null)
                 return;
 
-            Debug.Log(tile.name + " " + tilePos);            
+           // Debug.Log(tile.name + " " + tilePos);            
         }
     }
 

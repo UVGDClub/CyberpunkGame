@@ -14,11 +14,15 @@ MonoBehaviour:
   sceneIndex: 1
   scene: {fileID: 102900000, guid: d5eac27d2f7e7e64e9dedcf3dfc1bfd5, type: 3}
   loadSceneMode: 1
-  backgroundMusic: {fileID: 0}
-  fadeRate: 0.1
+  audioSettings:
+    clip: {fileID: 0}
+    fadeRate: 0
+    pitch: 0
   enemySpawnInfo:
-  - name: test_enemy_3
+  - name: BigBlue
     position: {x: -0.5, y: -0.55}
     facingDir: 2
     spawnMode: 1
     respawnTime: 0
+  grid: {fileID: 0}
+  tilemap: {fileID: 0}

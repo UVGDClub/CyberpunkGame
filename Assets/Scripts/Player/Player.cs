@@ -148,8 +148,8 @@ public class Player : MonoBehaviour {
     }
 
     public void TransferToState( APlayerState state ) {
-        Debug.Log("Exiting: " + currentState);
-        Debug.Log("Entering: " + state);
+       // Debug.Log("Exiting: " + currentState);
+       // Debug.Log("Entering: " + state);
         currentState.OnExit(this);
         currentState = state;
         currentState.OnEnter(this);

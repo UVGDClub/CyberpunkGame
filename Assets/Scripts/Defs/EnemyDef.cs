@@ -25,6 +25,9 @@ namespace Defs
 		public Direction DefaultFacingDirection = Direction.Left;
 		public SpriteAnchorPoint DefaultAnchorPoint = SpriteAnchorPoint.Center;
 		public float Scale = 1f;
+        
+        [Tooltip("Warning!! Don't use this unless you know what you're doing.")]
+        public bool ForceIgnore = false;
 
 		[Header("References")]
 		public AnimatorOverrideController Animations;
