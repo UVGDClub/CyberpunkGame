@@ -22,6 +22,13 @@ public class WallSlideState : APlayerState
     public override void OnEnter( Player player ) {
         if (Input.GetButton("Jump"))
             processedJump = true;
+
+        player.animator.SetBool("WallSliding", true);
+    }
+
+    public override void OnExit(Player player)
+    {
+        player.animator.SetBool("WallSliding", false);
     }
 
     private bool processedJump;

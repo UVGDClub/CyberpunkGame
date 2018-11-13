@@ -13,6 +13,8 @@ public class Player : MonoBehaviour {
     public bool initialized = false;
 
     public Direction facing = Direction.Right;
+    public Animator animator;
+    public SpriteRenderer spriteRenderer;
 
     [Header("Attack")]
     public Vector2 attackBoxSize = new Vector2(0.16f, 0.32f);
@@ -72,6 +74,10 @@ public class Player : MonoBehaviour {
 
     // Update is called once per frame
     void FixedUpdate () {
+        if (facing == Direction.Left && spriteRenderer.flipX == false)
+            spriteRenderer.flipX = true;
+        else if (facing == Direction.Right && spriteRenderer.flipX == true)
+            spriteRenderer.flipX = false;
 
         boxCollider.bounds.GetTopLeft(ref start);
         boxCollider.bounds.GetBottomLeft(ref end);
@@ -100,6 +106,7 @@ public class Player : MonoBehaviour {
 
         if(Input.GetKey(KeyCode.Mouse0))
         {
+            animator.SetBool("Attack", true);
             Vector2 direction = facing == Direction.Left ? Vector2.left : Vector2.right;
 
             Debug.DrawRay(rigidbody2d.position, direction * maxAttackDistance, Color.red);
