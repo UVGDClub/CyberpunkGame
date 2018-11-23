@@ -8,17 +8,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8163c39a367954844bddbb0b10b5e1db, type: 3}
-  m_Name: Jump
+  m_Script: {fileID: 11500000, guid: 5e936f04b0e686747bd46695f3112cca, type: 3}
+  m_Name: Dash
   m_EditorClassIdentifier: 
-  DebugColor: {r: 0, g: 0.9804158, b: 1, a: 0}
+  DebugColor: {r: 0, g: 0, b: 0, a: 0}
   Transitions:
+  - {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}
   - {fileID: 11400000, guid: db76c1d81954c9a4ea1150767564586f, type: 2}
   - {fileID: 11400000, guid: 89d6350f7d2cd6c4394db0912cadcfe8, type: 2}
-  - {fileID: 11400000, guid: 0c22eb5db0f54c14998a8833f354d24d, type: 2}
-  maxTicksForJump: 6
-  JumpVelocityAddition: 0.64
-  releaseToCancelJump: 1
-  retainVelocityY: 0
-  airControl: 1
-  airControlSpeed: 1
+  distance: 0.64
+  speed: 5
+  minTimeBetweenDashes: 0.5

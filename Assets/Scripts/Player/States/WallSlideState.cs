@@ -20,6 +20,7 @@ public class WallSlideState : APlayerState
     }
 
     public override void OnEnter( Player player ) {
+        player.canDash = true;
         if (Input.GetButton("Jump"))
             processedJump = true;
     }

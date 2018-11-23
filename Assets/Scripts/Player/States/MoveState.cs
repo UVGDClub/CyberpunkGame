@@ -15,7 +15,6 @@ public class MoveState : APlayerState {
         if (dir == 0)
             return Vector2.zero;
 
-        player.facing = dir > 0 ? Direction.Right : Direction.Left;
         RaycastHit2D hitForward = dir > 0 ? player.right : player.left;
 
         float SlopeDeg = Vector2.Angle(dir > 0 ? Vector2.left : Vector2.right, hitForward.normal);

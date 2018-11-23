@@ -16,5 +16,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: db76c1d81954c9a4ea1150767564586f, type: 2}
   - {fileID: 11400000, guid: ba3cdf720a927e1489ff415ec0566711, type: 2}
   - {fileID: 11400000, guid: 154c1e031af72da43a506e92e7743730, type: 2}
+  - {fileID: 11400000, guid: 0c22eb5db0f54c14998a8833f354d24d, type: 2}
   moveSpeed: 2
   maxSlopeDegree: 50
