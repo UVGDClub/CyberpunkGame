@@ -23,6 +23,18 @@ public class WallSlideState : APlayerState
         player.canDash = true;
         if (Input.GetButton("Jump"))
             processedJump = true;
+
+        player.animator.SetBool("WallSliding", true);
+
+        if (player.facing == Direction.Left)
+            player.facing = Direction.Right;
+        else
+            player.facing = Direction.Left;
+    }
+
+    public override void OnExit(Player player)
+    {
+        player.animator.SetBool("WallSliding", false);
     }
 
     private bool processedJump;
@@ -38,6 +50,11 @@ public class WallSlideState : APlayerState
 
         if ((Input.GetButton("Jump") || Input.GetButtonDown("Jump")) && !processedJump)
         {
+            if (player.facing == Direction.Left)
+                player.facing = Direction.Right;
+            else
+                player.facing = Direction.Left;
+
             processedJump = true;
             if (player.left)
                 player.rigidbody2d.velocity += distanceAfterJumpOff;

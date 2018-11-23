@@ -64,20 +64,25 @@ namespace Enemy
 
 			transform.position = position.ToV3();
 			transform.rotation = Quaternion.identity;
-			Sprite.transform.localScale = new Vector3(Def.Scale, Def.Scale, 1f);
 
-			switch (Def.DefaultAnchorPoint)
-			{
-				case SpriteAnchorPoint.BottomCenter: Sprite.transform.localPosition = Vector3.zero; break;
-				case SpriteAnchorPoint.Center: Sprite.transform.localPosition = new Vector3(0f, (Def.Scale * Def.CellSize.y) / (2f * Def.PixelsPerUnit), 0f); break;
-			}
+            //(ADVANCED) Force override
+            if(!newDef.ForceIgnore)
+            {
+                Sprite.transform.localScale = new Vector3(Def.Scale, Def.Scale, 1f);
 
-			//Set facing direction - use default if not specified
-			FacingDirection = (facingDirection == Direction.Unspecified) ? Def.DefaultFacingDirection : facingDirection;
+                switch (Def.DefaultAnchorPoint)
+                {
+                    case SpriteAnchorPoint.BottomCenter: Sprite.transform.localPosition = Vector3.zero; break;
+                    case SpriteAnchorPoint.Center: Sprite.transform.localPosition = new Vector3(0f, (Def.Scale * Def.CellSize.y) / (2f * Def.PixelsPerUnit), 0f); break;
+                }
 
-			//Set collider - At this point, sprite is guaranteed to be centered on the x and at the bottom on the y.
-			Collider.size = Def.VisibleSize * Def.Scale;
-			Collider.offset = new Vector2(0f, Collider.size.y / 2f);
+                //Set facing direction - use default if not specified
+                FacingDirection = (facingDirection == Direction.Unspecified) ? Def.DefaultFacingDirection : facingDirection;
+
+                //Set collider - At this point, sprite is guaranteed to be centered on the x and at the bottom on the y.
+                Collider.size = Def.VisibleSize * Def.Scale;
+                Collider.offset = new Vector2(0f, Collider.size.y / 2f);
+            }			
 
 			//Set animator override
 			if (Def.Animations == null)

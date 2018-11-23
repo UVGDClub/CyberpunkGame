@@ -11,6 +11,16 @@ public class MoveState : APlayerState {
         player.rigidbody2d.velocity = GetForwardVelocity(Input.GetAxisRaw("Horizontal"), player) * moveSpeed;
     }
 
+    public override void OnEnter(Player player)
+    {
+        player.animator.SetBool("Running", true);
+    }
+
+    public override void OnExit(Player player)
+    {
+        player.animator.SetBool("Running", false);
+    }
+
     public Vector2 GetForwardVelocity( float dir, Player player) {
         if (dir == 0)
             return Vector2.zero;

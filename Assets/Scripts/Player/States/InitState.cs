@@ -9,6 +9,7 @@ public class InitState : APlayerState {
         CanTransitionOutOf = false;
         player.rigidbody2d.gravityScale = 0;
 
+        player.animator.SetBool("Idle", true);
         player.StartCoroutine(Initialize(player));
     }
 

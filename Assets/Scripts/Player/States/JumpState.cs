@@ -23,13 +23,25 @@ public class JumpState : APlayerState {
     public override void OnEnter( Player player ) {
         CanTransitionOutOf = false;
         player.StartCoroutine(Jump(player));
+        player.animator.SetBool("Airborne", true);
     }
 
-	public override void Execute(Player player) {
+    public override void OnExit(Player player)
+    {
+        player.animator.SetBool("Idle", false);
+    }
+
+    public override void Execute(Player player) {
 		Vector2 vel = player.rigidbody2d.velocity;
 		if (airControl) {
 			vel.x = Input.GetAxisRaw("Horizontal") * airControlSpeed;
-		}
+
+            if (vel.x < 0)
+                player.facing = Direction.Left;
+            else if (vel.x > 0)
+                player.facing = Direction.Right;
+
+        }
         if(releaseToCancelJump && !Input.GetButton("Jump")) {
             Debug.Log("Cancelled");
             CanTransitionOutOf = true;
